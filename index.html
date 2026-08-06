@@ -1,0 +1,917 @@
+<title>M3 / M4 / M5 Macs on OLX &#8212; 36 GB and up</title>
+<style>
+  :root {
+    --ground:#F2F4F4; --surface:#FFFFFF; --surface-2:#E9EDED;
+    --ink:#101718; --ink-2:#4E5C5E; --line:#D6DCDC;
+    --accent:#0B6E5F; --accent-ink:#FFFFFF; --accent-2:#0E8F79;
+    --warn:#8A5A12; --warn-bg:#FBF0DC; --crit:#A33F36;
+    --shadow:0 1px 2px rgba(16,23,24,.06), 0 8px 24px -16px rgba(16,23,24,.28);
+    --display:ui-serif,"Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --body:ui-sans-serif,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+    --data:ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground:#0D1314; --surface:#151D1E; --surface-2:#1D2728;
+      --ink:#E7EDEC; --ink-2:#96A5A5; --line:#263233;
+      --accent:#46C5A8; --accent-ink:#08201C; --accent-2:#6FDCC2;
+      --warn:#E5B970; --warn-bg:#2A2213; --crit:#E0685D;
+      --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.9);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground:#0D1314; --surface:#151D1E; --surface-2:#1D2728;
+    --ink:#E7EDEC; --ink-2:#96A5A5; --line:#263233;
+    --accent:#46C5A8; --accent-ink:#08201C; --accent-2:#6FDCC2;
+    --warn:#E5B970; --warn-bg:#2A2213; --crit:#E0685D;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -18px rgba(0,0,0,.9);
+  }
+  :root[data-theme="light"] {
+    --ground:#F2F4F4; --surface:#FFFFFF; --surface-2:#E9EDED;
+    --ink:#101718; --ink-2:#4E5C5E; --line:#D6DCDC;
+    --accent:#0B6E5F; --accent-ink:#FFFFFF; --accent-2:#0E8F79;
+    --warn:#8A5A12; --warn-bg:#FBF0DC; --crit:#A33F36;
+    --shadow:0 1px 2px rgba(16,23,24,.06), 0 8px 24px -16px rgba(16,23,24,.28);
+  }
+
+  body { background:var(--ground); color:var(--ink); font-family:var(--body);
+         line-height:1.5; -webkit-font-smoothing:antialiased; }
+  .wrap { max-width:1180px; margin:0 auto; padding:40px 20px 72px; }
+
+  header { display:flex; flex-direction:column; gap:10px; margin-bottom:28px; }
+  .eyebrow { font-family:var(--data); font-size:11px; letter-spacing:.12em;
+             text-transform:uppercase; color:var(--ink-2); }
+  h1 { font-family:var(--display); font-weight:600; font-size:clamp(28px,4vw,42px);
+       line-height:1.1; text-wrap:balance; letter-spacing:-.01em; }
+  .lede { color:var(--ink-2); max-width:66ch; font-size:15px; }
+
+  .stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+           gap:1px; background:var(--line); border:1px solid var(--line);
+           border-radius:4px; overflow:hidden; margin:26px 0; }
+  .stat { background:var(--surface); padding:16px 18px; display:flex; flex-direction:column; gap:4px; }
+  .stat dt { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-2); }
+  .stat dd { font-family:var(--data); font-size:22px; font-variant-numeric:tabular-nums;
+             letter-spacing:-.02em; }
+  .stat dd small { display:block; font-size:11.5px; line-height:1.4; color:var(--ink-2);
+                   letter-spacing:0; font-family:var(--body); margin-top:3px; }
+
+  /* ---- FILTERS ---- */
+  .fbar { display:flex; flex-direction:column; gap:9px; padding:15px 17px; margin-bottom:10px;
+          background:var(--surface); border:1px solid var(--line); border-radius:8px;
+          box-shadow:var(--shadow); position:sticky; top:0; z-index:5; }
+  .frow { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+  .flabel { font-family:var(--data); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+            color:var(--ink-2); width:66px; flex:none; }
+  .fchip { font-family:var(--data); font-size:12px; padding:5px 10px; border-radius:999px;
+           cursor:pointer; background:var(--surface-2); color:var(--ink-2);
+           border:1px solid transparent; }
+  .fchip:hover { color:var(--ink); border-color:var(--line); }
+  .fchip[aria-pressed="true"] { background:var(--accent); color:var(--accent-ink);
+                                border-color:var(--accent); font-weight:600; }
+  .fchip .n { opacity:.55; margin-left:5px; font-size:10.5px; }
+  .fchip[aria-pressed="true"] .n { opacity:.8; }
+  .fbar .tail { display:flex; align-items:center; gap:10px; margin-left:auto;
+                font-family:var(--data); font-size:11.5px; color:var(--ink-2); }
+  .fclear { font-family:var(--data); font-size:11.5px; cursor:pointer; background:none;
+            border:1px solid var(--line); border-radius:999px; padding:5px 11px; color:var(--ink-2); }
+  .fclear:hover { color:var(--ink); border-color:var(--ink-2); }
+  .fchip:focus-visible, .fclear:focus-visible, a:focus-visible {
+    outline:2px solid var(--accent); outline-offset:2px; }
+  .fhint { font-size:12.5px; color:var(--ink-2); margin:0 2px 24px; }
+  .fhint b { color:var(--ink); font-weight:600; }
+  .fempty { display:none; padding:30px; text-align:center; color:var(--ink-2);
+            border:1px dashed var(--line); border-radius:8px; margin-bottom:26px; }
+
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(330px,1fr)); gap:16px; }
+  .card { background:var(--surface); border:1px solid var(--line); border-radius:6px;
+          padding:18px; display:flex; flex-direction:column; gap:12px; box-shadow:var(--shadow); }
+  .card[hidden], .sect[hidden] { display:none !important; }
+  .card.fresh { border-color:var(--accent-2); }
+  .card.gone { opacity:.6; }
+  .card.gone .price .amt { text-decoration:line-through; text-decoration-thickness:1.5px; }
+  .card.gone h2 { color:var(--ink-2); }
+  .card.gone a.cta { background:transparent; color:var(--ink-2);
+                     border:1px dashed var(--line); }
+  .card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:12px; }
+  .badges { display:flex; gap:6px; flex-wrap:wrap; }
+  .badge { font-family:var(--data); font-size:11px; letter-spacing:.04em; padding:3px 7px;
+           border-radius:3px; background:var(--surface-2); color:var(--ink-2); }
+  .badge.ram { background:var(--accent); color:var(--accent-ink); font-weight:600; }
+  .badge.ram.sub { background:transparent; color:var(--ink-2); border:1px solid var(--accent); }
+  .badge.shop { background:var(--warn-bg); color:var(--warn); }
+  .badge.est { background:transparent; border:1px dashed var(--line); }
+  .badge.sold { background:var(--crit); color:var(--surface); font-weight:600; }
+  .price { font-family:var(--data); font-size:19px; font-variant-numeric:tabular-nums;
+           white-space:nowrap; letter-spacing:-.02em; }
+  .price small { display:block; font-size:11px; color:var(--ink-2); letter-spacing:0; }
+  .card h2 { font-size:15px; font-weight:600; line-height:1.35; text-wrap:balance; }
+  .meta { font-size:13px; color:var(--ink-2); display:flex; gap:10px; flex-wrap:wrap; }
+  .stamp { font-family:var(--data); font-size:10.5px; letter-spacing:.03em; color:var(--ink-2); }
+  .stamp::before { content:"\25CF "; }
+  .st-live::before { color:var(--accent); }
+  .st-new::before { color:var(--accent-2); }
+  .st-gone::before { color:var(--crit); }
+  .evidence { font-family:var(--data); font-size:11.5px; line-height:1.5; color:var(--ink-2);
+              background:var(--surface-2); padding:8px 10px; border-radius:4px;
+              overflow-x:auto; white-space:nowrap; }
+  .note { font-size:12.5px; color:var(--warn); background:var(--warn-bg); padding:8px 10px;
+          border-radius:4px; line-height:1.45; }
+  .card a.cta { margin-top:auto; display:inline-flex; align-items:center; justify-content:center;
+                gap:8px; text-decoration:none; font-size:14px; font-weight:600;
+                background:var(--accent); color:var(--accent-ink); padding:10px 14px; border-radius:4px; }
+  .card a.cta:hover { filter:brightness(1.08); }
+
+  .actions { margin-top:auto; display:flex; gap:8px; align-items:stretch; }
+  .card a.cta { margin-top:0; flex:1 1 auto; }
+  .favbtn { flex:none; width:44px; cursor:pointer; font-size:15px; line-height:1;
+            background:var(--surface-2); color:var(--ink-2); border:1px solid var(--line);
+            border-radius:4px; }
+  .favbtn:hover { color:var(--accent); border-color:var(--accent); }
+  .favbtn[aria-pressed="true"] { background:var(--accent); color:var(--accent-ink);
+                                 border-color:var(--accent); }
+  .favbtn:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .card.fav { border-color:var(--accent); }
+
+  /* ---- PRICE SECTION ----
+     Dumbbell (28 Jul -> 7 Aug median) over a range track (current low-high).
+     One hue, two shades; validated against both page surfaces at 2.35:1 / 3.13:1. */
+  .viz { --v-prev:#6FB6A8; --v-now:var(--accent); --v-track:var(--surface-2);
+         --v-grid:var(--line); }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz { --v-prev:#2C7566; }
+  }
+  :root[data-theme="dark"] .viz { --v-prev:#2C7566; }
+
+  .pgrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(430px,1fr)); gap:26px; }
+  .pblock { background:var(--surface); border:1px solid var(--line); border-radius:6px;
+            padding:18px 20px 16px; box-shadow:var(--shadow); }
+  .pblock h3 { font-size:14px; font-weight:600; margin-bottom:2px; }
+  .pblock .psub { font-size:12.5px; color:var(--ink-2); margin-bottom:14px; }
+
+  .plegend { display:flex; flex-wrap:wrap; gap:14px; margin-bottom:14px;
+             font-size:11.5px; color:var(--ink-2); }
+  .plegend span { display:inline-flex; align-items:center; gap:6px; }
+  .pkey { width:14px; height:2px; background:var(--v-now); border-radius:2px; }
+  .pkey.prev { background:var(--v-prev); }
+  .pkey.track { height:9px; border-radius:2px; background:var(--v-track); }
+
+  .prows { position:relative; }
+  .prow { display:grid; grid-template-columns:80px 1fr 62px; align-items:center;
+          gap:10px; padding:5px 0; border-radius:4px; }
+  .prow:hover, .prow:focus-visible { background:var(--surface-2); outline:none; }
+  .prow:focus-visible { box-shadow:inset 0 0 0 2px var(--accent); }
+  .plabel { font-family:var(--data); font-size:12px; color:var(--ink);
+            display:flex; justify-content:space-between; gap:6px; }
+  .plabel .pn { color:var(--ink-2); font-size:10.5px; }
+  .ptrack { position:relative; height:22px; }
+  .pband { position:absolute; top:7px; height:9px; background:var(--v-track);
+           border-radius:2px; }
+  .pconn { position:absolute; top:10.5px; height:2px; background:var(--v-prev);
+           border-radius:2px; }
+  .pdot { position:absolute; top:6.5px; width:9px; height:9px; border-radius:50%;
+          margin-left:-4.5px; box-shadow:0 0 0 2px var(--surface); }
+  .pdot.prev { background:var(--v-prev); }
+  .pdot.now  { background:var(--v-now); }
+  .pdelta { font-family:var(--data); font-size:11.5px; color:var(--ink-2);
+            text-align:right; font-variant-numeric:tabular-nums; }
+
+  /* the plot column is the 1fr cell: 80px label + 10px gap left, 62px delta + 10px gap right */
+  .paxis { position:relative; height:15px; margin:5px 72px 0 90px; }
+  .paxis .ptick { position:absolute; top:0; font-family:var(--data); font-size:10px;
+                  color:var(--ink-2); transform:translateX(-50%); white-space:nowrap; }
+  .pgrid-lines { position:absolute; top:0; bottom:0; left:90px; right:72px;
+                 pointer-events:none; }
+  .pgrid-lines i { position:absolute; top:0; bottom:0; width:1px; background:var(--v-grid); }
+
+  .ptable { width:100%; border-collapse:collapse; margin-top:16px; font-size:12px;
+            font-variant-numeric:tabular-nums; }
+  .ptable caption { text-align:left; font-size:11px; letter-spacing:.08em;
+                    text-transform:uppercase; color:var(--ink-2); padding-bottom:6px;
+                    font-family:var(--data); }
+  .ptable th, .ptable td { padding:5px 6px; text-align:right; border-top:1px solid var(--line); }
+  .ptable th { font-weight:600; color:var(--ink-2); font-size:10.5px;
+               letter-spacing:.04em; text-transform:uppercase; border-top:0; }
+  .ptable th:first-child, .ptable td:first-child { text-align:left; font-family:var(--data); }
+
+  /* ---- MIX OVER TIME ----
+     Ordinal teal ramp: chip and memory are both ordered, so more-is-darker
+     carries the order. 5 steps validated --ordinal on both page surfaces. */
+  .viz { --o1:#6FB6A8; --o2:#4EA294; --o3:#2E8B7B; --o4:#15745F; --o5:#0A5748; }
+  @media (prefers-color-scheme: dark) {
+    :root:where(:not([data-theme="light"])) .viz {
+      --o1:#2C7566; --o2:#38907C; --o3:#46AE95; --o4:#59C9AE; --o5:#7FDECA; }
+  }
+  :root[data-theme="dark"] .viz {
+    --o1:#2C7566; --o2:#38907C; --o3:#46AE95; --o4:#59C9AE; --o5:#7FDECA; }
+
+  .mrow { display:grid; grid-template-columns:74px 1fr 34px; align-items:center;
+          gap:10px; padding:6px 0; }
+  .mlabel { font-family:var(--data); font-size:11.5px; color:var(--ink-2); }
+  .mbar { display:flex; height:20px; border-radius:2px; overflow:hidden; }
+  .mseg { position:relative; min-width:2px; }
+  .mseg + .mseg { margin-left:2px; }            /* 2px surface gap, not a border */
+  .mtotal { font-family:var(--data); font-size:11.5px; color:var(--ink-2);
+            text-align:right; font-variant-numeric:tabular-nums; }
+
+  .swatch { width:10px; height:10px; border-radius:2px; display:inline-block; }
+
+  /* posting-date strip: one row per class, one dot per ad, shared date axis */
+  .strip { position:relative; }
+  .sgroup { font-family:var(--data); font-size:10.5px; letter-spacing:.12em;
+            text-transform:uppercase; color:var(--ink-2); margin:14px 0 4px; }
+  .srow { display:grid; grid-template-columns:74px 1fr 34px; align-items:center;
+          gap:10px; padding:3px 0; border-radius:4px; }
+  .srow:hover, .srow:focus-visible { background:var(--surface-2); outline:none; }
+  .srow:focus-visible { box-shadow:inset 0 0 0 2px var(--accent); }
+  .strack { position:relative; height:18px; }
+  .strack::before { content:""; position:absolute; left:0; right:0; top:8.5px;
+                    height:1px; background:var(--line); }
+  .sdot { position:absolute; top:5px; width:9px; height:9px; margin-left:-4.5px;
+          border-radius:50%; box-shadow:0 0 0 2px var(--surface); }
+  .saxis { position:relative; height:15px; margin:6px 44px 0 84px; }
+  .saxis span { position:absolute; top:0; font-family:var(--data); font-size:10px;
+                color:var(--ink-2); transform:translateX(-50%); white-space:nowrap; }
+
+  .ptip { position:fixed; z-index:20; pointer-events:none; opacity:0;
+          background:var(--surface); border:1px solid var(--line); border-radius:5px;
+          padding:9px 11px; box-shadow:var(--shadow); font-size:12px; max-width:250px;
+          transition:opacity .1s; }
+  .ptip[data-on="1"] { opacity:1; }
+  .ptip b { font-family:var(--data); font-variant-numeric:tabular-nums; font-size:12.5px; }
+  .ptip .trow { display:flex; align-items:center; gap:7px; color:var(--ink-2);
+                margin-top:4px; }
+  .ptip .thead { font-weight:600; color:var(--ink); }
+  .pcaveat { margin-top:22px; font-size:12.5px; color:var(--warn); background:var(--warn-bg);
+             padding:11px 13px; border-radius:4px; line-height:1.5; max-width:78ch; }
+
+  .sect { margin-top:46px; padding-top:26px; border-top:1px solid var(--line); }
+  .sect h2.sec { font-family:var(--display); font-size:23px; font-weight:600; margin-bottom:8px; }
+  .sect p.sec { color:var(--ink-2); font-size:14.5px; max-width:68ch; margin-bottom:20px; }
+
+  footer { margin-top:44px; padding-top:18px; border-top:1px solid var(--line);
+           font-size:12.5px; color:var(--ink-2); display:flex; flex-direction:column; gap:6px; }
+  @media (max-width:820px){ .fbar { position:static; } .flabel { width:auto; } }
+  @media (prefers-reduced-motion: reduce){ * { transition:none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow" id="stamp"></div>
+    <h1>M3, M4 &amp; M5 Macs on OLX with 36&nbsp;GB or more</h1>
+    <p class="lede">Every olx.ro listing for an Apple&nbsp;silicon M3-, M4- or M5-generation
+      Mac&nbsp;mini, Mac&nbsp;Studio or MacBook carrying at least 36&nbsp;GB of unified memory,
+      plus the 24&nbsp;GB minis as a fleet alternative. Each listing was re-opened on OLX to
+      confirm it is still for sale; the ones that have gone are struck through rather than
+      deleted, so the price history stays readable.</p>
+  </header>
+
+  <dl class="stats" id="stats"></dl>
+
+  <div class="fbar" id="fbar">
+    <div class="frow" data-facet="kind"><span class="flabel">Type</span></div>
+    <div class="frow" data-facet="gen"><span class="flabel">Chip</span></div>
+    <div class="frow" data-facet="ram"><span class="flabel">Memory</span></div>
+    <div class="frow" data-facet="city"><span class="flabel">City</span></div>
+    <div class="frow" data-facet="facet_status"><span class="flabel">Status</span></div>
+    <div class="frow" id="favRow"><span class="flabel">Saved</span>
+      <button class="fchip" type="button" id="favFilter" aria-pressed="false">&#9733; Shortlist<span class="n" id="favN">0</span></button>
+      <span class="tail"><span id="fcount"></span>
+        <button class="fclear" type="button" id="fclear">Clear all</button></span>
+    </div>
+  </div>
+  <p class="fhint">Filters combine: more than one chip in a row <b>widens</b> it, picking across
+    rows <b>narrows</b>. Chip <b>M3</b>&nbsp;+&nbsp;<b>M4</b> with City <b>Cluj-Napoca</b>&nbsp;+&nbsp;<b>Bucure&#537;ti</b>
+    shows M3 or M4 machines in either city. Sort:
+    <button class="fchip" data-sort="price" aria-pressed="true">Price</button>
+    <button class="fchip" data-sort="ram" aria-pressed="false">RAM</button></p>
+
+  <div class="fempty" id="fempty">Nothing matches that combination.</div>
+
+  <section class="sect" id="favSect" hidden style="margin-top:0; border-top:0; padding-top:0">
+    <h2 class="sec">Shortlist</h2>
+    <p class="sec">Machines you starred. Saved in this browser and mirrored into the page URL,
+      so a bookmark or a copied link keeps the list.</p>
+    <div class="grid" id="favGrid"></div>
+  </section>
+
+  <div class="grid" id="grid"></div>
+
+  <section class="sect viz" id="priceSect">
+    <h2 class="sec">Price by memory and by chip</h2>
+    <p class="sec">Two sweeps so far: <span id="pdates"></span>. Each row is one memory tier
+      or chip generation &mdash; the pale track is the low-to-high spread of what is on offer
+      today, the two dots are the median asking price at each sweep. Follows the Type, Chip,
+      Memory and City filters; the Status filter does not apply here, since each column is
+      by definition the machines on offer on that date. The axis is fixed so the picture
+      does not rescale as you filter.</p>
+
+    <div class="pgrid">
+      <div class="pblock" id="pblock-ram">
+        <h3>By memory</h3>
+        <p class="psub">Unified memory, low tier to high.</p>
+        <div class="plegend">
+          <span><i class="pkey prev"></i>Median 28 Jul</span>
+          <span><i class="pkey"></i>Median 7 Aug</span>
+          <span><i class="pkey track"></i>Low&ndash;high, on offer today</span>
+        </div>
+        <div class="prows"></div>
+        <div class="paxis"></div>
+        <table class="ptable"><caption>Same figures, in lei</caption></table>
+      </div>
+
+      <div class="pblock" id="pblock-gen">
+        <h3>By chip</h3>
+        <p class="psub">Apple silicon generation, M3 to M5.</p>
+        <div class="plegend">
+          <span><i class="pkey prev"></i>Median 28 Jul</span>
+          <span><i class="pkey"></i>Median 7 Aug</span>
+          <span><i class="pkey track"></i>Low&ndash;high, on offer today</span>
+        </div>
+        <div class="prows"></div>
+        <div class="paxis"></div>
+        <table class="ptable"><caption>Same figures, in lei</caption></table>
+      </div>
+    </div>
+
+    <p class="pcaveat" id="pcaveat"></p>
+  </section>
+  <section class="sect viz" id="mixSect">
+    <h2 class="sec">Chip and memory over time</h2>
+    <p class="sec">What the supply is made of, sweep by sweep. Each sweep appends a row,
+      so this fills in as the page is re-checked &mdash; today there are
+      <span id="msweeps"></span>. The colour ramp runs from the lowest tier to the highest
+      in legend order, and the same step means the same tier in every chart in this section.
+      Follows the Type, Chip, Memory and City filters.</p>
+
+    <div class="pgrid">
+      <div class="pblock" id="mblock-gen">
+        <h3>Chip mix at each sweep</h3>
+        <p class="psub">Machines on offer, split by generation.</p>
+        <div class="plegend"></div>
+        <div class="mrows"></div>
+        <table class="ptable"></table>
+      </div>
+
+      <div class="pblock" id="mblock-ram">
+        <h3>Memory mix at each sweep</h3>
+        <p class="psub">Machines on offer, split by memory tier.</p>
+        <div class="plegend"></div>
+        <div class="mrows"></div>
+        <table class="ptable"></table>
+      </div>
+    </div>
+
+    <div class="pblock" id="mblock-age" style="margin-top:26px">
+      <h3>When the ads on offer were posted</h3>
+      <p class="psub" id="agesub"></p>
+      <div class="strip"></div>
+      <div class="saxis"></div>
+      <table class="ptable"></table>
+    </div>
+
+    <p class="pcaveat" id="mcaveat"></p>
+  </section>
+
+  <div class="ptip" id="ptip" role="tooltip" data-on="0"></div>
+
+  <section class="sect" id="miniSect">
+    <h2 class="sec">Mac mini &mdash; under the line, right shape for a fleet</h2>
+    <p class="sec">No mini reaches 36&nbsp;GB, but a mini is the cheapest macOS core you can buy.
+      These are the M4-generation minis at 24&nbsp;GB, the ceiling for the model here. Every mini
+      from the previous sweep has gone; the two on offer now are both M4&nbsp;Pro and cost more than
+      the ones they replaced. The filters above apply to this section too.</p>
+    <div class="grid" id="miniGrid"></div>
+  </section>
+
+  <footer>
+    <div>Prices as listed. EUR figures converted at the BNR reference rate of
+      <span id="rate"></span>&nbsp;RON/EUR for comparison only.</div>
+    <div>Filters exclude accessories, cases, empty boxes, wanted-ads and Intel-era machines.
+      A struck-through card means the offer returned HTTP&nbsp;410 or the seller reused the ad for
+      a different machine &mdash; the button still opens the original OLX page.</div>
+  </footer>
+</div>
+
+<script>
+const DATA = {"main": [{"id": 297749283, "title": "Macbook 16 pro m3, 36 gb ram", "url": "https://www.olx.ro/d/oferta/macbook-16-pro-m3-36-gb-ram-IDk9kbN.html", "chip": "M3", "ram": 36, "ram_evidence": "Macbook 16 pro m3, 36 gb ram Vând Macbook Pro 16 cu proceso", "price": 8500, "currency": "RON", "price_label": "8 500 lei", "city": "Șcheia", "region": "Suceava", "kind": "MacBook", "business": false, "refreshed": "2026-07-12", "created": "2026-01-06", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/sl3w72smprry-RO/image;s=800x0", "desc": "Vând Macbook Pro 16 cu procesor m3 și 36GB RAM. Echipat cu o placă video integrată, acest laptop este ideal pentru sarcini intensive. Perfect funcțional, fără defecte sau probleme. Preț negociabil.<br />\nDoar 28 cicluri, baterie 100%<br />\nFără nicio zgârietură <br />\nDoar cu încărcător", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDk9kbN", "note": "", "ron": 8500, "gen": "M3", "gone_reason": "", "facet_status": "available"}, {"id": 306280362, "title": "Macbook pro m3 16 pro 36 gb ram 512gb ssd", "url": "https://www.olx.ro/d/oferta/macbook-pro-m3-16-pro-36-gb-ram-512gb-ssd-IDkJ7wQ.html", "chip": "M3", "ram": 36, "ram_evidence": "Macbook pro m3 16 pro 36 gb ram 512gb ssd folosit doar pentru", "price": 8500, "currency": "RON", "price_label": "8 500 lei", "city": "Arad", "region": "Arad", "kind": "MacBook", "business": false, "refreshed": "2026-07-04", "created": "2026-07-04", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/f5hxfnst7rbt2-RO/image;s=800x0", "desc": "folosit doar pentru web surfing, microsoft word/powerpoint. <br />\n36GB RAM 512gb SSD<br />\npentru mai multe detalii puteți să mă contactați", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDkJ7wQ", "note": "", "ron": 8500, "gen": "M3", "gone_reason": "", "facet_status": "available"}, {"id": 306181470, "title": "Macbook Pro M3 16” 36GB 1TB SSD", "url": "https://www.olx.ro/d/oferta/macbook-pro-m3-16-36gb-1tb-ssd-IDkIHMO.html", "chip": "M3", "ram": 36, "ram_evidence": "Macbook Pro M3 16” 36GB 1TB SSD Laptopul se vinde cu tot c", "price": 8800, "currency": "RON", "price_label": "8 800 lei", "city": "Popești-Leordeni", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-07-03", "created": "2026-07-03", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/yptktdv3e1x-RO/image;s=800x0", "desc": "Laptopul se vinde cu tot cu cutie si incarcator. A fost folosit exclusiv de mine pentru activitati repetitive, mult prea simple raportat la performanta sa. Il vand, tocmai, pentru ca nu-l folosesc nici la 25% din capacitate. Se prezinta in ‘mint state’, fara zgarieturi, pete sau urme.", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDkIHMO", "note": "", "ron": 8800, "gen": "M3", "gone_reason": "", "facet_status": "available"}, {"id": 241425262, "title": " Mac Studio**M4 Max**36 GB**1 TB SSD**", "url": "https://www.olx.ro/d/oferta/mac-studiom4-max36-gb1-tb-ssd-IDgkZJQ.html", "chip": "M4 Max", "ram": 36, "ram_evidence": " Mac Studio**M4 Max**36 GB**1 TB SSD** ~ Ideal pt programato", "price": 9050, "currency": "RON", "price_label": "9 050 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "Mac Studio", "business": false, "refreshed": "2026-07-17", "created": "2022-07-24", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/k0s7txuzptgq-RO/image;s=800x0", "desc": "~  Ideal pt programatori, editori photo/video, dj. Si nu numai ! ~<br />\nAre bypass la mdm, se poate folosi normal<br />\n<br />\nVand Apple Mac Studio cu procesor Apple M4 Max 14 nuclee CPU, 32 nuclee GPU, 36GB, 1 TBGB SSD.<br />\n<br />\nPoze reale!<br />\n<br />\nPreț fix<br />\n<br />\nPredare in București<br />\nRog si ofer maxima seriozitate", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDgkZJQ", "note": "", "ron": 9050, "gen": "M4", "gone_reason": "", "facet_status": "available"}, {"id": 302675475, "title": "Laptop Apple MacBook Pro 14 M3 Max - 36Gb", "url": "https://www.olx.ro/d/oferta/laptop-apple-macbook-pro-14-m3-max-36gb-IDktZIw.html", "chip": "M3 Max", "ram": 36, "ram_evidence": "ptop Apple MacBook Pro 14 M3 Max - 36Gb Vand Laptop Apple MacBook Pro 14 (", "price": 9200, "currency": "RON", "price_label": "9 200 lei", "city": "Buzău", "region": "Buzau", "kind": "MacBook", "business": false, "refreshed": "2026-07-26", "created": "2026-04-14", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/xz39kw414gcp-RO/image;s=800x0", "desc": "Vand Laptop Apple MacBook Pro 14 (late 2023) in stare impecabila. Are folie AlienSurface din prima zi<br />\nRam - 36GB<br />\nProcesor - M3 Max 14-core CPU 30-core GPU<br />\nSSD - 1TB<br />\nPlaca de baza schimbata anul trecut pe garantie. Vine fara adaptor de priza. Doar cablu magsafe", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDktZIw", "note": "", "ron": 9200, "gen": "M3", "gone_reason": "", "facet_status": "available"}, {"id": 305411306, "title": "Apple Macbook 14” M3 Pro CA NOU ! 36GB 18GPU 12CPU 1TB Apple / vs m4 24gb max", "url": "https://www.olx.ro/d/oferta/apple-macbook-14-m3-pro-ca-nou-36gb-18gpu-12cpu-1tb-apple-vs-m4-24gb-max-IDkFtqO.html", "chip": "M3 Pro", "ram": 36, "ram_evidence": "Apple Macbook 14” M3 Pro CA NOU ! 36GB 18GPU 12CPU 1TB Apple / vs m4 24gb", "price": 9299, "currency": "RON", "price_label": "9 299 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-07-14", "created": "2026-06-15", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/3ni1ugbidmo6-RO/image;s=800x0", "desc": "Ofer spre vanzare Apple Macbook PRO 14.2 inch - ultim model an 2024 - procesor: Apple M3 PRO. <br />\n<br />\nEcran: Liquid Ultra Retina XDR ! <br />\n<br />\nLayout tastatura cel mai bun: INTERNATIONAL ! A nu se confunda cu celelalte.<br />\n<br />\nCuloare: SPACE BLACK / NEGRU sau Space Gray / Grey Gri sau Silver / Argintiu.<br />\n<br />\nConfiguratie superioara: cu procesor M3 PRO cu 12C CPU | 18C GPU | stocare 1 Terra / 1000GB ssd | 36GB RAM !<br />\n<br />\nAre doar 3 cicle count si se afla intr-o stare absolut NOUA in cutie - in pachet complet original !", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDkFtqO", "note": "", "ron": 9299, "gen": "M3", "gone_reason": "", "facet_status": "available", "price_was": 7799}, {"id": 306788068, "title": "Macbook Pro M3 Pro 14” 36GB 1TB SSD", "url": "https://www.olx.ro/d/oferta/macbook-pro-m3-pro-14-36gb-1tb-ssd-IDkLfAE.html", "chip": "M3 Pro", "ram": 36, "ram_evidence": "Macbook Pro M3 Pro 14” 36GB 1TB SSD Macbook Pro M3 Pro 14”", "price": 9500, "currency": "RON", "price_label": "9 500 lei", "city": "Cluj-Napoca", "region": "Cluj", "kind": "MacBook", "business": false, "refreshed": "2026-07-12", "created": "2026-07-12", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/txrlw92umf3w2-RO/image;s=800x0", "desc": "Macbook Pro M3 Pro 14” <br />\n36GB RAM<br />\n1TB SSD <br />\nStare foarte buna, fara zgarieturi.<br />\n<br />\nFactura cu TVA deductibil, predare personala.", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDkLfAE", "note": "", "ron": 9500, "gen": "M3", "gone_reason": "", "facet_status": "available"}, {"id": 303040212, "title": "Macbook PRO 14” M3 Pro CA NOU ! 36GB 20GPU 1TB ! INT Keyboard ! Apple vs max", "url": "https://www.olx.ro/d/oferta/macbook-pro-14-m3-pro-ca-nou-36gb-20gpu-1tb-int-keyboard-apple-vs-max-IDkwvBm.html", "chip": "M3 Pro", "ram": 36, "ram_evidence": "Macbook PRO 14” M3 Pro CA NOU ! 36GB 20GPU 1TB ! INT Keyboard ! Apple v", "price": 9799, "currency": "RON", "price_label": "9 799 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-07-23", "created": "2026-04-23", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/xordh8eqnfu6-RO/image;s=800x0", "desc": "Ofer spre vanzare Apple Macbook PRO 14,2” inch - procesor: Apple M3 PRO !<br />\n<br />\nEcran: Liquid Retina XDR ! Layout tastatura cel mai bun: INTERNATIONAL ! A nu se confunda cu celelalte !<br />\n<br />\nCuloare: “ Space Black /  Negru “ sau Space Grey / Gri sau Silver / Argintiu.<br />\n<br />\nConfiguratie superioara: procesor M3 PRO cu 14Core CPU | 20Core grafica GPU | 36GB RAM | stocare 1TB / 1000GB / 1 Terra ssd.<br />\n<br />\nEste absolut CA NOU, doar 7 cicle count. Vine insotit de pachetul complet original in cutie !", "note": "The seller reused this ad: it now advertises a sealed M5 Pro 24GB at 10 899 lei. The M3 Pro 36GB it listed is no longer on sale.", "ram_stated": true, "below_threshold": false, "ron": 9799, "status": "gone", "gone_reason": "reused", "oid": "IDkwvBm", "gen": "M3", "facet_status": "gone"}, {"id": 304600338, "title": "Macbook Pro 16' M4 Max 48Gb RAM 1 Tb SSD 42 cicluri", "url": "https://www.olx.ro/d/oferta/macbook-pro-16-m4-max-48gb-ram-1-tb-ssd-42-cicluri-IDkC4sG.html", "chip": "M4 Max", "ram": 48, "ram_evidence": "Macbook Pro 16' M4 Max 48Gb RAM 1 Tb SSD 42 cicluri Apple MacB", "price": 9999, "currency": "RON", "price_label": "9 999 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-07-03", "created": "2026-06-02", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/6eo6i1ny2zw31-RO/image;s=800x0", "desc": "Apple MacBook M4 Max 16\" 48 Gb RAM si 1 Tb SSD. Nu am dat update pana la Tahoe. Nu are urme de utilizare de loc. Ca și nou. PRET FIX", "below_threshold": false, "status": "gone", "ram_stated": true, "oid": "IDkC4sG", "note": "", "ron": 9999, "gen": "M4", "gone_reason": "sold", "facet_status": "gone"}, {"id": 304320448, "title": "MacBook Pro M3 Pro 16 inch", "url": "https://www.olx.ro/d/oferta/macbook-pro-m3-pro-16-inch-IDkATEk.html", "chip": "M3 Pro", "ram": 36, "ram_evidence": "nch MacBook Pro M3 Pro - 16 inch - 36 gb ram - 512 GB stocare. Stare", "price": 10500, "currency": "RON", "price_label": "10 500 lei", "city": "Drumul Carului", "region": "Brasov", "kind": "MacBook", "business": false, "refreshed": "2026-07-23", "created": "2026-05-24", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/5i405wlv3z1d1-RO/image;s=800x0", "desc": "MacBook Pro M3 Pro - 16 inch - 36 gb ram - 512 GB stocare.<br />\nStare perfectă de funcționare și estetic.<br />\nLaptopul se vinde cu cutia originala , încărcător original. <br />\nCumpărat din Anglia. <br />\n20 cicluri la baterie . Bateria 100% <br />\n<br />\nAccept plata in crypto sau cash sau transfer bancar . <br />\nNu mă interesează altfel de schimburi sau combinații. <br />\nSe poate testa la mine acasă. <br />\nCont personal pe laptop  , se predă curat.", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDkATEk", "note": "", "ron": 10500, "gen": "M3", "gone_reason": "", "facet_status": "available"}, {"id": 304646731, "title": "14 inch MacBook Pro M4 Pro, 14 Core, 20 GPU, 48gb,1TB - doar predare in Brasov", "url": "https://www.olx.ro/d/oferta/14-inch-macbook-pro-m4-pro-14-core-20-gpu-48gb-1tb-doar-predare-in-brasov-IDkCgvX.html", "chip": "M4 Pro", "ram": 48, "ram_evidence": "cBook Pro M4 Pro, 14 Core, 20 GPU, 48gb,1TB - doar predare in Brasov Vand", "price": 10999, "currency": "RON", "price_label": "10 999 lei", "city": "Brașov", "region": "Brasov", "kind": "MacBook", "business": false, "refreshed": "2026-07-05", "created": "2026-06-03", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/kem35h176ouk2-RO/image;s=800x0", "desc": "Vand MacBook Pro M4 Pro, 14 Core, 20 GPU, 48 GB RAM, 1TB storage, nou-nout, doar pentru predare in Brasov. Procesor Apple, placa video integrata.<br />\n<br />\nBateria e la 99% sanatate.<br />\n<br />\nVand pentru ca mi-am luat unul nou.", "below_threshold": false, "status": "gone", "ram_stated": true, "oid": "IDkCgvX", "note": "", "ron": 10999, "gen": "M4", "gone_reason": "sold", "facet_status": "gone"}, {"id": 268058112, "title": "Macbook PRO 14.2” M3 Max SIGILAT ! 36GB 30GPU 14CPU 1TB // Apple m4", "url": "https://www.olx.ro/d/oferta/macbook-pro-14-2-m3-max-sigilat-36gb-30gpu-14cpu-1tb-apple-m4-IDi8K9V.html", "chip": "M3 Max", "ram": 36, "ram_evidence": "Macbook PRO 14.2” M3 Max SIGILAT ! 36GB 30GPU 14CPU 1TB // Apple m4 Vand A", "price": 11390, "currency": "RON", "price_label": "11 390 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-07-07", "created": "2024-03-26", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/yyhwcms4zzt91-RO/image;s=800x0", "desc": "Vand Apple Macbook PRO 14,2” inch Chipset M3 MAX. <br />\n<br />\nConfiguratie superioara: 14Core CPU | 30Core grafica GPU | 36GB RAM | 1000GB / 1 Terra stocare.<br />\n<br />\n* Culoare: SILVER / ARGINTIU sau Space Grey / Negru Black.<br />\n* Ecran generos de: 14,3 inch - ultra retina XDR.<br />\n** Fara MDM, fara probleme - garantat ! <br />\n** Layout-ul tastaturii este cel: INTERNATIONAL !<br />\n* Produsul este absolut NOU, total SIGILAT in ambalajul original !<br />\n* Macbook PRO lansat Apple - an 2024 - foarte performant !<br />\n<br />\n—> Se poate proba in momentul achizitionarii.<br />\n<br />\n(vs 256GB macbook air M1 M2 13.3 / 13,6 / 15 / 16 / 15.3)", "below_threshold": false, "status": "gone", "ram_stated": true, "oid": "IDi8K9V", "note": "", "ron": 11390, "gen": "M3", "gone_reason": "sold", "facet_status": "gone"}, {"id": 304539986, "title": "Macbook Pro 16\" 48GB 512SSD M4PRO 2025", "url": "https://www.olx.ro/d/oferta/macbook-pro-16-48gb-512ssd-m4pro-2025-IDkBOLg.html", "chip": "M4 Pro", "ram": 48, "ram_evidence": "Macbook Pro 16\" 48GB 512SSD M4PRO 2025 Laptop Apple Mac", "price": 11900, "currency": "RON", "price_label": "11 900 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-06-28", "created": "2026-05-31", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/3jvcmbmbkk6t-RO/image;s=800x0", "desc": "Laptop Apple MacBook Pro 16\" cu procesor Apple M4 Pro, 14 nuclee CPU si 20 nuclee GPU<br />\n<br />\n48GB RAM, 512GB SSD, Space Black<br />\n<br />\nLayout tastatura QWERTY <br />\n<br />\nFolosit cu 12 cicluri de incarcare. Sănătate baterie 100%.", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDkBOLg", "note": "", "ron": 11900, "gen": "M4", "gone_reason": "", "facet_status": "available"}, {"id": 303831981, "title": "MacBook Pro 14 M4 Pro, 48GB RAM, 1TB SSD in garantie la eMag", "url": "https://www.olx.ro/d/oferta/macbook-pro-14-m4-pro-48gb-ram-1tb-ssd-in-garantie-la-emag-IDkyQzP.html", "chip": "M4 Pro", "ram": 48, "ram_evidence": "MacBook Pro 14 M4 Pro, 48GB RAM, 1TB SSD in garantie la eMag L", "price": 12400, "currency": "RON", "price_label": "12 400 lei", "city": "Timișoara", "region": "Timis", "kind": "MacBook", "business": false, "refreshed": "2026-07-27", "created": "2026-05-11", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/mi1gv6hn8d0x-RO/image;s=800x0", "desc": "L-am cumparat in mai 2025 de pe eMag. Garantia Apple Care a expirat pe 23 mai 2026 iar cea de la eMag expira in 24 mai 2027.<br />\n<br />\nNu are absolut niciun defect functional sau estetic. Am pus skin-ul de piele de la dbrand la cateva zile de la cumparare si a fost folosit 95% din timp acasa pentru programare.<br />\n<br />\nSe vinde doar in Timisoara si in imprejurimi. Il vand deoarece vreau sa fac upgrade.", "below_threshold": false, "status": "gone", "ram_stated": true, "oid": "IDkyQzP", "note": "", "ron": 12400, "gen": "M4", "gone_reason": "sold", "facet_status": "gone", "price_was": 12500}, {"id": 301552902, "title": "MacBook Pro 16 | 36 GB | M3 Max | 1 Tb SSD | Health 100% | 44 Cicluri", "url": "https://www.olx.ro/d/oferta/macbook-pro-16-36-gb-m3-max-1-tb-ssd-health-100-44-cicluri-IDkphGu.html", "chip": "M3 Max", "ram": 36, "ram_evidence": "MacBook Pro 16 | 36 GB | M3 Max | 1 Tb SSD | Health 100%", "price": 12990, "currency": "RON", "price_label": "12 990 lei", "city": "Florești", "region": "Cluj", "kind": "MacBook", "business": false, "refreshed": "2026-07-02", "created": "2026-03-22", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/7cdabzngvv9c3-RO/image;s=800x0", "desc": "MacBook Pro 16 | 36 GB | M3 Max | 1 Tb SSD | Health 100% | 44 Cicluri<br />\n<br />\nMacBook Pro 16-inch achiziție Emag, Procesor M3 Max,  36 Gb RAM, 1 Tb = 1024 Gb, in cutie cu toate accesoriile, asemeni unui nou, scos din cutie.<br />\n<br />\nGarantie Emag de 24 luni valabilă pana in data de 09.07.2027, cu posibilitatea de extindere Garanție Plus.<br />\n<br />\nNu prezintă nici o urma de uzura, sau alte probleme de natura tehnica sau estetica.<br />\n<br />\n• Cablu<br />\n• Incarcator original.<br />\n• Cutie.<br />\n• 1 Tb = 1024 Gb.<br />\n• Procesor : Apple M3 Max<br />\n• Memorie : 36 GB.<br />\n• Batery Health 100%<br />\n• 44 Cicluri de încărcare", "note": "", "ram_stated": true, "below_threshold": false, "ron": 12990, "status": "gone", "oid": "IDkphGu", "gen": "M3", "gone_reason": "sold", "facet_status": "gone"}, {"id": 291081734, "title": " MacBook Pro 16 inch M4 Max **36 GB**1000 SSD**Sigilat", "url": "https://www.olx.ro/d/oferta/macbook-pro-16-inch-m4-max-36-gb1000-ssdsigilat-IDjHlEG.html", "chip": "M4 Max", "ram": 36, "ram_evidence": " MacBook Pro 16 inch M4 Max **36 GB**1000 SSD**Sigilat ~ Ideal pt pro", "price": 13050, "currency": "RON", "price_label": "13 050 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-07-07", "created": "2025-08-11", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/jwx38yfx42491-RO/image;s=800x0", "desc": "~  Ideal pt programatori, editori photo/video, dj. Si nu numai ! ~<br />\n<br />\n Macbook 16 inch  M4 Max **Nou în cutie, sigilat, neactivat<br />\nNeverloked <br />\n<br />\n~ Space Silver ~<br />\n<br />\nEcran: Liquid Retina XDR ! Layout INTERNATIONAL.<br />\n<br />\nM4 Max, Mac cu 14 C CPU, 32 Core GPU | 36 GB RAM, 1000  SSD<br />\nTastatura qwerty international<br />\n<br />\nPoze reale!<br />\n<br />\nPreț fix<br />\n<br />\nPredare in București<br />\nRog si ofer maxima seriozitate", "below_threshold": false, "status": "gone", "ram_stated": true, "oid": "IDjHlEG", "note": "", "ron": 13050, "gen": "M4", "gone_reason": "sold", "facet_status": "gone"}, {"id": 302516082, "title": "MACBOOK PRO 16inch 2023 m3 pro", "url": "https://www.olx.ro/d/oferta/macbook-pro-16inch-2023-m3-pro-IDktkfE.html", "chip": "M3 Pro", "ram": 36, "ram_evidence": "Engine: 16 nuclee. Memorie: 36 GB memorie unificată (configurabilă).", "price": 2700, "currency": "EUR", "price_label": "14 179 lei", "city": "Chiajna", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-07-10", "created": "2026-04-11", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/nhaf99i2wpry1-RO/image;s=800x0", "desc": "MacBook Pro 16 inch 2023 Space black cu procesor M3 PRO.<br />\n<br />\nSpecificații principale<br />\n<br />\nCip: Apple M3 Pro (procesor cu 12 nuclee, dintre care 6 de performanță și 6 de eficiență, procesor grafic cu 18 nuclee).<br />\nNeural Engine: 16 nuclee.<br />\nMemorie: 36 GB memorie unificată (configurabilă).<br />\nSpațiu de stocare: SSD de  2 TB<br />\nMotor media: decodare H.264, HEVC, ProRes, ProRes RAW, AV1 accelerată hardware, motor de codare/decodare video. <br />\n<br />\nEcran<br />\nTip: ecran Liquid Retina XDR de 16,2 inci (diagonală).<br />\n<br />\nRezoluție: <br />\nrezoluție nativă de 254 pixeli pe inch.<br />\nLuminozitate: 1000 niți susținută (XDR), 1600 niți maximă (HDR), 600 niți (SDR).<br />\nTehnologie: Tehnologie ProMotion pentru rate de reîmprospătare adaptive de până la 120 Hz, gamă largă de culori P3. <br />\n<br />\nBaterie și alimentare<br />\nBaterie: baterie litiu-polimer de 100 wați-oră.<br />\nAutonomie: până la 22 de ore de redare a filmelor prin aplicația Apple TV; până la 15 ore de navigare wireless pe internet.<br />\nÎncărcare: adaptor de alimentare USB-C de 140 W, port MagSafe 3.<br />\n<br />\nPREFER CU PREDARE PERSONALA SAU TRIMITERE IN JUD ILFOV - BUCURESTI. FARA TRIMITERE PRIN CURIER IN ALTE JUDETE.<br />\nMULTUMESC", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDktkfE", "note": "Priced in euro, so the lei figure moves with the rate — OLX showed 14 189,82 lei today. Description is Apple's spec sheet pasted verbatim, including “36 GB (configurable)”; confirm the actual config before travelling.", "ron": 14179, "gen": "M3", "gone_reason": "", "facet_status": "available"}, {"id": 286770706, "title": "MacBook Pro 16.2\"  M4 Pro Max, 36gb/1tb SSD Sigilat", "url": "https://www.olx.ro/d/oferta/macbook-pro-16-2-m4-pro-max-36gb-1tb-ssd-sigilat-IDjpg9Y.html", "chip": "M4 Max", "ram": 36, "ram_evidence": "MacBook Pro 16.2\" M4 Pro Max, 36gb/1tb SSD Sigilat MacBook Pro 16.2\"", "price": 14999, "currency": "RON", "price_label": "14 999 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-07-13", "created": "2025-05-05", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/5lhovgn085ej3-RO/image;s=800x0", "desc": "MacBook Pro 16.2\"  M4 Max 14core/32 core, 36gb/1tb SSD Sigilat<br />\nGarantie internationala.<br />\nCuloare spaceblack.<br />\n<br />\nLayout qwerty US - cel mai cautat, pentru cunoscatori.<br />\n<br />\nPretul este fix.", "note": "Title says “M4 Pro Max”; the description specifies M4 Max, 14-core CPU / 32-core GPU.", "ram_stated": true, "below_threshold": false, "ron": 14999, "status": "gone", "oid": "IDjpg9Y", "gen": "M4", "gone_reason": "sold", "facet_status": "gone"}, {"id": 302276977, "title": "MacBook Pro / M4 Pro / 48/1 TB / 16\" / Midnight / sigilat / DeluxGSM", "url": "https://www.olx.ro/d/oferta/macbook-pro-m4-pro-48-1-tb-16-midnight-sigilat-deluxgsm-IDksk37.html", "chip": "M4 Pro", "ram": 48, "ram_evidence": "D; - varianta cu memorie RAM 48 GB; -culoare neagră. 15000 lei.", "price": 15000, "currency": "RON", "price_label": "15 000 lei", "city": "Timișoara", "region": "Timis", "kind": "MacBook", "business": true, "refreshed": "2026-07-22", "created": "2026-04-07", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/42ucwlpivg5a2-RO/image;s=800x0", "desc": "DELUXGSM, magazin dedicat gadgeturilor în trend, VÂNZĂRI/ACHIZIȚII/SCHIMBURI, vă oferă spre vânzare laptop nou în cutie sigilată. <br />\n<br />\nPuteți efectua comanda pe www.deluxareagsm.ro, aveți transport GRATUIT pentru orice produs.<br />\n<br />\nSpecificații:<br />\n-procesor M4 Pro;<br />\n-display 16 inch;<br />\n-tastatură QWERTY;<br />\n-hard 1 TB SSD;<br />\n- varianta cu memorie RAM 48 GB;<br />\n-culoare neagră. 15000 lei.<br />\n<br />\nProdusul beneficiază de garanție 24 luni, documente de achiziție, factură fiscală persoană fizică sau juridică. <br />\n<br />\nSe desigilează, activează și probează în momentul vânzării fără nici o reținere.<br />\n<br />\nSunt acceptate UNELE schimburi cu telefoane.<br />\n<br />\nOferim posibilitate de achiziționare prin rate fixe de la distanță sau în magazin. <br />\n<br />\nRatele se acordă DOAR prin credit bancar(Tbi Bank sau BT Direct)!<br />\n<br />\nPrețul final este cel afișat/buc.<br />\n<br />\nTrimitem în țară cu livrare și verificare prin FAN Courier. <br />\n<br />\nRugăm și oferim seriozitate pentru serviciile prestate.<br />\n<br />\nRemarcăm în stoc o vastă gamă de modele precum:<br />\n<br />\n-Iphone X / Xs / Xs Max / 11 / Pro / Max / 12 / Mini / Pro / Max / 13 / Pro / Max / 14 / Plus / Pro / Max / 15 / Pro / Max / 16 / Plus / Pro / Max;<br />\n<br />\n-Samsung S20 / Plus / Ultra / S21 / FE / S22 / S23 / S24 / Plus / Ultra / A25 / A34 / A35 / A54 / A55 / A72, precum și multe alte modele.<br />\n<br />\nProgram de funcționare cu publicul:<br />\n<br />\nLuni - vineri: 10:00-18:00.<br />\nSâmbăta: 10:00-15:00.<br />\nDuminică: închis.<br />\n<br />\nVă așteptăm să vizitați cu mare plăcere magazinul nostru fiind situat în: <br />\n<br />\n-Timișoara, zona spitalului județean, bulevardul Liviu Rebreanu numărul 142, intersecția Rebreanu cu Martirilor (Girocului).", "note": "DeluxGSM reused this ad: it now advertises an M2 Pro 16GB Silver at 9 000 lei. The M4 Pro 48GB it listed is no longer on sale.", "ram_stated": true, "below_threshold": false, "ron": 15000, "status": "gone", "gone_reason": "reused", "oid": "IDksk37", "gen": "M4", "facet_status": "gone"}, {"id": 304494650, "title": "Macbook Pro 16.4’ M4 Max 48GB RAM 1TB SSD", "url": "https://www.olx.ro/d/oferta/macbook-pro-16-4-m4-max-48gb-ram-1tb-ssd-IDkBCY2.html", "chip": "M4 Max", "ram": 48, "ram_evidence": "Macbook Pro 16.4’ M4 Max 48GB RAM 1TB SSD Macbook Pro 16.4’ cu p", "price": 15500, "currency": "RON", "price_label": "15 500 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-07-28", "created": "2026-05-29", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/mmtilty4pttt3-RO/image;s=800x0", "desc": "Macbook Pro 16.4’ cu procesor M4, capacitate de 48GB RAM si SSD de 1TB. Configuratie excelenta pentru performanta ridicata. Cumparat de nou", "below_threshold": false, "status": "gone", "ram_stated": true, "oid": "IDkBCY2", "note": "", "ron": 15500, "gen": "M4", "gone_reason": "sold", "facet_status": "gone"}, {"id": 294592256, "title": "Macbook Pro M4 Pro 16-inch  48Gb/1Tb Silver/Nou/Garantie 12 luni @atsgsm.ro", "url": "https://www.olx.ro/d/oferta/macbook-pro-m4-pro-16-inch-48gb-1tb-silver-nou-garantie-12-luni-atsgsm-ro-IDjV4U0.html", "chip": "M4 Pro", "ram": 48, "ram_evidence": "Macbook Pro M4 Pro 16-inch 48Gb/1Tb Silver/Nou/Garantie 12 luni @a", "price": 15990, "currency": "RON", "price_label": "15 990 lei", "city": "Oradea", "region": "Bihor", "kind": "MacBook", "business": true, "refreshed": "2026-07-27", "created": "2025-10-24", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/lmydh19y1o8y1-RO/image;s=800x0", "desc": "** MACBOOK PRO M4 PRO 16-INCH 48GB/1TB SILVER **<br />\n<br />\nComenzile se plasează pe atsgsm.ro<br />\n<br />\nProdusul este nou<br />\n<br />\nBeneficiaza de factura si garantie 12  luni<br />\n<br />\nPOSIBILITATE DE ACHIZITIONARE IN RATE PRIN UNICREDIT CONSUMER FINANCING !!<br />\n<br />\nLivram in tara prin Fancurier<br />\n<br />\nPOSIBILITATE BUY-BACK!!<br />\n<br />\n** NE GASITI PE STR NUFARULUI NR 54**<br />\n<br />\nLuni-Vineri 10 - 18<br />\n<br />\n• Pret : 15.990 Lei<br />\n• Fb/Insta/tiktok : AtsGsm Nufarul<br />\n<br />\nPentru mai multe detalii ne puteti contacta la numarul de telefon : 07********49", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDjV4U0", "note": "", "ron": 15990, "gen": "M4", "gone_reason": "", "facet_status": "available"}, {"id": 305716675, "title": "Apple Macbook M4 max, 16 nuclee CPU, 40 nuclee GPU, 48GB RAM, 1TB SSD", "url": "https://www.olx.ro/d/oferta/apple-macbook-m4-max-16-nuclee-cpu-40-nuclee-gpu-48gb-ram-1tb-ssd-IDkGKS7.html", "chip": "M4 Max", "ram": 48, "ram_evidence": "max, 16 nuclee CPU, 40 nuclee GPU, 48GB RAM, 1TB SSD Vând Apple Macbook M4", "price": 17500, "currency": "RON", "price_label": "17 500 lei", "city": "Vlădești", "region": "Valcea", "kind": "MacBook", "business": false, "refreshed": "2026-07-22", "created": "2026-06-21", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/evsqyjnq6iy21-RO/image;s=800x0", "desc": "Vând Apple Macbook M4 max, 16 nuclee CPU, 40 nuclee GPU, 48GB RAM, 1TB SSD. Garanție de bază rămasă 12 luni plus 1 an extragaranție (24 de luni garanție). Cumpărat în august 2025 de pe Istyle. Pachet complet,  cutie, accesorii etc. Laptop-ul are 15 cicluri de încarcare. A fost folosit în Excel, Clion, Arduino în proiecte pentru facultate. Îl vând pentru că poate prea mult pentru nevoile mele de studiu. Prefer livrare cu test în Rm. Vâlcea sau împrejurimi.", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDkGKS7", "note": "", "ron": 17500, "gen": "M4", "gone_reason": "", "facet_status": "available", "price_was": 18000}, {"id": 0, "kind": "Mac Studio", "chip": "M4 Max", "ram": 36, "ram_stated": false, "title": "Mac Studio M4 Max", "url": "https://www.olx.ro/d/oferta/mac-studio-m4-max-IDkLUNG.html", "price": 18400, "currency": "RON", "city": "București", "region": "Bucuresti - Ilfov", "created": "", "refreshed": "", "ram_evidence": "Computerul este ca nou, scos din cutie și folosit o singură lună", "note": "Seller states no RAM or storage. Listed here because the M4 Max Mac Studio starts at 36 GB — ask which config it is.", "below_threshold": false, "ron": 18400, "status": "live", "business": false, "oid": "IDkLUNG", "gen": "M4", "gone_reason": "", "facet_status": "available"}, {"id": 305391775, "title": "MacBook Pro 14” M5 Max | 36GB RAM | 2TB SSD | Sigilat", "url": "https://www.olx.ro/d/oferta/macbook-pro-14-m5-max-36gb-ram-2tb-ssd-sigilat-IDkFolN.html", "chip": "M5 Max", "ram": 36, "ram_evidence": "MacBook Pro 14” M5 Max | 36GB RAM | 2TB SSD | Sigilat Vând MacBo", "price": 3600, "currency": "EUR", "price_label": "18 827 lei", "city": "Timișoara", "region": "Timis", "kind": "MacBook", "business": false, "refreshed": "2026-07-23", "created": "2026-06-14", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/dqlqmchgy67n2-RO/image;s=800x0", "desc": "Vând MacBook Pro 14” nou, sigilat, în ambalaj original.<br />\n<br />\nSpecificații:<br />\n<br />\n* Chip Apple M5 Max<br />\n* CPU 18 nuclee<br />\n* GPU 32 nuclee<br />\n* 36 GB memorie unificată<br />\n* SSD 2 TB<br />\n* Ecran 14,2” Liquid Retina XDR cu ProMotion<br />\n* Culoare: Space Black<br />\n* Încărcător USB-C MagSafe inclus<br />\n<br />\nLaptopul este ideal pentru editare video 4K/8K, programare, design grafic, randare 3D și alte activități profesionale care necesită performanță maximă.<br />\n<br />\nStare: Nou, sigilat, neactivat.<br />\nPredare: Personală sau prin curier cu verificare.<br />\nPreț:3600 negociabil in limita bunului simt ! Oferte ca 2800-3000 nu raspund", "below_threshold": false, "status": "gone", "ram_stated": true, "oid": "IDkFolN", "note": "", "ron": 18845, "gen": "M5", "gone_reason": "sold", "facet_status": "gone"}, {"id": 306149082, "title": "MacBook Pro 16, procesor Apple M3 MAX, 16 nuclee CPU si 40 nuclee GPU, 128GB, 2TB SSD, Silver | Garantie | Cluj", "url": "https://www.olx.ro/d/oferta/macbook-pro-16-procesor-apple-m3-max-16-nuclee-cpu-si-40-nuclee-gpu-128gb-2tb-ssd-silver-garantie-cluj-IDkIzmq.html", "chip": "M3 Max", "ram": 128, "ram_evidence": "X, 16 nuclee CPU si 40 nuclee GPU, 128GB, 2TB SSD, Silver | Garantie | Cluj", "price": 20000, "currency": "RON", "price_label": "20 000 lei", "city": "Cluj-Napoca", "region": "Cluj", "kind": "MacBook", "business": false, "refreshed": "2026-07-02", "created": "2026-07-02", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/4945ykunevjl2-RO/image;s=800x0", "desc": "MacBook Pro 16\", procesor Apple M3 MAX, 16 nuclee CPU si 40 nuclee GPU, 128G , 2TB SSD - Silver (#muw73ro/a) cu Garantie<br />\n<br />\nMemorie:<br />\n128GB de memorie unificată <br />\nStocare:<br />\n2TB SSD <br />\n<br />\nAspect 10/10, tot timpu era in husa si are folie pe ectan de protectie.<br />\n<br />\nMerge impecabil, am 2 bucati, acesta e al sotiei, care nu mai foloseste.<br />\n<br />\nnu ma interesaza schimburi", "below_threshold": false, "status": "gone", "ram_stated": true, "oid": "IDkIzmq", "note": "", "ron": 20000, "gen": "M3", "gone_reason": "sold", "facet_status": "gone"}, {"id": 307321577, "title": "MacBook Pro 14\" M5 Pro 64GB Garantie Apple/Emag", "url": "https://www.olx.ro/d/oferta/macbook-pro-14-m5-pro-64gb-garantie-apple-emag-IDkNunD.html", "chip": "M5 Pro", "ram": 64, "ram_evidence": "MacBook Pro 14\" M5 Pro 64GB Garantie Apple/Emag Laptop Apple M", "price": 20000, "currency": "RON", "price_label": "20 000 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-07-28", "created": "2026-07-28", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/eo2n0fasinwl3-RO/image;s=800x0", "desc": "Laptop Apple MacBook Pro 14\" cu procesor Apple M5 Pro, 18 nuclee CPU, 20 nuclee GPU, 16 nuclee Neural Engine, 64GB RAM, 1TB SSD, Space Black, Tastatura Internationala<br />\n<br />\nGarantie Emag si Apple internationala", "below_threshold": false, "status": "gone", "ram_stated": true, "oid": "IDkNunD", "note": "", "ron": 20000, "gen": "M5", "gone_reason": "sold", "facet_status": "gone"}, {"id": 301917298, "title": " Apple MacBook Pro 14**M5 Max**18-core CPU 40-core GPU 128GB Ram 2TB", "url": "https://www.olx.ro/d/oferta/apple-macbook-pro-14m5-max18-core-cpu-40-core-gpu-128gb-ram-2tb-IDkqOtQ.html", "chip": "M5 Max", "ram": 128, "ram_evidence": "4**M5 Max**18-core CPU 40-core GPU 128GB Ram 2TB  MacBook Pro 14 inch M5 M", "price": 27550, "currency": "RON", "price_label": "27 550 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": false, "refreshed": "2026-07-16", "created": "2026-03-30", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/gsgm9uoklrro3-RO/image;s=800x0", "desc": " MacBook Pro 14 inch M5 Max **Nou, sigilat.<br />\n<br />\n~  Ideal pt programatori, editori photo/video, dj. Si nu numai ! ~<br />\nNeverlocked din fabrica!<br />\n<br />\nSPECIFICATII:<br />\n128GB Ram Unified Memory (new Gen)<br />\n40-Core GPU<br />\nautonomie 13-20 ore<br />\nstocare 2TB SSD (new Gen 2x faster)<br />\n<br />\n6 difuzoare cu subwoofer Dolby Atmos + Spatial Audio port HDMI + 3x Thuderbolt 5 + Memory Card Slot SDXC +<br />\nMagSafe 3 + Jack Audio<br />\ncamera 12MP<br />\n<br />\nPoze reale <br />\n<br />\n*** Pret fix ***<br />\n<br />\nValabil in Bucuresti<br />\n<br />\nRog si ofer seriozitate!<br />\nNu fac schimburi !", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDkqOtQ", "note": "", "ron": 27550, "gen": "M5", "gone_reason": "", "facet_status": "available"}, {"id": 302211904, "title": "Laptop Apple MacBook Pro 16 (2026) M5 Max 18-core CPU 40-core GPU 64GB Ram 2TB SSD NANO TEXTURE in STOC Firma AlienStore", "url": "https://www.olx.ro/d/oferta/laptop-apple-macbook-pro-16-2026-m5-max-18-core-cpu-40-core-gpu-64gb-ram-2tb-ssd-nano-texture-in-stoc-firma-alienstore-IDks37y.html", "chip": "M5 Max", "ram": 64, "ram_evidence": "26) M5 Max 18-core CPU 40-core GPU 64GB Ram 2TB SSD NANO TEXTURE in STOC F", "price": 28950, "currency": "RON", "price_label": "28 950 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": true, "refreshed": "2026-07-19", "created": "2026-04-06", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/5n0yifnr24on3-RO/image;s=800x0", "desc": "Laptop Apple MacBook Pro 16 (2026) M5 Max 18-core CPU 40-core GPU 64GB Ram 2TB SSD NANO TEXTURE Glass - Custom Spec<br />\n<br />\nALIENSTORE.RO - produs nou, sigilat - partener autorizat - emitem Factura cu garantie directa (prin Apple) - in stoc limitat - TVA deductibil - ridicare / livrare rapida<br />\n<br />\nSPECS:<br />\nmodel 2026 (ultimul)<br />\nprocesor Apple M5 Max 18-Core<br />\n16,2\" Retina XDR Display 120Hz 1600-nits<br />\n 64GB Ram Unified Memory (new Gen)<br />\n40-Core GPU<br />\nautonomie 16-22 ore<br />\nstocare 2TB SSD (new Gen 2x faster)<br />\nCulori: Silver sau Space Black - selectabile<br />\ntastatura iluminata layout QWERTY US<br />\nMac-OS preinstalat<br />\n2.1Kg<br />\n6 difuzoare cu subwoofer Dolby Amtos + Spatial Audio<br />\nport HDMI + 3x Thuderbolt 5 + Memory Card Slot SDXC + MagSafe 3 + Jack Audio<br />\ncamera 12MP<br />\n<br />\nALIENSTORE.RO<br />\nHigh-End Computer Deals", "below_threshold": false, "status": "gone", "ram_stated": true, "oid": "IDks37y", "note": "", "ron": 28950, "gen": "M5", "gone_reason": "sold", "facet_status": "gone"}, {"id": 306095827, "title": "Laptop Apple MacBook Pro 14 (2026) M5 Max 18-core CPU 40-core GPU 128GB Ram 2TB SSD 3 Ani", "url": "https://www.olx.ro/d/oferta/laptop-apple-macbook-pro-14-2026-m5-max-18-core-cpu-40-core-gpu-128gb-ram-2tb-ssd-3-ani-IDkIlwt.html", "chip": "M5 Max", "ram": 128, "ram_evidence": "26) M5 Max 18-core CPU 40-core GPU 128GB Ram 2TB SSD 3 Ani Laptop Apple Mac", "price": 34450, "currency": "RON", "price_label": "34 450 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": true, "refreshed": "2026-07-27", "created": "2026-07-02", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/k8aed9ytvooo1-RO/image;s=800x0", "desc": "Laptop Apple MacBook Pro 14 (2026) M5 Max 18-core CPU 40-core GPU 128GB Ram 2TB SSD 3 Ani<br />\nOFERTA PROMO: garantie 3 ani !<br />\nmodel 2026 (ultimul) cu procesor Apple M5 Max 18-Core<br />\nPe stoc propriu , livrare / ridicare  imediata!<br />\n<br />\n--> ATENTIE: suntem FIRMA ! Pretul este Fix si include TVA! Se emite factura! Garantie Apple! Suntem parteneri!<br />\n<br />\nSPECIFICATII:<br />\n14,2\" Retina XDR Display 120Hz 1600-nits + Nano Texture Glass<br />\n 128GB Ram Unified Memory (new Gen)<br />\n40-Core GPU<br />\nautonomie 13-20 ore<br />\nstocare 2TB SSD (new Gen 2x faster)<br />\nCulori:  Space Black / Silver<br />\ntastatura iluminata layout QWERTY International<br />\n1.6Kg<br />\n6 difuzoare cu subwoofer Dolby Atmos + Spatial Audio<br />\nport HDMI + 3x Thuderbolt 5 + Memory Card Slot SDXC + MagSafe 3 + Jack Audio<br />\ncamera 12MP<br />\nmodelele 2026 Macbook Pro M5 vin fara incarcator <br />\nBONUS: garantie Apple persoane fizice sau juridice: 36 luni!<br />\n<br />\nALIENSTORE.RO<br />\nHigh-End Computer Deals", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDkIlwt", "note": "", "ron": 34450, "gen": "M5", "gone_reason": "", "facet_status": "available"}, {"id": 303982905, "title": "Laptop Apple MacBook Pro 16 (2026) M5 Max 18-core CPU 40-core GPU 128GB Ram 2TB SSD 3Ani NANO TEXTURE", "url": "https://www.olx.ro/d/oferta/laptop-apple-macbook-pro-16-2026-m5-max-18-core-cpu-40-core-gpu-128gb-ram-2tb-ssd-3ani-nano-texture-IDkztQ5.html", "chip": "M5 Max", "ram": 128, "ram_evidence": "26) M5 Max 18-core CPU 40-core GPU 128GB Ram 2TB SSD 3Ani NANO TEXTURE Mode", "price": 41890, "currency": "RON", "price_label": "41 890 lei", "city": "București", "region": "Bucuresti - Ilfov", "kind": "MacBook", "business": true, "refreshed": "2026-07-27", "created": "2026-05-14", "photo": "https://frankfurt.apollo.olxcdn.com:443/v1/files/mzo4puy1he4v3-RO/image;s=800x0", "desc": "Model Custom (configuratie speciala) cu 128GB Ram + Nano Texture Glass + 3 ani Garantie Apple<br />\nPe stoc la AlienStore.ro - Direct Apple RO  - suntem firma, se emite factura cu TVA deductibil - stoc limitat - produs nou, sigilat de fabrica - PROMO: 3 ani Garantie chiar si pt persoane Juridice (firme)<br />\n<br />\n- disponibil cu : 4TB / 14-inch / fara Nano (intreaba / vezi website)<br />\n<br />\nSPECIFICATII:<br />\nmodel 2026 (ultimul)<br />\nprocesor Apple M5 Max 18-Core<br />\n16,2\" Retina XDR Display 120Hz 1600-nits + Nano Texture Glass<br />\n 128GB Ram Unified Memory (new Gen)<br />\n40-Core GPU<br />\nautonomie 16-22 ore<br />\nstocare 2TB SSD (new Gen 2x faster)<br />\nCulori:  Space Black <br />\ntastatura iluminata layout QWERTY US International<br />\nMac-OS preinstalat<br />\n2.1Kg<br />\n6 difuzoare cu subwoofer Dolby Amtos + Spatial Audio<br />\nport HDMI + 3x Thuderbolt 5 + Memory Card Slot SDXC + MagSafe 3 + Jack Audio<br />\ncamera 12MP<br />\n<br />\nALIENSTORE.RO<br />\nHigh-End Computer Deals", "below_threshold": false, "status": "live", "ram_stated": true, "oid": "IDkztQ5", "note": "", "ron": 41890, "gen": "M5", "gone_reason": "", "facet_status": "available", "price_was": 37850}, {"id": 0, "price_label": "10 000 lei", "region": "Arad", "created": "2026-08-05", "photo": "", "desc": "", "below_threshold": false, "status": "new", "ram_stated": true, "note": "Cheapest 48 GB machine on the page. 165 battery cycles; bought new from iStyle Timișoara in Feb 2025, invoice included.", "gone_reason": "", "facet_status": "available,new", "currency": "RON", "kind": "MacBook", "business": false, "oid": "IDkOKjN", "title": "Apple Macbook Pro 16\" 2025 M4 Pro 14-Core, 20-Core GPU 48GB RAM 512GB SSD", "url": "https://www.olx.ro/d/oferta/apple-macbook-pro-16-2025-m4-pro-14-core-20-core-gpu-48gb-ram-512gb-ssd-IDkOKjN.html", "chip": "M4 Pro", "gen": "M4", "ram": 48, "price": 10000, "city": "Arad", "refreshed": "2026-08-05", "ram_evidence": "Apple Macbook Pro 16\" 2025 M4 Pro 14-Core, 20-Core GPU 48GB RAM 512GB SSD", "ron": 10000}, {"id": 0, "price_label": "11 999 lei", "region": "Brasov", "created": "2026-07-29", "photo": "", "desc": "", "below_threshold": false, "status": "new", "ram_stated": true, "note": "Battery health 92%, 12–13 months of warranty left. Handover in Brașov only, no courier, no trades.", "gone_reason": "", "facet_status": "available,new", "currency": "RON", "kind": "MacBook", "business": false, "oid": "IDkNHVf", "title": "Macbook Pro 16 inch - M4 pro", "url": "https://www.olx.ro/d/oferta/macbook-pro-16-inch-m4-pro-IDkNHVf.html", "chip": "M4 Pro", "gen": "M4", "ram": 48, "price": 11999, "city": "Tărlungeni", "refreshed": "2026-07-29", "ram_evidence": "48 GB unified memory · 512 GB SSD · 14-core CPU / 20-core GPU (spec fields, not the title)", "ron": 11999}, {"id": 0, "price_label": "13 200 lei", "region": "Sibiu", "created": "2026-08-05", "photo": "", "desc": "", "below_threshold": false, "status": "new", "ram_stated": true, "note": "Two small scratches, battery health 97%. Handover in Sibiu only, no courier.", "gone_reason": "", "facet_status": "available,new", "currency": "RON", "kind": "MacBook", "business": false, "oid": "IDkOKCo", "title": "MacBook Pro M4 - 16inch", "url": "https://www.olx.ro/d/oferta/macbook-pro-m4-16inch-IDkOKCo.html", "chip": "M4 Pro", "gen": "M4", "ram": 48, "price": 13200, "city": "Sibiu", "refreshed": "2026-08-05", "ram_evidence": "48 GB unified memory · 1 TB SSD · 14-core CPU / 20-core GPU · nano-texture (spec fields, not the title)", "ron": 13200}, {"id": 0, "price_label": "14 000 lei", "region": "Cluj", "created": "", "photo": "", "desc": "", "below_threshold": false, "status": "new", "ram_stated": true, "note": "119 cycles, 96% battery. eMAG invoice and warranty, bought Mar 2025 for ~19 200 lei. Stickers on the lid (removable). Cluj handover only.", "gone_reason": "", "facet_status": "available,new", "currency": "RON", "kind": "MacBook", "business": false, "oid": "IDkIWsb", "title": "Macbook M4 Max 16' Nano Screen", "url": "https://www.olx.ro/d/oferta/macbook-m4-max-16-nano-screen-IDkIWsb.html", "chip": "M4 Max", "gen": "M4", "ram": 36, "price": 14000, "city": "Cluj-Napoca", "refreshed": "2026-08-07", "ram_evidence": "Apple M4 Max 14-core CPU / 32-core GPU · 36 GB RAM · 1 TB SSD · 16\" nano-texture", "ron": 14000}, {"id": 0, "price_label": "11 000 lei", "region": "Timis", "created": "2026-07-30", "photo": "", "desc": "", "below_threshold": false, "status": "new", "ram_stated": true, "note": "19 battery cycles, Space Black, full box. In-person handover preferred, no trades.", "gone_reason": "", "facet_status": "available,new", "currency": "RON", "kind": "MacBook", "business": false, "oid": "IDjRuYq", "title": "Apple Macbook M3 Pro 16\" 18 Core 36gb Ram 512gb", "url": "https://www.olx.ro/d/oferta/apple-macbook-m3-pro-16-18-core-36gb-ram-512gb-IDjRuYq.html", "chip": "M3 Pro", "gen": "M3", "ram": 36, "price": 11000, "city": "Timișoara", "refreshed": "2026-07-30", "ram_evidence": "Apple Macbook M3 Pro 16\" 18 Core 36gb Ram 512gb", "ron": 11000}, {"id": 0, "price_label": "8 500 lei", "region": "Bihor", "created": "2026-07-31", "photo": "", "desc": "", "below_threshold": false, "status": "new", "ram_stated": true, "note": "Shop listing (atsgsm.ro): invoice, 12-month warranty, battery 96% over 130 cycles. Ties the cheapest 36 GB machines here.", "gone_reason": "", "facet_status": "available,new", "currency": "RON", "kind": "MacBook", "business": true, "oid": "IDjOvZ6", "title": "Macbook Pro M3 Pro 16-inch 2023 36gb/512Gb/BATERIE96%/Garantie 12 luni @atsgsm.ro", "url": "https://www.olx.ro/d/oferta/macbook-pro-m3-pro-16-inch-2023-36gb-512gb-baterie96-garantie-12-luni-atsgsm-ro-IDjOvZ6.html", "chip": "M3 Pro", "gen": "M3", "ram": 36, "price": 8500, "city": "Oradea", "refreshed": "2026-07-31", "ram_evidence": "MACBOOK PRO M3 PRO 2023 512GB/36GB RAM 16-INCH", "ron": 8500}, {"id": 0, "price_label": "16 000 lei", "region": "Bucuresti - Ilfov", "created": "2026-07-25", "photo": "", "desc": "", "below_threshold": false, "status": "new", "ram_stated": true, "note": "Sealed and unactivated, model Z1MH002WJ. Posted 25 Jul — it was already up at the last sweep and was missed, not newly listed.", "gone_reason": "", "facet_status": "available,new", "currency": "RON", "kind": "MacBook", "business": false, "oid": "IDkNcLa", "title": "Apple MacBook Pro 14\" M5 Pro, 15 CPU, 16 GPU 48GB RAM, 1TB SSD, Silver, Tastatura US English", "url": "https://www.olx.ro/d/oferta/apple-macbook-pro-14-m5-pro-15-cpu-16-gpu-48gb-ram-1tb-ssd-silver-tastatura-us-english-IDkNcLa.html", "chip": "M5 Pro", "gen": "M5", "ram": 48, "price": 16000, "city": "București", "refreshed": "2026-07-25", "ram_evidence": "Apple MacBook Pro 14\" M5 Pro, 15 CPU, 16 GPU 48GB RAM, 1TB SSD", "ron": 16000}, {"id": 0, "price_label": "18 000 lei", "region": "Timis", "created": "", "photo": "", "desc": "", "below_threshold": false, "status": "new", "ram_stated": true, "note": "DeluxGSM, sealed, 24-month warranty, unsealed and tested at handover. Fills the 36 GB M5 Max slot left by the 18 845 lei private ad that went.", "gone_reason": "", "facet_status": "available,new", "currency": "RON", "kind": "MacBook", "business": true, "oid": "IDkFDCP", "title": "MacBook Pro / sigilat / M5 Max / 36/2 TB / 14\" / DeluxGSM", "url": "https://www.olx.ro/d/oferta/macbook-pro-sigilat-m5-max-36-2-tb-14-deluxgsm-IDkFDCP.html", "chip": "M5 Max", "gen": "M5", "ram": 36, "price": 18000, "city": "Timișoara", "refreshed": "2026-08-07", "ram_evidence": "M5 Max · 36 GB · 2 TB SSD · 14\" QWERTZ · sealed box", "ron": 18000}, {"id": 0, "price_label": "30 500 lei", "region": "Bucuresti - Ilfov", "created": "2026-08-07", "photo": "", "desc": "", "below_threshold": false, "status": "new", "ram_stated": true, "note": "eMAG warranty to 2028, near-new with full box. Seller cites 33 000 lei as the original iStyle config price. Only 64 GB machine left after the Alienstore ad went.", "gone_reason": "", "facet_status": "available,new", "currency": "RON", "kind": "MacBook", "business": false, "oid": "IDkOYZJ", "title": "MacBook Pro 14 inchi M5 Max -64gb-nano texture-40core", "url": "https://www.olx.ro/d/oferta/macbook-pro-14-inchi-m5-max-64gb-nano-texture-40core-IDkOYZJ.html", "chip": "M5 Max", "gen": "M5", "ram": 64, "price": 30500, "city": "București", "refreshed": "2026-08-07", "ram_evidence": "M5 MAX · 64 GB · 2 TB SSD · 18-core CPU / 40-core GPU · 14\" nano-texture", "ron": 30500}], "minis": [{"id": 307009083, "title": "Mac mini M4 (2024) 24GB RAM / 512GB SSD – full box, stare impecabilă", "url": "https://www.olx.ro/d/oferta/mac-mini-m4-2024-24gb-ram-512gb-ssd-full-box-stare-impecabila-IDkMb5p.html", "chip": "M4", "ram": 24, "ram_stated": true, "ram_evidence": "Mac mini M4 (2024) 24GB RAM / 512GB SSD – full box, stare", "price": 4500, "currency": "RON", "city": "Șag", "kind": "Mac mini", "business": false, "refreshed": "2026-07-23", "below_threshold": true, "note": "", "ron": 4500, "status": "gone", "oid": "IDkMb5p", "gen": "M4", "gone_reason": "sold", "facet_status": "gone"}, {"id": 306672698, "title": "Mac Mini PC Apple", "url": "https://www.olx.ro/d/oferta/mac-mini-pc-apple-IDkKLzQ.html", "chip": "M4", "ram": 24, "ram_stated": true, "ram_evidence": ", 10 nuclee CPU and 10 nuclee GPU, 24GB, 256GB SSD , utiliat foarte putin,", "price": 4500, "currency": "RON", "city": "București", "kind": "Mac mini", "business": false, "refreshed": "2026-07-09", "below_threshold": true, "note": "Base M4, 10-core, 256 GB — the weakest build host of the minis.", "status": "gone", "oid": "IDkKLzQ", "ron": 4500, "gen": "M4", "gone_reason": "sold", "facet_status": "gone"}, {"id": 307209738, "title": "Mac Mini m4 pro 24GB RAM", "url": "https://www.olx.ro/d/oferta/mac-mini-m4-pro-24gb-ram-IDkN1hM.html", "chip": "M4 Pro", "ram": 24, "ram_stated": true, "ram_evidence": "Mac Mini m4 pro 24GB RAM Mac mini m4 pro Garanție", "price": 6500, "currency": "RON", "city": "Târgu Jiu", "kind": "Mac mini", "business": false, "refreshed": "2026-07-24", "below_threshold": true, "note": "Both Târgu Jiu minis went at the same time, which supports the earlier read that the pair was one machine listed twice.", "status": "gone", "oid": "IDkN1hM", "ron": 6500, "gen": "M4", "gone_reason": "sold", "facet_status": "gone"}, {"id": 306548552, "title": "Mac Mini M4 PRO 24GB RAM/512GB SSD", "url": "https://www.olx.ro/d/oferta/mac-mini-m4-pro-24gb-ram-512gb-ssd-IDkKfhu.html", "chip": "M4 Pro", "ram": 24, "ram_stated": true, "ram_evidence": "Mac Mini M4 PRO 24GB RAM/512GB SSD Mac Mini M4 PRO cu 2", "price": 6500, "currency": "RON", "city": "Târgu Jiu", "kind": "Mac mini", "business": false, "refreshed": "2026-07-08", "below_threshold": true, "note": "Bought new from Altex, warranty to 17.12.2026. Went at the same time as the other Târgu Jiu ad — the two listings looked like one machine.", "status": "gone", "oid": "IDkKfhu", "ron": 6500, "gen": "M4", "gone_reason": "sold", "facet_status": "gone"}, {"id": 0, "below_threshold": true, "status": "new", "ram_stated": true, "note": "Sealed, international warranty, price negotiable. Cheapest machine on the page now that the 4 500 lei minis are gone.", "gone_reason": "", "facet_status": "available,new", "currency": "RON", "kind": "Mac mini", "business": false, "oid": "IDkOr5M", "title": "Apple Mac Mini M4 Pro (12-core CPU / 16-core GPU), 24 GB RAM, 512GB", "url": "https://www.olx.ro/d/oferta/apple-mac-mini-m4-pro-12-core-cpu-16-core-gpu-24-gb-ram-512gb-IDkOr5M.html", "chip": "M4 Pro", "gen": "M4", "ram": 24, "price": 7499, "city": "București", "refreshed": "2026-08-03", "ram_evidence": "Apple Mac Mini M4 Pro (12-core CPU / 16-core GPU), 24 GB RAM, 512GB", "ron": 7499}, {"id": 307449558, "below_threshold": true, "status": "new", "ram_stated": false, "note": "24 GB is assumed from the base M4 Pro mini config, not stated. Also the most expensive 24 GB mini listed here. Confirm the memory before buying.", "gone_reason": "", "facet_status": "available,new", "currency": "RON", "kind": "Mac mini", "business": false, "oid": "IDkO1FQ", "title": "Mini mac M4 pro (Apple)", "url": "https://www.olx.ro/d/oferta/mini-mac-m4-pro-apple-IDkO1FQ.html", "chip": "M4 Pro", "gen": "M4", "ram": 24, "price": 8500, "city": "Piatra Neamț", "refreshed": "2026-07-31", "ram_evidence": "RAM field reads \"peste 16 GB\" — the seller never states the exact size", "ron": 8500}], "summary": {"total": 45, "available": 27, "sold": 18, "fresh": 11, "min": 7499, "max": 41890, "cities": 18, "eur_ron": 5.2513, "checked": "7 Aug 2026", "prev": "28 Jul 2026", "built": "25 Jul 2026", "by_gen": {"M3": 14, "M4": 22, "M5": 9}, "by_ram": {"36": 20, "48": 12, "128": 4, "64": 3, "24": 6}, "by_kind": {"MacBook": 37, "Mac Studio": 2, "Mac mini": 6}, "by_city": {"Șcheia": 1, "Arad": 2, "Popești-Leordeni": 1, "București": 19, "Buzău": 1, "Cluj-Napoca": 3, "Drumul Carului": 1, "Brașov": 1, "Timișoara": 5, "Florești": 1, "Chiajna": 1, "Oradea": 2, "Vlădești": 1, "Tărlungeni": 1, "Sibiu": 1, "Șag": 1, "Târgu Jiu": 2, "Piatra Neamț": 1}, "by_status": {"available": 27, "new": 11, "gone": 18}, "sold_since": 13, "undated": 6}, "sweeps": [{"date": "28 Jul 2026", "iso": "2026-07-28", "offer": [{"oid": "IDk9kbN", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Șcheia", "ron": 8500}, {"oid": "IDkJ7wQ", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Arad", "ron": 8500}, {"oid": "IDkIHMO", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Popești-Leordeni", "ron": 8800}, {"oid": "IDgkZJQ", "kind": "Mac Studio", "gen": "M4", "ram": 36, "city": "București", "ron": 9050}, {"oid": "IDktZIw", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Buzău", "ron": 9200}, {"oid": "IDkFtqO", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "București", "ron": 9299}, {"oid": "IDkLfAE", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Cluj-Napoca", "ron": 9500}, {"oid": "IDkC4sG", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "București", "ron": 9999}, {"oid": "IDkATEk", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Drumul Carului", "ron": 10500}, {"oid": "IDkCgvX", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "Brașov", "ron": 10999}, {"oid": "IDi8K9V", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "București", "ron": 11390}, {"oid": "IDkBOLg", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "București", "ron": 11900}, {"oid": "IDkyQzP", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "Timișoara", "ron": 12400}, {"oid": "IDjHlEG", "kind": "MacBook", "gen": "M4", "ram": 36, "city": "București", "ron": 13050}, {"oid": "IDktkfE", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Chiajna", "ron": 14134}, {"oid": "IDkBCY2", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "București", "ron": 15500}, {"oid": "IDjV4U0", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "Oradea", "ron": 15990}, {"oid": "IDkGKS7", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "Vlădești", "ron": 17500}, {"oid": "IDkLUNG", "kind": "Mac Studio", "gen": "M4", "ram": 36, "city": "București", "ron": 18400}, {"oid": "IDkFolN", "kind": "MacBook", "gen": "M5", "ram": 36, "city": "Timișoara", "ron": 18845}, {"oid": "IDkIzmq", "kind": "MacBook", "gen": "M3", "ram": 128, "city": "Cluj-Napoca", "ron": 20000}, {"oid": "IDkNunD", "kind": "MacBook", "gen": "M5", "ram": 64, "city": "București", "ron": 20000}, {"oid": "IDkqOtQ", "kind": "MacBook", "gen": "M5", "ram": 128, "city": "București", "ron": 27550}, {"oid": "IDks37y", "kind": "MacBook", "gen": "M5", "ram": 64, "city": "București", "ron": 28950}, {"oid": "IDkIlwt", "kind": "MacBook", "gen": "M5", "ram": 128, "city": "București", "ron": 34450}, {"oid": "IDkztQ5", "kind": "MacBook", "gen": "M5", "ram": 128, "city": "București", "ron": 37850}, {"oid": "IDkKLzQ", "kind": "Mac mini", "gen": "M4", "ram": 24, "city": "București", "ron": 4500}, {"oid": "IDkN1hM", "kind": "Mac mini", "gen": "M4", "ram": 24, "city": "Târgu Jiu", "ron": 6500}, {"oid": "IDkKfhu", "kind": "Mac mini", "gen": "M4", "ram": 24, "city": "Târgu Jiu", "ron": 6500}]}, {"date": "7 Aug 2026", "iso": "2026-08-07", "offer": [{"oid": "IDk9kbN", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Șcheia", "ron": 8500}, {"oid": "IDkJ7wQ", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Arad", "ron": 8500}, {"oid": "IDkIHMO", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Popești-Leordeni", "ron": 8800}, {"oid": "IDgkZJQ", "kind": "Mac Studio", "gen": "M4", "ram": 36, "city": "București", "ron": 9050}, {"oid": "IDktZIw", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Buzău", "ron": 9200}, {"oid": "IDkFtqO", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "București", "ron": 9299}, {"oid": "IDkLfAE", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Cluj-Napoca", "ron": 9500}, {"oid": "IDkATEk", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Drumul Carului", "ron": 10500}, {"oid": "IDkBOLg", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "București", "ron": 11900}, {"oid": "IDktkfE", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Chiajna", "ron": 14179}, {"oid": "IDjV4U0", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "Oradea", "ron": 15990}, {"oid": "IDkGKS7", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "Vlădești", "ron": 17500}, {"oid": "IDkLUNG", "kind": "Mac Studio", "gen": "M4", "ram": 36, "city": "București", "ron": 18400}, {"oid": "IDkqOtQ", "kind": "MacBook", "gen": "M5", "ram": 128, "city": "București", "ron": 27550}, {"oid": "IDkIlwt", "kind": "MacBook", "gen": "M5", "ram": 128, "city": "București", "ron": 34450}, {"oid": "IDkztQ5", "kind": "MacBook", "gen": "M5", "ram": 128, "city": "București", "ron": 41890}, {"oid": "IDkOKjN", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "Arad", "ron": 10000}, {"oid": "IDkNHVf", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "Tărlungeni", "ron": 11999}, {"oid": "IDkOKCo", "kind": "MacBook", "gen": "M4", "ram": 48, "city": "Sibiu", "ron": 13200}, {"oid": "IDkIWsb", "kind": "MacBook", "gen": "M4", "ram": 36, "city": "Cluj-Napoca", "ron": 14000}, {"oid": "IDjRuYq", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Timișoara", "ron": 11000}, {"oid": "IDjOvZ6", "kind": "MacBook", "gen": "M3", "ram": 36, "city": "Oradea", "ron": 8500}, {"oid": "IDkNcLa", "kind": "MacBook", "gen": "M5", "ram": 48, "city": "București", "ron": 16000}, {"oid": "IDkFDCP", "kind": "MacBook", "gen": "M5", "ram": 36, "city": "Timișoara", "ron": 18000}, {"oid": "IDkOYZJ", "kind": "MacBook", "gen": "M5", "ram": 64, "city": "București", "ron": 30500}, {"oid": "IDkOr5M", "kind": "Mac mini", "gen": "M4", "ram": 24, "city": "București", "ron": 7499}, {"oid": "IDkO1FQ", "kind": "Mac mini", "gen": "M4", "ram": 24, "city": "Piatra Neamț", "ron": 8500}]}]};
+const S = DATA.summary;
+const ALL = DATA.main.concat(DATA.minis);
+const fmt = n => n == null ? "\u2014" : n.toLocaleString("ro-RO");
+const ESC = { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" };
+const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ESC[c]);
+
+const state = { kind:new Set(), gen:new Set(), ram:new Set(), city:new Set(), facet_status:new Set() };
+let sortBy = "price";
+let favOnly = false;
+
+// file:// origins often refuse localStorage, so the hash is the durable copy.
+const FAV_KEY = "olx-macs-shortlist";
+const favs = (() => {
+  const set = new Set();
+  try { (JSON.parse(localStorage.getItem(FAV_KEY)) || []).forEach(v => set.add(v)); } catch (e) {}
+  const m = location.hash.match(/fav=([^&]*)/);
+  if (m) decodeURIComponent(m[1]).split(",").filter(Boolean).forEach(v => set.add(v));
+  return set;
+})();
+function saveFavs() {
+  const arr = [...favs];
+  try { localStorage.setItem(FAV_KEY, JSON.stringify(arr)); } catch (e) {}
+  try {
+    const hash = arr.length ? "#fav=" + encodeURIComponent(arr.join(",")) : "";
+    history.replaceState(null, "", location.pathname + location.search + hash);
+  } catch (e) {}
+}
+
+document.getElementById("rate").textContent = S.eur_ron;
+document.getElementById("stamp").textContent =
+  "olx.ro \u00b7 built " + S.built + " \u00b7 re-verified " + S.checked;
+
+stats: {
+  const el = document.getElementById("stats");
+  const gens = Object.entries(S.by_gen).sort().map(([k,v]) => v + " \u00d7 " + k).join(" \u00b7 ");
+  const rams = Object.keys(S.by_ram).map(Number).sort((a,b)=>a-b);
+  el.innerHTML = [
+    ["For sale", fmt(S.available), S.fresh + " added since " + S.prev],
+    ["Gone", fmt(S.sold), "sold or ad reused"],
+    ["Price range", fmt(S.min) + "\u2013" + fmt(S.max), "RON, available only"],
+    ["Memory", rams[0] + "\u2013" + rams[rams.length-1] + " GB", gens],
+    ["Cities", fmt(S.cities), Object.entries(S.by_city).sort((a,b)=>b[1]-a[1])
+      .slice(0,3).map(([c,n]) => c + " " + n).join(" \u00b7 ")]
+  ].map(([t,v,sub]) => `<div class="stat"><dt>${t}</dt><dd>${v}<small>${sub}</small></dd></div>`).join("");
+}
+
+const LABELS = { available:"Available", new:"New this sweep", gone:"Gone" };
+function buildRow(facet, counts, order) {
+  const row = document.querySelector(`.frow[data-facet="${facet}"]`);
+  const keys = order || Object.keys(counts).sort((a,b) => counts[b]-counts[a] || String(a).localeCompare(b));
+  const html = keys.map(k =>
+    `<button class="fchip" type="button" data-v="${esc(k)}" aria-pressed="false">` +
+    `${esc(LABELS[k] || k)}${facet === "ram" ? " GB" : ""}<span class="n">${counts[k]}</span></button>`).join("");
+  row.querySelector(".flabel").insertAdjacentHTML("afterend", html);
+  row.querySelectorAll(".fchip").forEach(b => b.addEventListener("click", () => {
+    const v = b.dataset.v, on = state[facet].has(v);
+    on ? state[facet].delete(v) : state[facet].add(v);
+    b.setAttribute("aria-pressed", String(!on));
+    render();
+  }));
+}
+buildRow("kind", S.by_kind);
+buildRow("gen", S.by_gen, Object.keys(S.by_gen).sort());
+buildRow("ram", S.by_ram, Object.keys(S.by_ram).map(Number).sort((a,b)=>a-b));
+buildRow("city", S.by_city);
+buildRow("facet_status", S.by_status, ["available","new","gone"]);
+
+document.getElementById("fclear").addEventListener("click", () => {
+  Object.values(state).forEach(s => s.clear());
+  document.querySelectorAll(".fchip[data-v]").forEach(b => b.setAttribute("aria-pressed","false"));
+  favOnly = false;
+  document.getElementById("favFilter").setAttribute("aria-pressed", "false");
+  render();
+});
+document.addEventListener("click", ev => {
+  const btn = ev.target.closest(".favbtn");
+  if (!btn) return;
+  const id = btn.dataset.oid;
+  favs.has(id) ? favs.delete(id) : favs.add(id);
+  saveFavs();
+  render();
+});
+
+document.getElementById("favFilter").addEventListener("click", ev => {
+  favOnly = !favOnly;
+  ev.currentTarget.setAttribute("aria-pressed", String(favOnly));
+  render();
+});
+
+document.querySelectorAll("[data-sort]").forEach(b => b.addEventListener("click", () => {
+  sortBy = b.dataset.sort;
+  document.querySelectorAll("[data-sort]").forEach(x => x.setAttribute("aria-pressed", String(x===b)));
+  render();
+}));
+
+function matches(i) {
+  if (favOnly && !favs.has(i.oid)) return false;
+  return Object.entries(state).every(([facet, sel]) =>
+    !sel.size || String(i[facet]).split(",").some(v => sel.has(v)));
+}
+
+function cardHTML(i) {
+  const cls = "card" + (i.status === "gone" ? " gone" : i.status === "new" ? " fresh" : "")
+            + (favs.has(i.oid) ? " fav" : "");
+  const stamp = i.status === "gone"
+    ? `<div class="stamp st-gone">${i.gone_reason === "reused" ? "Ad reused for another machine" : "Sold"} \u00b7 checked ${S.checked}</div>`
+    : i.status === "new"
+      ? `<div class="stamp st-new">New since ${S.prev}</div>`
+      : `<div class="stamp st-live">Still listed \u00b7 checked ${S.checked}</div>`;
+  return `
+    <article class="card ${cls.slice(5)}">
+      <div class="card-top">
+        <div class="badges">
+          <span class="badge ram${i.below_threshold ? " sub" : ""}">${i.ram} GB${i.ram_stated ? "" : " min"}</span>
+          <span class="badge">${esc(i.chip)}</span>
+          <span class="badge">${esc(i.kind)}</span>
+          ${i.business ? '<span class="badge shop">shop</span>' : ""}
+          ${i.status === "gone" ? `<span class="badge sold">${i.gone_reason === "reused" ? "Relisted" : "Sold"}</span>` : ""}
+          ${i.ram_stated ? "" : '<span class="badge est">config unstated</span>'}
+        </div>
+        <div class="price"><span class="amt">${fmt(i.price)} ${esc(i.currency)}</span>
+          ${i.currency === "EUR" ? `<small>\u2248 ${fmt(i.ron)} RON</small>`
+            : i.price_was ? `<small>was ${fmt(i.price_was)}</small>` : "<small>&nbsp;</small>"}
+        </div>
+      </div>
+      <h2>${esc(i.title)}</h2>
+      <div class="meta"><span>${esc(i.city) || "\u2014"}</span>
+        ${i.refreshed ? `<span>refreshed ${esc(i.refreshed)}</span>` : ""}</div>
+      ${stamp}
+      ${i.ram_evidence ? `<div class="evidence">${esc(i.ram_evidence)}</div>` : ""}
+      ${i.note ? `<div class="note">${esc(i.note)}</div>` : ""}
+      <div class="actions">
+        <a class="cta" href="${esc(i.url)}" target="_blank" rel="noopener noreferrer">
+          ${i.status === "gone" ? "Original OLX page" : "Open on OLX"} <span>&rarr;</span></a>
+        <button class="favbtn" type="button" data-oid="${esc(i.oid)}"
+                aria-pressed="${favs.has(i.oid)}" title="Save to shortlist"
+                aria-label="Save ${esc(i.title)} to shortlist">&#9733;</button>
+      </div>
+    </article>`;
+}
+
+// ---------- price structure ----------
+// Two sweeps only, so "evolution" is two medians and the gap between them, never a curve.
+const SWEEPS = DATA.sweeps;
+const NOW_OFFER = ALL.filter(i => i.status !== "gone");
+const PREV_OFFER = SWEEPS[0].offer;
+const PLOT_FACETS = ["kind","gen","ram","city"];   // Status/shortlist do not scope this section
+const AXIS_MAX = Math.ceil(
+  Math.max(...NOW_OFFER.concat(PREV_OFFER).map(i => i.ron)) / 5000) * 5000;
+const TICKS = [];
+for (let t = 0; t <= AXIS_MAX; t += 10000) TICKS.push(t);
+
+const pos = v => (v / AXIS_MAX) * 100;
+const median = xs => {
+  const s = [...xs].sort((a,b) => a-b), h = s.length >> 1;
+  return Math.round(s.length % 2 ? s[h] : (s[h-1] + s[h]) / 2);
+};
+const statMatch = i => PLOT_FACETS.every(f =>
+  !state[f].size || String(i[f]).split(",").some(v => state[f].has(v)));
+
+function groupBy(items, dim) {
+  const g = new Map();
+  for (const i of items) {
+    const k = String(i[dim]);
+    (g.get(k) || g.set(k, []).get(k)).push(i);
+  }
+  return g;
+}
+
+const tip = document.getElementById("ptip");
+function showTip(ev, row) {
+  tip.innerHTML = "";
+  const head = document.createElement("div");
+  head.className = "thead";
+  head.textContent = row.label + " · " + row.n + (row.n === 1 ? " machine" : " machines");
+  tip.appendChild(head);
+  const lines = [
+    ["", "Low – high today", fmt(row.lo) + " – " + fmt(row.hi) + " lei"],
+    ["now", "Median 7 Aug (n " + row.n + ")", fmt(row.med) + " lei"],
+    ["prev", "Median 28 Jul (n " + row.pn + ")",
+     row.pmed == null ? "—" : fmt(row.pmed) + " lei"],
+    ["", "Change", row.deltaText],
+  ];
+  for (const [key, name, val] of lines) {
+    const r = document.createElement("div");
+    r.className = "trow";
+    if (key) { const k = document.createElement("i"); k.className = "pkey " + key; r.appendChild(k); }
+    r.appendChild(document.createTextNode(name + " "));
+    const b = document.createElement("b");
+    b.textContent = val;
+    r.appendChild(b);
+    tip.appendChild(r);
+  }
+  tip.dataset.on = "1";
+  const box = tip.getBoundingClientRect();
+  const r = (ev.currentTarget || ev.target).getBoundingClientRect();
+  tip.style.left = Math.min(window.innerWidth - box.width - 10,
+                            Math.max(10, r.left + 20)) + "px";
+  tip.style.top = Math.max(10, r.top - box.height - 8 < 10
+                            ? r.bottom + 8 : r.top - box.height - 8) + "px";
+}
+const hideTip = () => { tip.dataset.on = "0"; };
+
+function priceRows(dim, order) {
+  const now = groupBy(NOW_OFFER.filter(statMatch), dim);
+  const prev = groupBy(PREV_OFFER.filter(statMatch), dim);
+  const keys = [...new Set([...now.keys(), ...prev.keys()])].sort(order);
+  return keys.filter(k => now.has(k)).map(k => {
+    const cur = now.get(k).map(i => i.ron), old = (prev.get(k) || []).map(i => i.ron);
+    const med = median(cur), pmed = old.length ? median(old) : null;
+    const pct = pmed ? (med - pmed) / pmed * 100 : null;
+    return {
+      key: k,
+      label: dim === "ram" ? k + " GB" : k,
+      n: cur.length, pn: old.length,
+      lo: Math.min(...cur), hi: Math.max(...cur), med, pmed,
+      perGB: median(now.get(k).map(i => i.ron / i.ram)),
+      delta: pct,
+      deltaText: pct == null ? "no 28 Jul figure"
+        : (pct >= 0 ? "▲ +" : "▼ −") + Math.abs(pct).toFixed(0) + "%"
+          + " (" + (med >= pmed ? "+" : "−") + fmt(Math.abs(med - pmed)) + " lei)",
+    };
+  });
+}
+
+function paintBlock(id, dim, order, dimLabel) {
+  const root = document.getElementById(id);
+  const rows = priceRows(dim, order);
+  const rowsEl = root.querySelector(".prows");
+  rowsEl.innerHTML = "";
+
+  const lines = document.createElement("div");
+  lines.className = "pgrid-lines";
+  TICKS.forEach(t => {
+    const i = document.createElement("i");
+    i.style.left = pos(t) + "%";
+    lines.appendChild(i);
+  });
+  rowsEl.appendChild(lines);
+
+  for (const r of rows) {
+    const el = document.createElement("div");
+    el.className = "prow";
+    el.tabIndex = 0;
+    el.innerHTML =
+      `<div class="plabel"><span></span><span class="pn">n ${r.n}</span></div>` +
+      `<div class="ptrack">` +
+        `<div class="pband" style="left:${pos(r.lo)}%;width:${Math.max(pos(r.hi-r.lo), 0.6)}%"></div>` +
+        (r.pmed == null ? "" :
+          `<div class="pconn" style="left:${pos(Math.min(r.med,r.pmed))}%;` +
+          `width:${pos(Math.abs(r.med-r.pmed))}%"></div>` +
+          `<div class="pdot prev" style="left:${pos(r.pmed)}%"></div>`) +
+        `<div class="pdot now" style="left:${pos(r.med)}%"></div>` +
+      `</div><div class="pdelta"></div>`;
+    el.querySelector(".plabel span").textContent = r.label;
+    el.querySelector(".pdelta").textContent =
+      r.delta == null ? "—"
+        : (r.delta >= 0 ? "▲ " : "▼ ") + Math.abs(r.delta).toFixed(0) + "%";
+    el.setAttribute("aria-label",
+      `${r.label}: ${r.n} on offer, ${fmt(r.lo)} to ${fmt(r.hi)} lei, ` +
+      `median ${fmt(r.med)} lei against ${r.pmed == null ? "no figure" : fmt(r.pmed) + " lei"} ` +
+      `over ${r.pn} machines on 28 Jul, ${r.deltaText}`);
+    ["pointerenter","focus"].forEach(e => el.addEventListener(e, ev => showTip(ev, r)));
+    ["pointerleave","blur"].forEach(e => el.addEventListener(e, hideTip));
+    rowsEl.appendChild(el);
+  }
+
+  const ax = root.querySelector(".paxis");
+  ax.innerHTML = "";
+  TICKS.forEach(t => {
+    const s = document.createElement("span");
+    s.className = "ptick";
+    s.style.left = pos(t) + "%";
+    s.textContent = t ? (t / 1000) + "k" : "0";
+    ax.appendChild(s);
+  });
+
+  // table twin - every plotted value readable without hovering
+  const tbl = root.querySelector(".ptable");
+  const head = ["Low", "Median", "High", "lei / GB", "28 Jul (n)", "Δ"];
+  let html = `<caption>Same figures, in lei</caption><tr><th>${dimLabel}</th><th>n</th>` +
+             head.map(h => `<th>${h}</th>`).join("") + "</tr>";
+  for (const r of rows) {
+    html += `<tr><td>${esc(r.label)}</td><td>${r.n}</td><td>${fmt(r.lo)}</td>` +
+            `<td>${fmt(r.med)}</td><td>${fmt(r.hi)}</td><td>${fmt(Math.round(r.perGB))}</td>` +
+            `<td>${r.pmed == null ? "—" : fmt(r.pmed) + " (" + r.pn + ")"}</td>` +
+            `<td>${r.delta == null ? "—"
+                  : (r.delta >= 0 ? "+" : "−") + Math.abs(r.delta).toFixed(0) + "%"}</td></tr>`;
+  }
+  tbl.innerHTML = rows.length ? html
+    : `<caption>Same figures, in lei</caption><tr><td>Nothing matches that combination.</td></tr>`;
+}
+
+const numAsc = (a,b) => Number(a) - Number(b);
+const strAsc = (a,b) => String(a).localeCompare(b);
+
+function renderPrice() {
+  paintBlock("pblock-ram", "ram", numAsc, "Memory");
+  paintBlock("pblock-gen", "gen", strAsc, "Chip");
+  hideTip();
+}
+
+// ---------- mix over time ----------
+// Classes are ordered (M3<M4<M5, 24<...<128), so the ordinal ramp carries the order
+// and the same step means the same tier in every chart in this section.
+const RAMP = ["var(--o1)","var(--o2)","var(--o3)","var(--o4)","var(--o5)"];
+const rampFor = (keys, k) => RAMP[keys.length <= 1 ? 0
+  : Math.round(keys.indexOf(k) * (RAMP.length - 1) / (keys.length - 1))];
+
+const classesOf = (dim, order) =>
+  [...new Set(SWEEPS.flatMap(s => s.offer.filter(statMatch).map(i => String(i[dim]))))].sort(order);
+const labelOf = (dim, k) => dim === "ram" ? k + " GB" : k;
+
+function paintLegend(el, dim, keys) {
+  el.innerHTML = "";
+  for (const k of keys) {
+    const s = document.createElement("span");
+    const sw = document.createElement("i");
+    sw.className = "swatch";
+    sw.style.background = rampFor(keys, k);
+    s.appendChild(sw);
+    s.appendChild(document.createTextNode(labelOf(dim, k)));
+    el.appendChild(s);
+  }
+}
+
+function paintMix(id, dim, order, dimLabel) {
+  const root = document.getElementById(id);
+  const keys = classesOf(dim, order);
+  paintLegend(root.querySelector(".plegend"), dim, keys);
+
+  const counts = SWEEPS.map(s => {
+    const kept = s.offer.filter(statMatch);
+    const c = {};
+    keys.forEach(k => c[k] = kept.filter(i => String(i[dim]) === k).length);
+    return { date: s.date, c, total: kept.length };
+  });
+  const widest = Math.max(1, ...counts.map(r => r.total));
+
+  const rows = root.querySelector(".mrows");
+  rows.innerHTML = "";
+  for (const r of counts) {
+    const el = document.createElement("div");
+    el.className = "mrow";
+    const lab = document.createElement("div");
+    lab.className = "mlabel";
+    lab.textContent = r.date.replace(" 2026", "");
+    const bar = document.createElement("div");
+    bar.className = "mbar";
+    // the row's own width tracks its share of the widest sweep, so a shrinking
+    // market reads as a shorter bar rather than a re-normalised one
+    bar.style.width = (r.total / widest * 100) + "%";
+    for (const k of keys) {
+      if (!r.c[k]) continue;
+      const seg = document.createElement("div");
+      seg.className = "mseg";
+      seg.style.background = rampFor(keys, k);
+      seg.style.flex = r.c[k];
+      // no number inside the segment: two ramp steps cannot hold 10.5px text at
+      // 4.5:1, and the table twin below carries every count anyway
+      seg.title = labelOf(dim, k) + ": " + r.c[k];
+      bar.appendChild(seg);
+    }
+    const tot = document.createElement("div");
+    tot.className = "mtotal";
+    tot.textContent = r.total;
+    el.append(lab, bar, tot);
+    el.setAttribute("aria-label", r.date + ": " + r.total + " on offer — " +
+      keys.filter(k => r.c[k]).map(k => r.c[k] + " × " + labelOf(dim, k)).join(", "));
+    rows.appendChild(el);
+  }
+
+  const tbl = root.querySelector(".ptable");
+  let html = `<caption>Machines on offer</caption><tr><th>Sweep</th>` +
+    keys.map(k => `<th>${esc(labelOf(dim, k))}</th>`).join("") + `<th>All</th></tr>`;
+  for (const r of counts)
+    html += `<tr><td>${esc(r.date)}</td>` +
+            keys.map(k => `<td>${r.c[k] || "—"}</td>`).join("") +
+            `<td>${r.total}</td></tr>`;
+  tbl.innerHTML = counts.length && keys.length ? html
+    : `<caption>Machines on offer</caption><tr><td>Nothing matches that combination.</td></tr>`;
+}
+
+// ---------- posting-date strip ----------
+const DAY = 864e5;
+const AGED = ALL.filter(i => i.status !== "gone" && i.created && i.created >= "2023-01-01");
+const t0 = Math.min(...AGED.map(i => Date.parse(i.created)));
+const t1 = Date.parse(DATA.sweeps[DATA.sweeps.length - 1].iso);
+const tpos = iso => (Date.parse(iso) - t0) / (t1 - t0) * 100;
+
+function paintAge() {
+  const root = document.getElementById("mblock-age");
+  const kept = AGED.filter(statMatch);
+  const strip = root.querySelector(".strip");
+  strip.innerHTML = "";
+
+  const groups = [
+    ["Chip", "gen", classesOf("gen", strAsc)],
+    ["Memory", "ram", classesOf("ram", numAsc)],
+  ];
+  const tableRows = [];
+
+  for (const [gname, dim, keys] of groups) {
+    const h = document.createElement("div");
+    h.className = "sgroup";
+    h.textContent = gname;
+    strip.appendChild(h);
+    for (const k of keys) {
+      const mine = kept.filter(i => String(i[dim]) === k)
+                       .sort((a,b) => a.created.localeCompare(b.created));
+      const el = document.createElement("div");
+      el.className = "srow";
+      el.tabIndex = 0;
+      const lab = document.createElement("div");
+      lab.className = "mlabel";
+      lab.textContent = labelOf(dim, k);
+      const track = document.createElement("div");
+      track.className = "strack";
+      for (const i of mine) {
+        const dot = document.createElement("div");
+        dot.className = "sdot";
+        dot.style.left = tpos(i.created) + "%";
+        dot.style.background = rampFor(keys, k);
+        dot.title = i.created + " · " + i.title;
+        track.appendChild(dot);
+      }
+      const n = document.createElement("div");
+      n.className = "mtotal";
+      n.textContent = mine.length || "—";
+      el.append(lab, track, n);
+
+      const oldest = mine[0], newest = mine[mine.length - 1];
+      const ageOf = x => Math.round((t1 - Date.parse(x.created)) / DAY);
+      el.setAttribute("aria-label", mine.length
+        ? `${labelOf(dim,k)}: ${mine.length} ads, posted between ${oldest.created} and ${newest.created}`
+        : `${labelOf(dim,k)}: no dated ads`);
+      strip.appendChild(el);
+      tableRows.push([gname, labelOf(dim, k), mine.length,
+                      oldest ? oldest.created : "—", newest ? newest.created : "—",
+                      mine.length ? ageOf(mine[Math.floor(mine.length/2)]) + " d" : "—"]);
+    }
+  }
+
+  const ax = root.querySelector(".saxis");
+  ax.innerHTML = "";
+  const d0 = new Date(t0), marks = [];
+  for (let y = d0.getFullYear(), mo = d0.getMonth(); ; mo++) {
+    const dt = new Date(Date.UTC(y, mo, 1));
+    if (dt.getTime() > t1) break;
+    if (dt.getTime() >= t0) marks.push(dt);
+  }
+  const every = Math.ceil(marks.length / 7);
+  marks.forEach((dt, ix) => {
+    if (ix % every) return;
+    const s = document.createElement("span");
+    s.style.left = tpos(dt.toISOString().slice(0,10)) + "%";
+    s.textContent = dt.toLocaleDateString("en-GB", { month:"short", year:"2-digit", timeZone:"UTC" });
+    ax.appendChild(s);
+  });
+
+  const tbl = root.querySelector(".ptable");
+  tbl.innerHTML = `<caption>Posting dates of the ads on offer</caption>` +
+    `<tr><th>Group</th><th>Class</th><th>Dated ads</th><th>Oldest</th><th>Newest</th>` +
+    `<th>Median age</th></tr>` +
+    tableRows.map(r => "<tr>" + r.map((v,ix) =>
+      `<td>${esc(v)}</td>`).join("") + "</tr>").join("");
+
+  document.getElementById("agesub").textContent =
+    `One dot per ad, placed on the day it was posted. ${kept.length} of ` +
+    `${ALL.filter(i => i.status !== "gone").length} machines on offer carry a usable date; ` +
+    `${S.undated} are excluded — five never exposed one and the Mac Studio M4 Max sits in ` +
+    `an ad slot opened in 2022, years before the machine existed.`;
+}
+
+function renderMix() {
+  paintMix("mblock-gen", "gen", strAsc, "Chip");
+  paintMix("mblock-ram", "ram", numAsc, "Memory");
+  paintAge();
+}
+
+document.getElementById("msweeps").textContent =
+  SWEEPS.length + " (" + SWEEPS.map(s => s.date).join(" and ") + ")";
+document.getElementById("mcaveat").textContent =
+  "Two sweeps is not a trend. The bars move because ads went and others appeared, not " +
+  "because the market re-sorted itself: M4 dropped from 13 to 11 and 24 GB from 3 to 2 " +
+  "purely because every Mac mini from the first sweep sold. The posting-date strip is the " +
+  "one view here with real depth, and it only describes ads that are still up — anything " +
+  "listed and sold before 25 July never enters it.";
+
+document.getElementById("pdates").textContent = S.prev + " and " + S.checked;
+document.getElementById("pcaveat").textContent =
+  "Read the movement as composition, not as sellers cutting prices. Between the two sweeps " +
+  S.sold_since + " ads went and " + S.fresh + " appeared, and exactly one listing on this page " +
+  "changed its own asking price (the Alienstore M5 Max 128 GB, 37 850 → 41 890 lei). A tier " +
+  "whose median fell usually lost an expensive machine rather than got cheaper. Cell counts are " +
+  "small - some tiers are a single listing - so treat every median here as a marker, not a market rate.";
+
+function render() {
+  const cmp = (a,b) => sortBy === "ram" ? (b.ram-a.ram) || (a.ron-b.ron) : (a.ron-b.ron);
+  const m = DATA.main.filter(matches).sort(cmp);
+  const n = DATA.minis.filter(matches).sort(cmp);
+  document.getElementById("grid").innerHTML = m.map(cardHTML).join("");
+  document.getElementById("miniGrid").innerHTML = n.map(cardHTML).join("");
+  document.getElementById("miniSect").hidden = n.length === 0;
+
+  // the shortlist ignores the filters - it is the saved list, not a view of it.
+  // Hidden while the shortlist filter is on, since the grids already show exactly that.
+  const saved = ALL.filter(i => favs.has(i.oid)).sort(cmp);
+  document.getElementById("favGrid").innerHTML = saved.map(cardHTML).join("");
+  document.getElementById("favSect").hidden = favOnly || saved.length === 0;
+  document.getElementById("favN").textContent = saved.length;
+  document.getElementById("favFilter").disabled = saved.length === 0;
+  renderPrice();
+  renderMix();
+  const shown = m.length + n.length;
+  document.getElementById("fcount").textContent =
+    shown === ALL.length ? ALL.length + " machines" : shown + " of " + ALL.length + " machines";
+  document.getElementById("fempty").style.display = shown ? "none" : "block";
+}
+render();
+</script>
