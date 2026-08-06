@@ -90,5 +90,8 @@ Charts follow a few fixed rules, worth knowing before editing them:
 
 ## Licence
 
-Not set. The code is trivial; the listing data is other people's public marketplace
-postings, reproduced with links back to the original ads.
+[MIT](LICENSE) — covers the page, its styles and its charting code.
+
+It does not cover the listing content. Titles, descriptions, prices and photos belong
+to the people who posted the ads on olx.ro; they are reproduced here with a link back
+to each original listing.
