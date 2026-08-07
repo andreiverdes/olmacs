@@ -2,3 +2,7 @@
 *.swp
 .idea/
 .vscode/
+
+# compiled sweeper
+/olmacs
+/dist/
