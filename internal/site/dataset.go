@@ -190,6 +190,49 @@ func (d *Dataset) Recompute(checked, prev string, eurRon float64, eurSource stri
 	d.Summary = s
 }
 
+// Romanian diacritics, folded for comparison only. The OLX API returns city
+// names unaccented ("Popesti-Leordeni") while listings added by hand carry the
+// proper spelling ("Popești-Leordeni"), and without folding the two become two
+// separate filter chips for one town.
+var diacriticFolder = strings.NewReplacer(
+	"ă", "a", "â", "a", "î", "i", "ș", "s", "ş", "s", "ț", "t", "ţ", "t",
+	"Ă", "A", "Â", "A", "Î", "I", "Ș", "S", "Ş", "S", "Ț", "T", "Ţ", "T",
+)
+
+func foldCity(s string) string { return strings.ToLower(diacriticFolder.Replace(s)) }
+
+// NormalizeCities collapses spellings of the same town onto one. The best
+// spelling wins — the one carrying diacritics, since that is the real name —
+// so a sweep never degrades "București" into "Bucuresti".
+func (d *Dataset) NormalizeCities() {
+	best := map[string]string{}
+	note := func(city string) {
+		k := foldCity(city)
+		cur, ok := best[k]
+		if !ok || (city != diacriticFolder.Replace(city) && cur == diacriticFolder.Replace(cur)) {
+			best[k] = city
+		}
+	}
+	for _, l := range d.All() {
+		note(l.City)
+	}
+	for _, s := range d.Sweeps {
+		for _, o := range s.Offer {
+			note(o.City)
+		}
+	}
+	for _, set := range [][]Listing{d.Main, d.Minis} {
+		for i := range set {
+			set[i].City = best[foldCity(set[i].City)]
+		}
+	}
+	for si := range d.Sweeps {
+		for oi := range d.Sweeps[si].Offer {
+			d.Sweeps[si].Offer[oi].City = best[foldCity(d.Sweeps[si].Offer[oi].City)]
+		}
+	}
+}
+
 // AppendSweep records the machines on offer right now as a checkpoint.
 func (d *Dataset) AppendSweep(date, iso string) {
 	var offer []Snapshot

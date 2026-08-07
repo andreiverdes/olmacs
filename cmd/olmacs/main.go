@@ -196,6 +196,7 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 
 	// last sweep's arrivals are no longer new
 	demoteStale(d, iso)
+	d.NormalizeCities()
 	flagUnderpriced(d)
 	applyNotes(d, notes) // a curated note always wins over a generated one
 

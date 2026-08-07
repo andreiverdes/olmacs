@@ -80,9 +80,9 @@ window.OLMACS_DATA = {
    "refreshed": "2026-08-02",
    "desc": "Laptopul se vinde cu tot cu cutie si incarcator. A fost folosit exclusiv de mine pentru activitati repetitive, mult prea simple raportat la performanta sa. Il vand, tocmai, pentru ca nu-l folosesc nici la 25% din capacitate. Se prezinta in ‘mint state’, fara zgarieturi, pete sau urme.",
    "below_threshold": false,
-   "status": "live",
-   "facet_status": "available",
-   "gone_reason": "",
+   "status": "gone",
+   "facet_status": "gone",
+   "gone_reason": "sold",
    "note": "",
    "first_seen": "2026-07-25"
   },
@@ -837,7 +837,7 @@ window.OLMACS_DATA = {
    "region": "Bucuresti - Ilfov",
    "business": true,
    "created": "2026-05-14",
-   "refreshed": "2026-07-27",
+   "refreshed": "2026-08-07",
    "desc": "Model Custom (configuratie speciala) cu 128GB Ram + Nano Texture Glass + 3 ani Garantie Apple\u003cbr /\u003e\nPe stoc la AlienStore.ro - Direct Apple RO  - suntem firma, se emite factura cu TVA deductibil - stoc limitat - produs nou, sigilat de fabrica - PROMO: 3 ani Garantie chiar si pt persoane Juridice (firme)\u003cbr /\u003e\n\u003cbr /\u003e\n- disponibil cu : 4TB / 14-inch / fara Nano (intreaba / vezi website)\u003cbr /\u003e\n\u003cbr /\u003e\nSPECIFICATII:\u003cbr /\u003e\nmodel 2026 (ultimul)\u003cbr /\u003e\nprocesor Apple M5 Max 18-Core\u003cbr /\u003e\n16,2\" Retina XDR Display 120Hz 1600-nits + Nano Texture Glass\u003cbr /\u003e\n 128GB Ram Unified Memory (new Gen)\u003cbr /\u003e\n40-Core GPU\u003cbr /\u003e\nautonomie 16-22 ore\u003cbr /\u003e\nstocare 2TB SSD (new Gen 2x faster)\u003cbr /\u003e\nCulori:  Space Black \u003cbr /\u003e\ntastatura iluminata layout QWERTY US International\u003cbr /\u003e\nMac-OS preinstalat\u003cbr /\u003e\n2.1Kg\u003cbr /\u003e\n6 difuzoare cu subwoofer Dolby Amtos + Spatial Audio\u003cbr /\u003e\nport HDMI + 3x Thuderbolt 5 + Memory Card Slot SDXC + MagSafe 3 + Jack Audio\u003cbr /\u003e\ncamera 12MP\u003cbr /\u003e\n\u003cbr /\u003e\nALIENSTORE.RO\u003cbr /\u003e\nHigh-End Computer Deals",
    "below_threshold": false,
    "status": "live",
@@ -1120,10 +1120,38 @@ window.OLMACS_DATA = {
    "refreshed": "2026-08-05",
    "desc": "Ofer spre vanzare Apple Macbook PRO 14.2 inch - ultim model an 2024 - procesor: Apple M4 PRO.\u003cbr /\u003e\n\u003cbr /\u003e\nEcran: Liquid Ultra Retina XDR !\u003cbr /\u003e\n\u003cbr /\u003e\nCuloare: SPACE BLACK / NEGRU\u003cbr /\u003e\n\u003cbr /\u003e\nConfiguratie superioara: cu procesor M4 PRO cu 12C CPU | stocare 1 Terra / 1000GB ssd | 36GB RAM !",
    "below_threshold": false,
+   "status": "gone",
+   "facet_status": "gone",
+   "gone_reason": "sold",
+   "note": "Priced at 4300 lei against a median of 9299 lei for a 36 GB MacBook. That gap is usually a scam or a bait price on OLX, not a bargain — check it carefully before travelling or paying anything up front.",
+   "first_seen": "2026-08-07"
+  },
+  {
+   "id": 307698608,
+   "oid": "IDkP4sM",
+   "title": "MacBook Pro M3 16” 1TB SSD 36 GB RAM",
+   "url": "https://www.olx.ro/d/oferta/macbook-pro-m3-16-1tb-ssd-36-gb-ram-IDkP4sM.html",
+   "kind": "MacBook",
+   "chip": "M3",
+   "gen": "M3",
+   "ram": 36,
+   "ram_stated": true,
+   "ram_evidence": "acBook Pro M3 16” 1TB SSD 36 GB RAM",
+   "price": 8300,
+   "price_label": "8 300 lei",
+   "currency": "RON",
+   "ron": 8300,
+   "city": "Popești-Leordeni",
+   "region": "Bucuresti - Ilfov",
+   "business": false,
+   "created": "2026-08-07",
+   "refreshed": "2026-08-07",
+   "desc": "Laptopul a fost achizitionat in 2024 pentru munca, iar motivul vanzarii este diagonala mult prea mare (portabilitatea).\u003cbr /\u003e\nBattery health, asa cum se poate observa si in poze, 88%",
+   "below_threshold": false,
    "status": "live",
    "facet_status": "available",
    "gone_reason": "",
-   "note": "Priced at 4300 lei against a median of 9299 lei for a 36 GB MacBook. That gap is usually a scam or a bait price on OLX, not a bargain — check it carefully before travelling or paying anything up front.",
+   "note": "Very likely the 8 800 lei ad that went earlier today (IDkIHMO), relisted 500 lei cheaper: same town, same 16-inch M3 / 36 GB / 1 TB spec, gone and reposted the same day. Not confirmed — the old ad now returns 410, so the two sellers can no longer be compared. If it is the same machine, treat that disappearance as a price cut rather than a sale.",
    "first_seen": "2026-08-07"
   }
  ],
@@ -1621,14 +1649,6 @@ window.OLMACS_DATA = {
      "ron": 17500
     },
     {
-     "oid": "IDkIHMO",
-     "kind": "MacBook",
-     "gen": "M3",
-     "ram": 36,
-     "city": "Popești-Leordeni",
-     "ron": 8800
-    },
-    {
      "oid": "IDkIWsb",
      "kind": "MacBook",
      "gen": "M4",
@@ -1693,14 +1713,6 @@ window.OLMACS_DATA = {
      "ron": 8500
     },
     {
-     "oid": "IDkOIdQ",
-     "kind": "MacBook",
-     "gen": "M4",
-     "ram": 36,
-     "city": "Constanta",
-     "ron": 4300
-    },
-    {
      "oid": "IDkOKCo",
      "kind": "MacBook",
      "gen": "M4",
@@ -1731,6 +1743,14 @@ window.OLMACS_DATA = {
      "ram": 24,
      "city": "București",
      "ron": 7499
+    },
+    {
+     "oid": "IDkP4sM",
+     "kind": "MacBook",
+     "gen": "M3",
+     "ram": 36,
+     "city": "Popești-Leordeni",
+     "ron": 8300
     },
     {
      "oid": "IDkqOtQ",
@@ -1768,11 +1788,11 @@ window.OLMACS_DATA = {
   }
  ],
  "summary": {
-  "total": 46,
-  "available": 28,
-  "sold": 18,
+  "total": 47,
+  "available": 27,
+  "sold": 20,
   "fresh": 10,
-  "min": 4300,
+  "min": 7499,
   "max": 41890,
   "cities": 19,
   "eur_ron": 5.2543,
@@ -1781,23 +1801,23 @@ window.OLMACS_DATA = {
   "prev": "7 Aug 2026",
   "built": "25 Jul 2026",
   "undated": 6,
-  "sold_since": 13,
+  "sold_since": 14,
   "by_gen": {
-   "M3": 14,
+   "M3": 15,
    "M4": 23,
    "M5": 9
   },
   "by_ram": {
    "128": 4,
    "24": 6,
-   "36": 21,
+   "36": 22,
    "48": 12,
    "64": 3
   },
   "by_kind": {
    "Mac Studio": 2,
    "Mac mini": 6,
-   "MacBook": 38
+   "MacBook": 39
   },
   "by_city": {
    "Arad": 2,
@@ -1811,7 +1831,7 @@ window.OLMACS_DATA = {
    "Florești": 1,
    "Oradea": 2,
    "Piatra Neamț": 1,
-   "Popești-Leordeni": 1,
+   "Popești-Leordeni": 2,
    "Sibiu": 1,
    "Timișoara": 5,
    "Târgu Jiu": 2,
@@ -1821,8 +1841,8 @@ window.OLMACS_DATA = {
    "Șcheia": 1
   },
   "by_status": {
-   "available": 28,
-   "gone": 18,
+   "available": 27,
+   "gone": 20,
    "new": 10
   }
  }
