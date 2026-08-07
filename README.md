@@ -1,7 +1,11 @@
 # olmacs
 
-A single-page tracker for **M3, M4 and M5 Macs listed on olx.ro with 36 GB or more of
-unified memory**, plus the 24 GB Mac minis as a cheaper fleet alternative.
+A single-page tracker for **M3, M4 and M5 Macs listed on olx.ro with 24 GB or more of
+unified memory**.
+
+MacBooks and Mac Studios are carried from 36 GB up; Mac minis are carried at 24 GB,
+which is as high as that model goes — they are the cheapest macOS core you can buy and
+the right shape for a build fleet.
 
 **Live page:** https://andreiverdes.github.io/olmacs/
 
