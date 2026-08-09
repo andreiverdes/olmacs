@@ -40,10 +40,15 @@ type Reject struct{ Reason string }
 
 func (r Reject) Error() string { return r.Reason }
 
-// Apple has never shipped these as unified-memory sizes, so a match on one of
-// them is storage or noise, whatever the surrounding words claim.
+// Sizes Apple actually ships as unified memory. A number outside this set is
+// storage or noise, whatever the surrounding words claim.
+//
+// 192/256/512 are Mac Studio Ultra configurations. They are also ordinary SSD
+// capacities, so they are deliberately absent from ramOnlySizes below and only
+// count when memory words sit beside them.
 var ramSizes = map[int]bool{8: true, 16: true, 18: true, 24: true, 32: true,
-	36: true, 48: true, 64: true, 96: true, 128: true}
+	36: true, 48: true, 64: true, 96: true, 128: true, 192: true, 256: true,
+	512: true}
 
 // Sizes Apple has never sold as an SSD, so a bare "36 GB" cannot be storage.
 var ramOnlySizes = map[int]bool{18: true, 24: true, 36: true, 48: true, 96: true}

@@ -40,6 +40,13 @@ func TestClassify(t *testing.T) {
 			wantKind: KindMini, wantGen: "M4", wantChip: "M4 Pro", wantRAM: 24,
 		},
 		{
+			// Studio Ultra memory runs past the laptop ceiling. 256 is also a
+			// common SSD size, so it only counts with "RAM" beside it.
+			name:     "Studio Ultra, memory larger than any laptop",
+			title:    "Mac Studio M3 Ultra 32/80 | 256GB RAM | 4TB SSD",
+			wantKind: KindStudio, wantGen: "M3", wantChip: "M3 Ultra", wantRAM: 256,
+		},
+		{
 			name:     "seller writes Pro Max for what Apple calls Max",
 			title:    `MacBook Pro 16.2"  M4 Pro Max, 36gb/1tb SSD Sigilat`,
 			wantKind: KindMacBook, wantGen: "M4", wantChip: "M4 Max", wantRAM: 36,
@@ -120,5 +127,20 @@ func TestClassifyMemoryUnstated(t *testing.T) {
 	gb, ev, ok := InferFromBucket("> 16 GB", m.Kind)
 	if !ok || gb != 24 {
 		t.Fatalf("InferFromBucket = (%d, %q, %v), want (24, …, true)", gb, ev, ok)
+	}
+}
+
+// 256 and 512 are Apple memory sizes AND ordinary SSD sizes. They must never be
+// read as memory on the strength of the number alone.
+func TestLargeSizesNeedMemoryWords(t *testing.T) {
+	if _, err := Classify(`Macbook Pro 14" M4 Pro 512GB SSD`, ""); err == nil {
+		t.Error("512GB SSD was read as 512 GB of memory")
+	}
+	if _, err := Classify("Mac Studio M3 Ultra 256GB SSD 4TB", ""); err == nil {
+		t.Error("256GB SSD was read as 256 GB of memory")
+	}
+	m, err := Classify("Mac Studio M3 Ultra 512GB memorie unificata 8TB SSD", "")
+	if err != nil || m.RAM != 512 {
+		t.Errorf("Classify = (%d, %v), want 512 GB — Romanian memory words count too", m.RAM, err)
 	}
 }

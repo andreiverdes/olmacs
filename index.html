@@ -196,13 +196,21 @@
   /* ---- MIX OVER TIME ----
      Ordinal teal ramp: chip and memory are both ordered, so more-is-darker
      carries the order. 5 steps validated --ordinal on both page surfaces. */
-  .viz { --o1:#6FB6A8; --o2:#4EA294; --o3:#2E8B7B; --o4:#15745F; --o5:#0A5748; }
+  /* Six steps, not five: memory reached a sixth tier when a 256 GB Studio Ultra
+     turned up, and five steps would have painted two adjacent tiers the same.
+     Generated at even OKLCH lightness spacing, then validated --ordinal against
+     each surface: monotone L, adjacent ΔL ≥ 0.06, hue spread 0.8°, and the step
+     nearest the surface at 2.39:1 light / 2.52:1 dark. */
+  .viz { --o1:#6CB69A; --o2:#57A086; --o3:#418B71;
+         --o4:#2A765D; --o5:#0E624A; --o6:#024D39; }
   @media (prefers-color-scheme: dark) {
     :root:where(:not([data-theme="light"])) .viz {
-      --o1:#2C7566; --o2:#38907C; --o3:#46AE95; --o4:#59C9AE; --o5:#7FDECA; }
+      --o1:#16674F; --o2:#337E65; --o3:#4C967C;
+      --o4:#65AF93; --o5:#7EC8AC; --o6:#97E2C5; }
   }
   :root[data-theme="dark"] .viz {
-    --o1:#2C7566; --o2:#38907C; --o3:#46AE95; --o4:#59C9AE; --o5:#7FDECA; }
+    --o1:#16674F; --o2:#337E65; --o3:#4C967C;
+    --o4:#65AF93; --o5:#7EC8AC; --o6:#97E2C5; }
 
   .mrow { display:grid; grid-template-columns:74px 1fr 34px; align-items:center;
           gap:10px; padding:6px 0; }
@@ -719,7 +727,7 @@ function renderPrice() {
 // ---------- mix over time ----------
 // Classes are ordered (M3<M4<M5, 24<...<128), so the ordinal ramp carries the order
 // and the same step means the same tier in every chart in this section.
-const RAMP = ["var(--o1)","var(--o2)","var(--o3)","var(--o4)","var(--o5)"];
+const RAMP = ["var(--o1)","var(--o2)","var(--o3)","var(--o4)","var(--o5)","var(--o6)"];
 const MIX_WINDOW = 14;   // sweep rows drawn; older ones stay in the data
 const rampFor = (keys, k) => RAMP[keys.length <= 1 ? 0
   : Math.round(keys.indexOf(k) * (RAMP.length - 1) / (keys.length - 1))];
