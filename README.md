@@ -45,12 +45,35 @@ The run prints what changed — gone, new, repriced, and *skipped*: Macs it foun
 whose memory the seller never wrote down. Skips are printed rather than silently
 dropped, so a classifier gap is visible instead of looking like an empty market.
 
-### Why plain `net/http` and not a headless browser
+### Why the client speaks HTTP/1.1
 
-`curl` gets HTTP 403 from CloudFront on every olx.ro endpoint, headers
-notwithstanding — it is fingerprinted at the TLS layer. Go's `net/http` is not, and
-gets 200 on both the API and the HTML pages. So the sweeper is a static binary with no
-Chrome, no Playwright and no proxy. Don't "simplify" it into a shell-out to `curl`.
+OLX is behind a CloudFront WAF rule that reads the **HTTP/2 connection fingerprint** —
+the SETTINGS values, window sizes and frame order a client sends when opening an h2
+connection. Go's fingerprint is on its list and so is curl's. Measured 14 Aug 2026:
+
+| client | HTTP/2 | HTTP/1.1 |
+| --- | --- | --- |
+| curl | 403 | 200 |
+| Go `net/http` | 403 | 200 |
+
+It is not the TLS layer, and it is not curl-versus-Go — it is the protocol version, on
+every olx.ro endpoint, API and HTML alike. `olx.New` therefore pins ALPN to
+`http/1.1`; clearing `TLSNextProto` alone is not enough, because ALPN still negotiates
+h2 and the transport then chokes on the frames. With that one setting the sweeper stays
+a static binary with no Chrome, no Playwright, no proxy and no TLS impersonation.
+
+An earlier version of this file blamed curl's TLS fingerprint. That was wrong, and it
+mattered: it pointed at the wrong layer when the block later widened to Go as well.
+
+### A blocked sweep is not a quiet market
+
+If OLX stops answering, pass 1 leaves every listing exactly as it was and pass 2 finds
+nothing new — which is indistinguishable from a genuinely uneventful day. Recording
+that would publish a claim that the market did not move on a day nobody could see it.
+
+So the sweeper counts what it actually reached and refuses to write when more than a
+quarter of either pass failed. An isolated failure is still tolerated and reported as
+`left as-is`.
 
 ### Memory is parsed, not read off a field
 
@@ -96,9 +119,12 @@ Stated on the page too, collected here:
   a reused ad slot carries a date from before the machine existed and is excluded.
 - **Survivorship.** The strip only describes ads still up at a sweep. Anything listed
   and sold between two sweeps never enters it.
-- **The euro rate has two possible sources.** BNR is tried first, ECB stands in when
-  bnr.ro refuses the connection. They differ in the fourth decimal, so the page names
-  whichever was actually used rather than claiming a number it did not use.
+- **The euro rate has two possible sources.** BNR is tried first, ECB stands in. They
+  differ in the fourth decimal, so the page names whichever was actually used rather
+  than claiming a number it did not use. **Since 14 Aug 2026 that is always ECB:**
+  `bnr.ro/nbrfxrates.xml` now redirects to the BNR homepage, as do the yearly and
+  ten-day feeds, so the XML is withdrawn rather than moved. The call is left in place
+  for the day it returns.
 
 ## Editing notes
 

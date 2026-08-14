@@ -45,6 +45,46 @@ var queries = []string{
 
 var reOID = regexp.MustCompile(`ID([A-Za-z0-9]+)\.html`)
 
+// reachability counts how much of a sweep actually reached OLX.
+//
+// This exists because of the failure mode it prevents, which is worse than an
+// outright crash: when every request fails, pass 1 leaves each listing exactly as
+// it was and pass 2 finds nothing new, so the run looks identical to a genuinely
+// quiet day. Recording that would write a sweep asserting the market did not move
+// on a day nobody actually looked at it, and the page would show it as fact.
+//
+// An isolated failure is different and is tolerated: one listing left as-is is a
+// small gap, not a false claim.
+type reachability struct {
+	recheckTried, recheckFailed int
+	searchTried, searchFailed   int
+}
+
+// maxFailedFraction is how much of either pass may fail before the sweep is not
+// worth recording. A quarter is well above ordinary flakiness and well below the
+// wholesale failure of a block or an outage.
+const maxFailedFraction = 0.25
+
+func (r reachability) check() error {
+	if r.recheckTried > 0 &&
+		float64(r.recheckFailed) > maxFailedFraction*float64(r.recheckTried) {
+		return r.err("re-check", r.recheckFailed, r.recheckTried)
+	}
+	if r.searchTried > 0 &&
+		float64(r.searchFailed) > maxFailedFraction*float64(r.searchTried) {
+		return r.err("search", r.searchFailed, r.searchTried)
+	}
+	return nil
+}
+
+func (r reachability) err(pass string, failed, tried int) error {
+	return fmt.Errorf(
+		"%d of %d %s requests failed — refusing to record a sweep that would claim "+
+			"the market did not move.\nIf these are HTTP 403s, OLX is blocking the "+
+			"client: check that internal/olx still pins HTTP/1.1 (see olx.New)",
+		failed, tried, pass)
+}
+
 func main() {
 	fs := flag.NewFlagSet("sweep", flag.ExitOnError)
 	dataPath := fs.String("data", "data/listings.js", "path to the generated data file")
@@ -92,6 +132,7 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 	}
 
 	var wentAway, repriced, added, skipped []string
+	var reach reachability
 
 	// pass 1 — is what we already show still for sale?
 	fmt.Fprintf(os.Stderr, "re-checking %d known listings…\n", len(known))
@@ -102,8 +143,10 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 		if l.ID == 0 { // legacy row with no numeric id; nothing to ask about
 			continue
 		}
+		reach.recheckTried++
 		alive, offer, err := c.Alive(l.ID)
 		if err != nil {
+			reach.recheckFailed++
 			fmt.Fprintf(os.Stderr, "  ! %s: %v (left as-is)\n", oid, err)
 			continue
 		}
@@ -113,15 +156,14 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 			continue
 		}
 		// Still up, but is it still the same machine? Sellers reuse ad slots.
-		if m, err := mac.Classify(offer.Title, offer.Description); err == nil &&
-			!qualifies(m) {
+		if note, isReused := reused(l, *offer); isReused {
 			l.Status, l.FacetStatus, l.GoneReason = "gone", "gone", "reused"
-			l.Note = fmt.Sprintf("The seller reused this ad: it now advertises %s %d GB. "+
-				"The machine listed here is no longer on sale.", m.Chip, m.RAM)
+			l.Note = note
 			wentAway = append(wentAway, fmt.Sprintf("%s  reused → %s", oid, trim(offer.Title, 40)))
 			continue
 		}
 		l.Status, l.FacetStatus = "live", "available"
+		l.Title = offer.Title // the seller may have retitled without changing the machine
 		// Compare the price the seller set, not the lei conversion: a euro-priced
 		// ad shifts by a few lei whenever the reference rate moves, and reporting
 		// that as the seller changing their mind would be wrong.
@@ -130,14 +172,24 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 			l.PriceWas = beforePrice
 			repriced = append(repriced, fmt.Sprintf("%s  %.0f → %.0f %s (%d → %d lei)",
 				oid, beforePrice, l.Price, l.Currency, beforeRON, l.RON))
+		} else {
+			// PriceWas means "changed at the most recent sweep", which is what both
+			// the card's "was …" line and the count under the price charts claim.
+			// Left uncleared it accumulates, so a listing repriced once in July still
+			// reads as having just moved, and the page said four listings had changed
+			// price between the last two sweeps when one had. Per-sweep prices live in
+			// sweeps[].offer[].ron, so nothing is lost by clearing it.
+			l.PriceWas = 0
 		}
 	}
 
 	// pass 2 — anything new?
 	seen := map[string]bool{}
 	for _, q := range queries {
+		reach.searchTried++
 		offers, err := c.Search(q, limit)
 		if err != nil {
+			reach.searchFailed++
 			fmt.Fprintf(os.Stderr, "  ! search %q: %v\n", q, err)
 			continue
 		}
@@ -194,6 +246,12 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 		}
 	}
 
+	// A sweep is a claim about the market on a given day, so it may only be
+	// recorded if OLX actually answered. Bail before anything is mutated.
+	if err := reach.check(); err != nil {
+		return err
+	}
+
 	// last sweep's arrivals are no longer new
 	demoteStale(d, iso)
 	d.NormalizeCities()
@@ -214,6 +272,45 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 	}
 	fmt.Fprintf(os.Stderr, "\nwrote %s\n", dataPath)
 	return nil
+}
+
+// reused reports whether an ad slot has stopped advertising the machine this page
+// has been showing, and the note to leave on it.
+//
+// The obvious case is a slot whose new text describes a machine that does not
+// qualify. The case this function was written for is quieter: a seller replaced an
+// M5 Max 128 GB with a plain M5 32 GB and the price fell 27,550 → 12,250 lei. The
+// new text does not state its memory in a form the classifier can read, so
+// classification failed — and the previous rule only retired a slot when
+// classification SUCCEEDED and the machine did not qualify. Failure meant "leave
+// as-is", so the listing kept the old machine's specs and took on the new
+// machine's price. The page would have shown a 128 GB M5 Max at 12,250 lei and
+// flagged it as suspiciously cheap, which is a fabricated data point.
+//
+// So the test is what can still be vouched for. The specs on the page were derived
+// from the ad's text; when that text changes they must be derived again, and
+// whatever cannot be re-derived is no longer a machine worth showing. An unchanged
+// title leaves its listing completely untouched, which is what keeps this safe for
+// rows that predate the classifier.
+func reused(l *site.Listing, o olx.Offer) (note string, ok bool) {
+	if strings.TrimSpace(o.Title) == strings.TrimSpace(l.Title) {
+		return "", false
+	}
+	m, err := mac.Classify(o.Title, o.Description)
+	switch {
+	case err != nil:
+		return "The seller rewrote this ad, and it no longer states a configuration " +
+			"that can be read. The machine listed here can no longer be confirmed as " +
+			"the one on sale.", true
+	case !qualifies(m):
+		return fmt.Sprintf("The seller reused this ad: it now advertises %s %d GB. "+
+			"The machine listed here is no longer on sale.", m.Chip, m.RAM), true
+	case m.Chip != l.Chip || m.RAM != l.RAM:
+		return fmt.Sprintf("The seller reused this ad: it now advertises %s %d GB, "+
+			"not %s %d GB. The machine listed here is no longer on sale.",
+			m.Chip, m.RAM, l.Chip, l.RAM), true
+	}
+	return "", false // same machine, the seller only reworded the ad
 }
 
 func qualifies(m mac.Machine) bool {
@@ -388,6 +485,15 @@ func fetchXML(url string, out any) error {
 	body, err := io.ReadAll(io.LimitReader(resp.Body, 1<<20))
 	if err != nil {
 		return err
+	}
+	// A withdrawn feed does not 404 here — it redirects to a homepage, which the
+	// client follows and hands back as HTML. Unmarshalling that reports a syntax
+	// error at some arbitrary line, which reads like a malformed rate file rather
+	// than a feed that is simply gone. Say what actually happened.
+	// (bnr.ro did exactly this to nbrfxrates.xml, noticed 14 Aug 2026.)
+	if ct := resp.Header.Get("Content-Type"); !strings.Contains(ct, "xml") {
+		return fmt.Errorf("not an XML feed any more: %s served %q from %s",
+			url, ct, resp.Request.URL)
 	}
 	return xml.Unmarshal(body, out)
 }

@@ -308,7 +308,7 @@
 
   <section class="sect viz" id="priceSect">
     <h2 class="sec">Price by memory and by chip</h2>
-    <p class="sec">Two sweeps so far: <span id="pdates"></span>. Each row is one memory tier
+    <p class="sec"><span id="pdates"></span>. Each row is one memory tier
       or chip generation &mdash; the pale track is the low-to-high spread of what is on offer
       today, the two dots are the median asking price at each sweep. Follows the Type, Chip,
       Memory and City filters; the Status filter does not apply here, since each column is
@@ -433,13 +433,19 @@ document.getElementById("stamp").textContent =
 
 stats: {
   const el = document.getElementById("stats");
-  const gens = Object.entries(S.by_gen).sort().map(([k,v]) => v + " \u00d7 " + k).join(" \u00b7 ");
-  const rams = Object.keys(S.by_ram).map(Number).sort((a,b)=>a-b);
+  // Available only, like the price range beside it. S.by_ram and S.by_gen span
+  // every listing ever seen, gone ones included, which reads as a range you could
+  // go and buy: on 14 Aug the 256 GB Studio Ultra was retired and the header would
+  // still have offered "24-256 GB".
+  const live = ALL.filter(l => l.status !== "gone");
+  const rams = [...new Set(live.map(l => l.ram))].sort((a,b) => a-b);
+  const tally = live.reduce((acc,l) => (acc[l.gen] = (acc[l.gen] || 0) + 1, acc), {});
+  const gens = Object.entries(tally).sort().map(([k,v]) => v + " \u00d7 " + k).join(" \u00b7 ");
   el.innerHTML = [
     ["For sale", fmt(S.available), S.fresh + " added since " + S.prev],
     ["Gone", fmt(S.sold), "sold or ad reused"],
     ["Price range", fmt(S.min) + "\u2013" + fmt(S.max), "RON, available only"],
-    ["Memory", rams[0] + "\u2013" + rams[rams.length-1] + " GB", gens],
+    ["Memory on offer", rams.length ? rams[0] + "\u2013" + rams[rams.length-1] + " GB" : "\u2014", gens],
     ["Cities", fmt(S.cities), Object.entries(S.by_city).sort((a,b)=>b[1]-a[1])
       .slice(0,3).map(([c,n]) => c + " " + n).join(" \u00b7 ")]
   ].map(([t,v,sub]) => `<div class="stat"><dt>${t}</dt><dd>${v}<small>${sub}</small></dd></div>`).join("");
@@ -932,9 +938,14 @@ document.getElementById("mcaveat").textContent =
   "posting-date strip is the one view with real depth, and it only describes ads that are " +
   "still up: anything listed and sold between two sweeps never enters it.";
 
+// The whole sentence is derived, opening words included. It used to read "Two
+// sweeps so far:" in the markup with only the dates filled in, so the third sweep
+// turned it into "Two sweeps so far: 4 between 28 Jul and 14 Aug" — a hand-written
+// count going stale in exactly the way the rest of this page is built to prevent.
 document.getElementById("pdates").textContent =
-  SWEEPS.length <= 2 ? SWEEPS.map(s => s.date).join(" and ")
-                     : SWEEPS.length + " between " + FIRST_SWEEP.date + " and " + LAST_SWEEP.date;
+  SWEEPS.length === 1 ? "One sweep so far, on " + FIRST_SWEEP.date
+  : SWEEPS.length === 2 ? "Two sweeps so far: " + FIRST_SWEEP.date + " and " + LAST_SWEEP.date
+  : SWEEPS.length + " sweeps so far, " + FIRST_SWEEP.date + " through " + LAST_SWEEP.date;
 
 // Everything in this caveat is counted from the data. A sweep must never be able
 // to leave a hand-written finding behind as a false statement.

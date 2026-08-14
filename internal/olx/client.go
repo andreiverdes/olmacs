@@ -2,15 +2,14 @@
 //
 // Two notes on why this looks the way it does:
 //
-//   - curl is fingerprinted and gets HTTP 403 from CloudFront on every olx.ro
-//     endpoint, headers notwithstanding. Go's net/http is not. So this needs no
-//     browser, no proxy and no TLS impersonation — but do not "simplify" it into
-//     a shell-out to curl.
+//   - OLX sits behind a CloudFront WAF rule that reads the HTTP/2 connection
+//     fingerprint, so the client must speak HTTP/1.1. See New.
 //   - A removed offer answers 410 on /offers/{id}/. That is the removal signal
 //     the site is built on, so it is reported as its own state rather than an error.
 package olx
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -35,9 +34,35 @@ type Client struct {
 	pause time.Duration // spacing between requests, to stay a polite caller
 }
 
+// New returns a client that talks to OLX over HTTP/1.1.
+//
+// That is not a style choice. OLX is behind a CloudFront WAF rule that reads the
+// HTTP/2 connection fingerprint — the SETTINGS values, window sizes and frame
+// order a client sends when it opens an h2 connection. Go's fingerprint is on its
+// list, and so is curl's: over h2 both get 403 on every olx.ro endpoint, API and
+// HTML alike, headers notwithstanding. The same requests over HTTP/1.1 get 200,
+// from either. Measured 14 Aug 2026:
+//
+//	curl --http2    403      curl --http1.1    200
+//	Go, h2 (ALPN)   403      Go, http/1.1      200
+//
+// So this needs no browser, no proxy and no TLS impersonation — the TLS layer was
+// never the problem. Do not "simplify" it into a shell-out to curl, and do not
+// drop the transport below: on the stock transport every request fails.
+//
+// Pinning NextProtos is what actually forces HTTP/1.1. Clearing TLSNextProto and
+// ForceAttemptHTTP2 alone still negotiates h2 over ALPN, and the transport then
+// chokes on the h2 frames with `malformed HTTP response "\x00\x00\x12\x04…"`.
 func New() *Client {
+	tr := http.DefaultTransport.(*http.Transport).Clone()
+	tr.ForceAttemptHTTP2 = false
+	tr.TLSNextProto = map[string]func(string, *tls.Conn) http.RoundTripper{}
+	tr.TLSClientConfig = &tls.Config{
+		NextProtos: []string{"http/1.1"},
+		MinVersion: tls.VersionTLS12,
+	}
 	return &Client{
-		http:  &http.Client{Timeout: 30 * time.Second},
+		http:  &http.Client{Timeout: 30 * time.Second, Transport: tr},
 		pause: 400 * time.Millisecond,
 	}
 }
