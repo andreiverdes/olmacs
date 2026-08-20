@@ -604,7 +604,6 @@ window.OLMACS_DATA = {
    "ram_stated": true,
    "ram_evidence": "max, 16 nuclee CPU, 40 nuclee GPU, 48GB RAM, 1TB SSD Vând Apple Macbook M4",
    "price": 16000,
-   "price_was": 17500,
    "price_label": "16 000 lei",
    "currency": "RON",
    "ron": 16000,
@@ -643,9 +642,9 @@ window.OLMACS_DATA = {
    "refreshed": "",
    "desc": "",
    "below_threshold": false,
-   "status": "live",
-   "facet_status": "available",
-   "gone_reason": "",
+   "status": "gone",
+   "facet_status": "gone",
+   "gone_reason": "sold",
    "note": "Seller states no RAM or storage. Listed here because the M4 Max Mac Studio starts at 36 GB — ask which config it is.",
    "first_seen": "2026-07-25"
   },
@@ -867,10 +866,10 @@ window.OLMACS_DATA = {
    "refreshed": "2026-08-05",
    "desc": "",
    "below_threshold": false,
-   "status": "live",
-   "facet_status": "available",
-   "gone_reason": "",
-   "note": "Cheapest 48 GB machine on the page. 165 battery cycles; bought new from iStyle Timișoara in Feb 2025, invoice included.",
+   "status": "gone",
+   "facet_status": "gone",
+   "gone_reason": "sold",
+   "note": "165 battery cycles; bought new from iStyle Timișoara in Feb 2025, invoice included.",
    "first_seen": "2026-08-07"
   },
   {
@@ -895,16 +894,16 @@ window.OLMACS_DATA = {
    "refreshed": "2026-07-29",
    "desc": "",
    "below_threshold": false,
-   "status": "live",
-   "facet_status": "available",
-   "gone_reason": "",
+   "status": "gone",
+   "facet_status": "gone",
+   "gone_reason": "sold",
    "note": "Battery health 92%, 12–13 months of warranty left. Handover in Brașov only, no courier, no trades.",
    "first_seen": "2026-08-07"
   },
   {
-   "id": 0,
+   "id": 307622324,
    "oid": "IDkOKCo",
-   "title": "MacBook Pro M4 - 16inch",
+   "title": "MacBook Pro M4 - 16inch - M4 Pro",
    "url": "https://www.olx.ro/d/oferta/macbook-pro-m4-16inch-IDkOKCo.html",
    "kind": "MacBook",
    "chip": "M4 Pro",
@@ -912,10 +911,10 @@ window.OLMACS_DATA = {
    "ram": 48,
    "ram_stated": true,
    "ram_evidence": "48 GB unified memory · 1 TB SSD · 14-core CPU / 20-core GPU · nano-texture (spec fields, not the title)",
-   "price": 13200,
-   "price_label": "13 200 lei",
+   "price": 12200,
+   "price_label": "12 200 lei",
    "currency": "RON",
-   "ron": 13200,
+   "ron": 12200,
    "city": "Sibiu",
    "region": "Sibiu",
    "business": false,
@@ -930,9 +929,9 @@ window.OLMACS_DATA = {
    "first_seen": "2026-08-07"
   },
   {
-   "id": 0,
+   "id": 306234007,
    "oid": "IDkIWsb",
-   "title": "Macbook M4 Max 16' Nano Screen",
+   "title": "Macbook M4 Max 16’ Nano Screen",
    "url": "https://www.olx.ro/d/oferta/macbook-m4-max-16-nano-screen-IDkIWsb.html",
    "kind": "MacBook",
    "chip": "M4 Max",
@@ -940,15 +939,15 @@ window.OLMACS_DATA = {
    "ram": 36,
    "ram_stated": true,
    "ram_evidence": "Apple M4 Max 14-core CPU / 32-core GPU · 36 GB RAM · 1 TB SSD · 16\" nano-texture",
-   "price": 14000,
-   "price_label": "14 000 lei",
+   "price": 13500,
+   "price_label": "13 500 lei",
    "currency": "RON",
-   "ron": 14000,
+   "ron": 13500,
    "city": "Cluj-Napoca",
    "region": "Cluj",
    "business": false,
    "created": "",
-   "refreshed": "2026-08-07",
+   "refreshed": "2026-08-18",
    "desc": "",
    "below_threshold": false,
    "status": "live",
@@ -958,9 +957,9 @@ window.OLMACS_DATA = {
    "first_seen": "2026-08-07"
   },
   {
-   "id": 0,
+   "id": 293500834,
    "oid": "IDjRuYq",
-   "title": "Apple Macbook M3 Pro 16\" 18 Core 36gb Ram 512gb",
+   "title": "Apple Macbook M3 Pro 16” 18 Core 36gb Ram 512gb",
    "url": "https://www.olx.ro/d/oferta/apple-macbook-m3-pro-16-18-core-36gb-ram-512gb-IDjRuYq.html",
    "kind": "MacBook",
    "chip": "M3 Pro",
@@ -968,10 +967,10 @@ window.OLMACS_DATA = {
    "ram": 36,
    "ram_stated": true,
    "ram_evidence": "Apple Macbook M3 Pro 16\" 18 Core 36gb Ram 512gb",
-   "price": 11000,
-   "price_label": "11 000 lei",
+   "price": 10700,
+   "price_label": "10 700 lei",
    "currency": "RON",
-   "ron": 11000,
+   "ron": 10700,
    "city": "Timișoara",
    "region": "Timis",
    "business": false,
@@ -986,7 +985,7 @@ window.OLMACS_DATA = {
    "first_seen": "2026-08-07"
   },
   {
-   "id": 0,
+   "id": 292793580,
    "oid": "IDjOvZ6",
    "title": "Macbook Pro M3 Pro 16-inch 2023 36gb/512Gb/BATERIE96%/Garantie 12 luni @atsgsm.ro",
    "url": "https://www.olx.ro/d/oferta/macbook-pro-m3-pro-16-inch-2023-36gb-512gb-baterie96-garantie-12-luni-atsgsm-ro-IDjOvZ6.html",
@@ -1004,7 +1003,7 @@ window.OLMACS_DATA = {
    "region": "Bihor",
    "business": true,
    "created": "2026-07-31",
-   "refreshed": "2026-07-31",
+   "refreshed": "2026-08-14",
    "desc": "",
    "below_threshold": false,
    "status": "live",
@@ -1014,7 +1013,7 @@ window.OLMACS_DATA = {
    "first_seen": "2026-08-07"
   },
   {
-   "id": 0,
+   "id": 307253844,
    "oid": "IDkNcLa",
    "title": "Apple MacBook Pro 14\" M5 Pro, 15 CPU, 16 GPU 48GB RAM, 1TB SSD, Silver, Tastatura US English",
    "url": "https://www.olx.ro/d/oferta/apple-macbook-pro-14-m5-pro-15-cpu-16-gpu-48gb-ram-1tb-ssd-silver-tastatura-us-english-IDkNcLa.html",
@@ -1042,9 +1041,9 @@ window.OLMACS_DATA = {
    "first_seen": "2026-08-07"
   },
   {
-   "id": 0,
+   "id": 305450491,
    "oid": "IDkFDCP",
-   "title": "MacBook Pro / sigilat / M5 Max / 36/2 TB / 14\" / DeluxGSM",
+   "title": "MacBook Pro / sigilat /  M5 Max / 36/2 TB / 14\" / DeluxGSM",
    "url": "https://www.olx.ro/d/oferta/macbook-pro-sigilat-m5-max-36-2-tb-14-deluxgsm-IDkFDCP.html",
    "kind": "MacBook",
    "chip": "M5 Max",
@@ -1060,7 +1059,7 @@ window.OLMACS_DATA = {
    "region": "Timis",
    "business": true,
    "created": "",
-   "refreshed": "2026-08-07",
+   "refreshed": "2026-08-20",
    "desc": "",
    "below_threshold": false,
    "status": "live",
@@ -1070,7 +1069,7 @@ window.OLMACS_DATA = {
    "first_seen": "2026-08-07"
   },
   {
-   "id": 0,
+   "id": 307677587,
    "oid": "IDkOYZJ",
    "title": "MacBook Pro 14 inchi M5 Max -64gb-nano texture-40core",
    "url": "https://www.olx.ro/d/oferta/macbook-pro-14-inchi-m5-max-64gb-nano-texture-40core-IDkOYZJ.html",
@@ -1080,21 +1079,21 @@ window.OLMACS_DATA = {
    "ram": 64,
    "ram_stated": true,
    "ram_evidence": "M5 MAX · 64 GB · 2 TB SSD · 18-core CPU / 40-core GPU · 14\" nano-texture",
-   "price": 30500,
-   "price_label": "30 500 lei",
+   "price": 29999,
+   "price_label": "29 999 lei",
    "currency": "RON",
-   "ron": 30500,
+   "ron": 29999,
    "city": "București",
    "region": "Bucuresti - Ilfov",
    "business": false,
    "created": "2026-08-07",
-   "refreshed": "2026-08-07",
+   "refreshed": "2026-08-06",
    "desc": "",
    "below_threshold": false,
    "status": "live",
    "facet_status": "available",
    "gone_reason": "",
-   "note": "eMAG warranty to 2028, near-new with full box. Seller cites 33 000 lei as the original iStyle config price. Only 64 GB machine left after the Alienstore ad went.",
+   "note": "eMAG warranty to 2028, near-new with full box. Seller cites 33 000 lei as the original iStyle config price.",
    "first_seen": "2026-08-07"
   },
   {
@@ -1343,8 +1342,8 @@ window.OLMACS_DATA = {
    "refreshed": "2026-08-15",
    "desc": "Vând MacBook Pro cu Apple M3 Pro, într-o configurație foarte bună, potrivit atât pentru utilizare profesională, cât și pentru activități care necesită performanță ridicată.\u003cbr /\u003e\n\u003cbr /\u003e\nSpecificații:\u003cbr /\u003e\n\u003cbr /\u003e\n* Apple M3 Pro\u003cbr /\u003e\n* CPU 12-core\u003cbr /\u003e\n* GPU 18-core\u003cbr /\u003e\n* 36 GB memorie unificată\u003cbr /\u003e\n* SSD 512 GB\u003cbr /\u003e\n* Funcționează 10/10, fără probleme\u003cbr /\u003e\n* Stare estetică 9,9/10\u003cbr /\u003e\n* Baterie 99% capacitate maximă\u003cbr /\u003e\n* Încărcător Apple original de 96W inclus, pentru încărcare mai rapidă\u003cbr /\u003e\n* Cablu de alimentare inclus\u003cbr /\u003e\n* Cutia originală inclusă\u003cbr /\u003e\n\u003cbr /\u003e\nLaptopul poate fi testat la fața locului înainte de cumpărare.\u003cbr /\u003e\n\u003cbr /\u003e\nSe prezintă foarte bine atât estetic, cât și funcțional și se vinde exact în configurația menționată mai sus.",
    "below_threshold": false,
-   "status": "new",
-   "facet_status": "available,new",
+   "status": "live",
+   "facet_status": "available",
    "gone_reason": "",
    "note": "",
    "first_seen": "2026-08-20"
@@ -1371,8 +1370,8 @@ window.OLMACS_DATA = {
    "refreshed": "2026-08-17",
    "desc": "Ofer spre vanzare Apple Macbook PRO 16.2 inch - ultim model an 2026 - procesor: Apple M5 Pro MAX. \u003cbr /\u003e\n\u003cbr /\u003e\nEcra: Liquid Ultra Retina XDR ! \u003cbr /\u003e\n\u003cbr /\u003e\nLayout tastatura cel mai bun: INTERNATIONAL ! A nu se confunda cu celelalte.\u003cbr /\u003e\n\u003cbr /\u003e\nCuloare: SILVER / ARGINTIU sau Space Black / Negru sau Space Gray / Grey Gri.\u003cbr /\u003e\n\u003cbr /\u003e\nConfiguratie superioara, DE TOP: cu procesor M5 MAX cu 18C CPU | 32C GPU | 36GB RAM | 2000GB / 2 Terra - stocare ssd !\u003cbr /\u003e\n\u003cbr /\u003e\nAbsolut NOU, complet SIGILAT in cutie in pachet complet original. Garantie Apple 12luni !",
    "below_threshold": false,
-   "status": "new",
-   "facet_status": "available,new",
+   "status": "live",
+   "facet_status": "available",
    "gone_reason": "",
    "note": "",
    "first_seen": "2026-08-20"
@@ -1399,8 +1398,8 @@ window.OLMACS_DATA = {
    "refreshed": "2026-08-19",
    "desc": "Macbook M5 Pro 64Gb RAM 1Tb SSD | 14' | 54 cucluri. Apropape impecabil. Foarte foarte mica zgarietura microscopica pe coltul exterior (nu se vede in poza) si 0,02 mm pe corp ciobit microscopic (pe poza nu se vede). Pe viu nici nu gasiti daca nu va arat. Arată per total ca nou",
    "below_threshold": false,
-   "status": "new",
-   "facet_status": "available,new",
+   "status": "live",
+   "facet_status": "available",
    "gone_reason": "",
    "note": "",
    "first_seen": "2026-08-20"
@@ -1427,8 +1426,8 @@ window.OLMACS_DATA = {
    "refreshed": "2026-08-17",
    "desc": "Laptopul Apple MacBook Pro 14, factura si garantie 2 ani. Predare personala in Bucuresti, se poate achizitiona pe firma.\u003cbr /\u003e\nSpecs:\u003cbr /\u003e\n​Procesor: Apple M4 Max (16 nuclee CPU și 40 nuclee GPU)\u003cbr /\u003e\n​Memorie RAM: 128 GB\u003cbr /\u003e\n​Capacitate stocare: 2 TB SSD\u003cbr /\u003e\n​Ecran: 14.2 inch Liquid Retina XDR (rezoluție 3024 x 1964), luminozitate 1000 nits (până la 1600 nits în HDR)\u003cbr /\u003e\n​Culoare: Space Black (Negru)\u003cbr /\u003e\n​Porturi și Conectivitate:\u003cbr /\u003e\n​3 x Thunderbolt 5 (până la 120 Gb/s)\u003cbr /\u003e\n​1 x HDMI\u003cbr /\u003e\n​1 x MagSafe 3\u003cbr /\u003e\n​1 x Jack audio 3.5 mm\u003cbr /\u003e\n​Cititor de carduri SDXC\u003cbr /\u003e\n​Wi-Fi 6E\u003cbr /\u003e\n​Bluetooth 5.3\u003cbr /\u003e\n​Audio \u0026 Cameră:\u003cbr /\u003e\n​Sistem audio cu 6 difuzoare și Dolby Atmos / Spatial Audio\u003cbr /\u003e\n​3 microfoane de calitate studio\u003cbr /\u003e\n​Cameră web 12MP Center Stage\u003cbr /\u003e\n​Tastatură \u0026 Securitate:\u003cbr /\u003e\n​Tastatură internațională iluminată\u003cbr /\u003e\n​Touch ID (senzor de amprentă)\u003cbr /\u003e\n​Force Touch trackpad\u003cbr /\u003e\n​Sistem de operare: macOS (include suport pentru Apple Intelligence)\u003cbr /\u003e\n​Baterie \u0026 Incarcător: Baterie de 72.4 Wh (până la 18-24 ore autonomie), adaptor de alimentare USB-C de 96W inclus\u003cbr /\u003e\n​Dimensiuni \u0026 Greutate: 312.6 x 221.2 x 15.5 mm; 1.62 kg\u003cbr /\u003e\n​Carcasă: Aluminiu",
    "below_threshold": false,
-   "status": "new",
-   "facet_status": "available,new",
+   "status": "live",
+   "facet_status": "available",
    "gone_reason": "",
    "note": "",
    "first_seen": "2026-08-20"
@@ -1548,7 +1547,7 @@ window.OLMACS_DATA = {
    "first_seen": "2026-07-25"
   },
   {
-   "id": 0,
+   "id": 307547266,
    "oid": "IDkOr5M",
    "title": "Apple Mac Mini M4 Pro (12-core CPU / 16-core GPU), 24 GB RAM, 512GB",
    "url": "https://www.olx.ro/d/oferta/apple-mac-mini-m4-pro-12-core-cpu-16-core-gpu-24-gb-ram-512gb-IDkOr5M.html",
@@ -1558,10 +1557,10 @@ window.OLMACS_DATA = {
    "ram": 24,
    "ram_stated": true,
    "ram_evidence": "Apple Mac Mini M4 Pro (12-core CPU / 16-core GPU), 24 GB RAM, 512GB",
-   "price": 7499,
-   "price_label": "",
+   "price": 7390,
+   "price_label": "7 390 lei",
    "currency": "RON",
-   "ron": 7499,
+   "ron": 7390,
    "city": "București",
    "region": "",
    "business": false,
@@ -1653,8 +1652,8 @@ window.OLMACS_DATA = {
    "refreshed": "2026-08-18",
    "desc": "- Chip Apple M4 (10-core CPU, 10-core GPU)\u003cbr /\u003e\n- 24GB RAM, 512GB SSD\u003cbr /\u003e\n- Model MCYT4ZE/A, macOS\u003cbr /\u003e\n\u003cbr /\u003e\nCumpărat ianuarie 2025 de la Altex, folosit pentru dezvoltare software.\u003cbr /\u003e\nFuncționează perfect, fără probleme.\u003cbr /\u003e\nBun pentru development sau rulare de modele AI local (Ollama, LM Studio etc.) — cei 24GB RAM ajută mult la asta.\u003cbr /\u003e\nNu am cutia originală, dar vine cu cablul de alimentare original.\u003cbr /\u003e\nGaranția producătorului (Apple Care) a expirat, dar garanția legală de conformitate e valabilă până în ianuarie 2027 (dovada achiziției poate fi arătată la predare).\u003cbr /\u003e\n\u003cbr /\u003e\nMotiv vânzare: upgrade, nu mai am nevoie de el.\u003cbr /\u003e\nPreț: 4900 lei, ușor negociabil.\u003cbr /\u003e\nPredare: personal în Iași, sau prin curier (Livrare prin OLX, cu verificare colet)\u003cbr /\u003e\n\u003cbr /\u003e\nScrieți pe chat sau sunați pentru mai multe detalii.",
    "below_threshold": true,
-   "status": "new",
-   "facet_status": "available,new",
+   "status": "live",
+   "facet_status": "available",
    "gone_reason": "",
    "note": "",
    "first_seen": "2026-08-20"
@@ -1681,8 +1680,8 @@ window.OLMACS_DATA = {
    "refreshed": "2026-08-18",
    "desc": "Mac mini M4 Pro varianta cu 24 GB RAM și un SSD de 512 GB, având garanție până în august 2027. Nu are niciun defect vizual, funcționează impecabil, a fost folosit câteva ore. Îl vând deoarece vreau să fac un upgrade la un laptop. Vine cu toate accesoriile și factura.",
    "below_threshold": true,
-   "status": "new",
-   "facet_status": "available,new",
+   "status": "live",
+   "facet_status": "available",
    "gone_reason": "",
    "note": "",
    "first_seen": "2026-08-20"
@@ -2854,23 +2853,245 @@ window.OLMACS_DATA = {
      "ron": 41890
     }
    ]
+  },
+  {
+   "date": "21 Aug 2026",
+   "iso": "2026-08-21",
+   "offer": [
+    {
+     "oid": "IDgztL6",
+     "kind": "MacBook",
+     "gen": "M5",
+     "ram": 36,
+     "city": "București",
+     "ron": 17499
+    },
+    {
+     "oid": "IDjOvZ6",
+     "kind": "MacBook",
+     "gen": "M3",
+     "ram": 36,
+     "city": "Oradea",
+     "ron": 8500
+    },
+    {
+     "oid": "IDjRuYq",
+     "kind": "MacBook",
+     "gen": "M3",
+     "ram": 36,
+     "city": "Timișoara",
+     "ron": 10700
+    },
+    {
+     "oid": "IDjV4U0",
+     "kind": "MacBook",
+     "gen": "M4",
+     "ram": 48,
+     "city": "Oradea",
+     "ron": 15990
+    },
+    {
+     "oid": "IDkBOLg",
+     "kind": "MacBook",
+     "gen": "M4",
+     "ram": 48,
+     "city": "București",
+     "ron": 11900
+    },
+    {
+     "oid": "IDkFDCP",
+     "kind": "MacBook",
+     "gen": "M5",
+     "ram": 36,
+     "city": "Timișoara",
+     "ron": 18000
+    },
+    {
+     "oid": "IDkGKS7",
+     "kind": "MacBook",
+     "gen": "M4",
+     "ram": 48,
+     "city": "Vlădești",
+     "ron": 16000
+    },
+    {
+     "oid": "IDkIWsb",
+     "kind": "MacBook",
+     "gen": "M4",
+     "ram": 36,
+     "city": "Cluj-Napoca",
+     "ron": 13500
+    },
+    {
+     "oid": "IDkIlwt",
+     "kind": "MacBook",
+     "gen": "M5",
+     "ram": 128,
+     "city": "București",
+     "ron": 36450
+    },
+    {
+     "oid": "IDkJ7wQ",
+     "kind": "MacBook",
+     "gen": "M3",
+     "ram": 36,
+     "city": "Arad",
+     "ron": 8450
+    },
+    {
+     "oid": "IDkJb5k",
+     "kind": "Mac mini",
+     "gen": "M4",
+     "ram": 24,
+     "city": "București",
+     "ron": 7200
+    },
+    {
+     "oid": "IDkLfAE",
+     "kind": "MacBook",
+     "gen": "M3",
+     "ram": 36,
+     "city": "Cluj-Napoca",
+     "ron": 9500
+    },
+    {
+     "oid": "IDkNcLa",
+     "kind": "MacBook",
+     "gen": "M5",
+     "ram": 48,
+     "city": "București",
+     "ron": 16000
+    },
+    {
+     "oid": "IDkO1FQ",
+     "kind": "Mac mini",
+     "gen": "M4",
+     "ram": 24,
+     "city": "Piatra Neamț",
+     "ron": 8500
+    },
+    {
+     "oid": "IDkOKCo",
+     "kind": "MacBook",
+     "gen": "M4",
+     "ram": 48,
+     "city": "Sibiu",
+     "ron": 12200
+    },
+    {
+     "oid": "IDkOYZJ",
+     "kind": "MacBook",
+     "gen": "M5",
+     "ram": 64,
+     "city": "București",
+     "ron": 29999
+    },
+    {
+     "oid": "IDkOr5M",
+     "kind": "Mac mini",
+     "gen": "M4",
+     "ram": 24,
+     "city": "București",
+     "ron": 7390
+    },
+    {
+     "oid": "IDkPAk7",
+     "kind": "MacBook",
+     "gen": "M5",
+     "ram": 128,
+     "city": "București",
+     "ron": 31499
+    },
+    {
+     "oid": "IDkQc9l",
+     "kind": "MacBook",
+     "gen": "M4",
+     "ram": 48,
+     "city": "Ramnicu Valcea",
+     "ron": 10790
+    },
+    {
+     "oid": "IDkRBxx",
+     "kind": "MacBook",
+     "gen": "M5",
+     "ram": 64,
+     "city": "București",
+     "ron": 18999
+    },
+    {
+     "oid": "IDkRcxn",
+     "kind": "MacBook",
+     "gen": "M3",
+     "ram": 36,
+     "city": "București",
+     "ron": 7850
+    },
+    {
+     "oid": "IDkRnrm",
+     "kind": "MacBook",
+     "gen": "M4",
+     "ram": 128,
+     "city": "București",
+     "ron": 31000
+    },
+    {
+     "oid": "IDkRtNF",
+     "kind": "Mac mini",
+     "gen": "M4",
+     "ram": 24,
+     "city": "București",
+     "ron": 7200
+    },
+    {
+     "oid": "IDkRzSo",
+     "kind": "Mac mini",
+     "gen": "M4",
+     "ram": 24,
+     "city": "Iasi",
+     "ron": 4900
+    },
+    {
+     "oid": "IDkdEZm",
+     "kind": "MacBook",
+     "gen": "M4",
+     "ram": 48,
+     "city": "București",
+     "ron": 11050
+    },
+    {
+     "oid": "IDktkfE",
+     "kind": "MacBook",
+     "gen": "M3",
+     "ram": 36,
+     "city": "Chiajna",
+     "ron": 14179
+    },
+    {
+     "oid": "IDkztQ5",
+     "kind": "MacBook",
+     "gen": "M5",
+     "ram": 128,
+     "city": "București",
+     "ron": 41890
+    }
+   ]
   }
  ],
  "summary": {
   "total": 60,
-  "available": 30,
-  "sold": 30,
-  "fresh": 6,
+  "available": 27,
+  "sold": 33,
+  "fresh": 0,
   "min": 4900,
   "max": 41890,
   "cities": 22,
   "eur_ron": 5.2515,
   "eur_ron_source": "ECB",
-  "checked": "20 Aug 2026",
-  "prev": "14 Aug 2026",
+  "checked": "21 Aug 2026",
+  "prev": "20 Aug 2026",
   "built": "25 Jul 2026",
-  "undated": 6,
-  "sold_since": 4,
+  "undated": 5,
+  "sold_since": 3,
   "by_gen": {
    "M3": 17,
    "M4": 30,
@@ -2914,9 +3135,9 @@ window.OLMACS_DATA = {
    "Șcheia": 1
   },
   "by_status": {
-   "available": 30,
-   "gone": 30,
-   "new": 6
+   "available": 27,
+   "gone": 33,
+   "new": 0
   }
  }
 };

@@ -30,13 +30,17 @@ go run ./cmd/olmacs sweep            # write data/listings.js
 git diff data/ && git commit -am "sweep" && git push
 ```
 
-A sweep does two passes:
+A sweep does three passes:
 
 1. **Re-check** every listing already on the page by id. `410` means gone. A listing
    that is still up but no longer describes a qualifying machine is marked gone with
-   reason `reused` — sellers recycle ad slots.
+   reason `reused` — sellers recycle ad slots. Rows entered before the sweeper existed
+   have no numeric id, so they are checked by fetching the ad URL instead — see below.
 2. **Discover** new machines across a dozen search angles, because OLX matches all
    terms and no single query surfaces everything.
+3. **Re-check the rows that just adopted an id.** Search is the only place a numeric
+   id appears, so pass 2 is the one chance to give a pre-sweeper row a full check;
+   doing it in the same run means it never publishes a price nobody has verified.
 
 Nothing is ever deleted. A listing that goes is kept and struck through so the price
 history stays readable.
@@ -64,6 +68,28 @@ a static binary with no Chrome, no Playwright, no proxy and no TLS impersonation
 
 An earlier version of this file blamed curl's TLS fingerprint. That was wrong, and it
 mattered: it pointed at the wrong layer when the block later widened to Go as well.
+
+### Rows with no id were never actually checked
+
+Eleven rows predated the sweeper and carried `"id": 0`. Pass 1 skipped them with
+`nothing to ask about` — but the card prints "Still listed · checked <date>" from the
+sweep stamp, which is global. So the page asserted that eleven listings had been
+confirmed still for sale when not one had been looked at since it was typed in.
+
+It surfaced the way these things do: someone opened IDkOKjN from the page and got a
+410. It had been dead for a day, still shown as available at 10 000 lei and still
+described by its curated note as the cheapest 48 GB machine on the page.
+
+They are now checked by fetching the ad URL (`olx.AliveAtURL`), which answers exactly
+the question the stamp claims — is the ad still up. The listing page carries neither
+the offer id nor fields the classifier can use, so that check confirms presence and
+nothing more; the id is adopted from search in pass 2 and pass 3 does the rest.
+
+Of the eleven: three were gone, and five of the remaining eight were carrying a price
+that no longer matched OLX. Those are reported as **corrected**, not repriced. The
+figure on the row had never been held against OLX, so a difference is this page having
+been wrong rather than the seller moving, and filing it as a reprice would corrupt the
+one number the charts lean on.
 
 ### A blocked sweep is not a quiet market
 
@@ -127,6 +153,11 @@ Stated on the page too, collected here:
   a reused ad slot carries a date from before the machine existed and is excluded.
 - **Survivorship.** The strip only describes ads still up at a sweep. Anything listed
   and sold between two sweeps never enters it.
+- **The sweeps before 21 Aug 2026 carry some unverified prices.** The eleven hand-entered
+  rows were not re-checked until then, so their figures in `sweeps[].offer[].ron` are
+  whatever was typed in when they were added. Five turned out to be stale by 109–1 000
+  lei. What the price actually was on those earlier dates is not recoverable, so the
+  history is left as it was recorded rather than back-filled with a guess.
 - **The euro rate has two possible sources.** BNR is tried first, ECB stands in. They
   differ in the fourth decimal, so the page names whichever was actually used rather
   than claiming a number it did not use. **Since 14 Aug 2026 that is always ECB:**

@@ -131,36 +131,40 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 		known[d.Minis[i].OID] = &d.Minis[i]
 	}
 
-	var wentAway, repriced, added, skipped []string
+	var wentAway, repriced, corrected, added, skipped, adopted []string
+	var healed []*site.Listing
 	var reach reachability
 
-	// pass 1 — is what we already show still for sale?
-	fmt.Fprintf(os.Stderr, "re-checking %d known listings…\n", len(known))
-	for oid, l := range known {
-		if l.Status == "gone" {
-			continue
-		}
-		if l.ID == 0 { // legacy row with no numeric id; nothing to ask about
-			continue
-		}
+	// byID is the full re-check: it can retire a slot the seller has recycled and
+	// notice a price change, both of which need the offer itself. It is a closure
+	// because it runs twice — once over everything with an id, and again over the
+	// rows that adopt one during discovery, so a row is never left carrying a
+	// price from before it had an id.
+	// verified says whether the price already on the row was itself confirmed at
+	// the previous sweep. It is false the first time a pre-sweeper row can be
+	// checked: the figure it carries was typed in by hand and never held against
+	// OLX, so a difference is this page having been wrong, not the seller moving.
+	// Filed as a reprice it would corrupt the one number the charts lean on —
+	// "N listings changed their own asking price between the last two sweeps".
+	byID := func(oid string, l *site.Listing, verified bool) {
 		reach.recheckTried++
 		alive, offer, err := c.Alive(l.ID)
 		if err != nil {
 			reach.recheckFailed++
 			fmt.Fprintf(os.Stderr, "  ! %s: %v (left as-is)\n", oid, err)
-			continue
+			return
 		}
 		if !alive {
 			l.Status, l.FacetStatus, l.GoneReason = "gone", "gone", "sold"
 			wentAway = append(wentAway, fmt.Sprintf("%s  %s", oid, trim(l.Title, 52)))
-			continue
+			return
 		}
 		// Still up, but is it still the same machine? Sellers reuse ad slots.
 		if note, isReused := reused(l, *offer); isReused {
 			l.Status, l.FacetStatus, l.GoneReason = "gone", "gone", "reused"
 			l.Note = note
 			wentAway = append(wentAway, fmt.Sprintf("%s  reused → %s", oid, trim(offer.Title, 40)))
-			continue
+			return
 		}
 		l.Status, l.FacetStatus = "live", "available"
 		l.Title = offer.Title // the seller may have retitled without changing the machine
@@ -168,11 +172,17 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 		// ad shifts by a few lei whenever the reference rate moves, and reporting
 		// that as the seller changing their mind would be wrong.
 		beforePrice, beforeRON := l.Price, l.RON
-		if applyOffer(l, *offer, rate) && l.Price != beforePrice {
+		moved := applyOffer(l, *offer, rate) && l.Price != beforePrice
+		switch {
+		case moved && !verified:
+			l.PriceWas = 0
+			corrected = append(corrected, fmt.Sprintf("%s  %d → %d lei (the page was wrong, not the seller)",
+				oid, beforeRON, l.RON))
+		case moved:
 			l.PriceWas = beforePrice
 			repriced = append(repriced, fmt.Sprintf("%s  %.0f → %.0f %s (%d → %d lei)",
 				oid, beforePrice, l.Price, l.Currency, beforeRON, l.RON))
-		} else {
+		default:
 			// PriceWas means "changed at the most recent sweep", which is what both
 			// the card's "was …" line and the count under the price charts claim.
 			// Left uncleared it accumulates, so a listing repriced once in July still
@@ -181,6 +191,41 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 			// sweeps[].offer[].ron, so nothing is lost by clearing it.
 			l.PriceWas = 0
 		}
+	}
+
+	// pass 1 — is what we already show still for sale?
+	fmt.Fprintf(os.Stderr, "re-checking %d known listings…\n", len(known))
+	for oid, l := range known {
+		if l.Status == "gone" {
+			continue
+		}
+		if l.ID == 0 {
+			// A row entered before the sweeper existed has no numeric id, so the
+			// offer API cannot be asked about it. Skipping it silently was worse
+			// than it sounds: the card still prints "checked <date>" from the
+			// sweep stamp, so the page claimed eleven listings had been confirmed
+			// still for sale when not one of them had been looked at since it was
+			// typed in. IDkOKjN answered 410 for a day while the page showed it
+			// available at 10 000 lei and called it the cheapest 48 GB machine.
+			//
+			// The URL check answers only whether the ad is still up. That is the
+			// claim the stamp makes, so it is enough to make the stamp true; the
+			// discovery pass below adopts a numeric id when a search turns one up,
+			// after which the row gets the full re-check like any other.
+			reach.recheckTried++
+			alive, err := c.AliveAtURL(l.URL)
+			if err != nil {
+				reach.recheckFailed++
+				fmt.Fprintf(os.Stderr, "  ! %s: %v (left as-is)\n", oid, err)
+				continue
+			}
+			if !alive {
+				l.Status, l.FacetStatus, l.GoneReason = "gone", "gone", "sold"
+				wentAway = append(wentAway, fmt.Sprintf("%s  %s", oid, trim(l.Title, 52)))
+			}
+			continue
+		}
+		byID(oid, l, true)
 	}
 
 	// pass 2 — anything new?
@@ -200,7 +245,15 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 				continue
 			}
 			seen[oid] = true
-			if _, ok := known[oid]; ok {
+			if k, ok := known[oid]; ok {
+				// Heal a row that predates the sweeper. Search is the only place
+				// the numeric id turns up — the listing page does not carry it —
+				// so this is the one chance to give the row a full re-check.
+				if k.ID == 0 && o.ID != 0 {
+					k.ID = o.ID
+					healed = append(healed, k)
+					adopted = append(adopted, fmt.Sprintf("%s  id %d", oid, o.ID))
+				}
 				continue
 			}
 			m, err := mac.Classify(o.Title, o.Description)
@@ -251,6 +304,28 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 		}
 	}
 
+	// pass 3 — the rows that just got an id. They were confirmed present in pass 1
+	// and nothing more, so their price is still whatever was typed in when they
+	// were added. Now that the offer API can be asked about them, ask, rather than
+	// publishing a stale figure under today's date and waiting for the next sweep.
+	if len(healed) > 0 {
+		fmt.Fprintf(os.Stderr, "re-checking %d listing(s) that just adopted an id…\n", len(healed))
+		for _, l := range healed {
+			byID(l.OID, l, false)
+		}
+	}
+
+	// Curated notes are merged in below and rendered verbatim. Nothing re-derives
+	// them, so a note that ranks its listing has to be re-read by a person against
+	// the sweep that just ran — the alternative is the page keeping a claim that
+	// stopped being true at some sweep nobody connected it to.
+	var ranking []string
+	for oid, note := range notes {
+		if ranksItsListing(note) {
+			ranking = append(ranking, fmt.Sprintf("%s  %s", oid, trim(note, 76)))
+		}
+	}
+
 	// A sweep is a claim about the market on a given day, so it may only be
 	// recorded if OLX actually answered. Bail before anything is mutated.
 	if err := reach.check(); err != nil {
@@ -267,7 +342,7 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 	d.AppendSweep(display, iso)
 	d.Recompute(display, prev, rate, rateSource) // sold_since needs the sweep in place
 
-	report(d, wentAway, repriced, added, skipped, rate, rateSource)
+	report(d, wentAway, repriced, corrected, added, skipped, adopted, ranking, rate, rateSource)
 	if dryRun {
 		fmt.Fprintln(os.Stderr, "\ndry run — nothing written")
 		return nil
@@ -277,6 +352,22 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 	}
 	fmt.Fprintf(os.Stderr, "\nwrote %s\n", dataPath)
 	return nil
+}
+
+// reRanking matches a curated note that ranks its listing against the others.
+//
+// Deliberately narrow. "only" and "left" on their own catch "Handover in Brașov
+// only" and "12 months of warranty left", and a block that cries wolf gets
+// skimmed — which is how a false claim survives to publication in the first place.
+var reRanking = regexp.MustCompile(`(?i)\b(cheapest|dearest|priciest|most expensive|` +
+	`least expensive|lowest|highest|weakest|strongest|ties the|tied with|only .{0,30}?` +
+	`(machine|listing|mini|macbook|studio)\b.{0,20}?(left|here|on the page))`)
+
+// ranksItsListing reports whether a note stakes a claim about where its listing
+// sits among the others. Those claims are true when written and false the moment
+// the market moves, and nothing re-derives them — see the sweep report.
+func ranksItsListing(note string) bool {
+	return reRanking.MatchString(note)
 }
 
 // bucketNote reports what OLX's own memory field says, when it says anything.
@@ -416,7 +507,7 @@ func applyNotes(d *site.Dataset, notes map[string]string) {
 	}
 }
 
-func report(d *site.Dataset, gone, repriced, added, skipped []string, rate float64, source string) {
+func report(d *site.Dataset, gone, repriced, corrected, added, skipped, adopted, ranking []string, rate float64, source string) {
 	block := func(title string, xs []string) {
 		if len(xs) == 0 {
 			return
@@ -430,7 +521,10 @@ func report(d *site.Dataset, gone, repriced, added, skipped []string, rate float
 	block("GONE since last sweep", gone)
 	block("NEW", added)
 	block("PRICE CHANGED", repriced)
+	block("PRICE CORRECTED — first sweep that could check this row", corrected)
 	block("SKIPPED — a Mac, but could not read the memory", skipped)
+	block("ID ADOPTED — a pre-sweeper row that can now be re-checked in full", adopted)
+	block("NOTES THAT RANK THEIR LISTING — re-read these against today's data", ranking)
 	fmt.Fprintf(os.Stderr, "\n%d listings · %d on offer · %d gone · EUR %.4f (%s)\n",
 		d.Summary.Total, d.Summary.Available, d.Summary.Sold, rate, source)
 }

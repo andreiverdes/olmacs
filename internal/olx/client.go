@@ -16,6 +16,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 )
 
@@ -172,6 +173,45 @@ func (c *Client) Search(query string, limit int) ([]Offer, error) {
 		return nil, fmt.Errorf("search %q: %w", query, err)
 	}
 	return page.Data, nil
+}
+
+// AliveAtURL reports whether the ad at a listing URL is still up. It exists for
+// rows that predate the sweeper and carry no numeric id, which the offer API
+// cannot be asked about at all.
+//
+// It is a weaker check than Alive and deliberately answers only one question.
+// The listing page does not expose the offer id or any field the classifier can
+// use, so a row confirmed this way is confirmed present and nothing more: its
+// price and specs are whatever they were. The alternative — skipping those rows
+// — is worse, because the page then prints "checked <date>" over a listing
+// nobody looked at.
+func (c *Client) AliveAtURL(pageURL string) (bool, error) {
+	req, err := http.NewRequest(http.MethodGet, pageURL, nil)
+	if err != nil {
+		return false, err
+	}
+	req.Header.Set("User-Agent", userAgent)
+	req.Header.Set("Accept", "text/html,application/xhtml+xml")
+	req.Header.Set("Accept-Language", "ro-RO,ro;q=0.9,en;q=0.8")
+
+	resp, err := c.http.Do(req)
+	if err != nil {
+		return false, err
+	}
+	io.Copy(io.Discard, io.LimitReader(resp.Body, 1<<16))
+	resp.Body.Close()
+	time.Sleep(c.pause)
+
+	switch resp.StatusCode {
+	case http.StatusGone, http.StatusNotFound:
+		return false, nil
+	case http.StatusOK:
+		// A 200 that arrived somewhere other than an offer page is a redirect to
+		// the homepage or a search, which is the site saying the ad is not there.
+		// Read as-is it would be the one failure mode that looks like success.
+		return strings.Contains(resp.Request.URL.Path, "/d/oferta/"), nil
+	}
+	return false, fmt.Errorf("olx: HTTP %d for %s", resp.StatusCode, pageURL)
 }
 
 // Alive reports whether an offer still exists. A 410 or 404 means gone, and is

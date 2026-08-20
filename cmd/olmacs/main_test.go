@@ -123,3 +123,42 @@ func TestReachabilityCheck(t *testing.T) {
 		})
 	}
 }
+
+// Curated notes are the only prose on the page that is not re-derived at render
+// time, so they are the only prose that can go false while the page keeps
+// publishing it. Four did in two days: "Cheapest machine on the page" after a
+// 4 900 lei mini arrived, "Ties the cheapest 36 GB machines here" after two
+// cheaper ones did, "Cheapest 48 GB machine on the page" after that listing was
+// removed, and "Only 64 GB machine left" after a second 64 GB machine appeared.
+// Each was a ranking, and a ranking is exactly the kind of claim a sweep can
+// falsify — so a note that makes one is worth re-reading every sweep.
+func TestRanksItsListing(t *testing.T) {
+	ranks := []string{
+		"Cheapest machine on the page now that the 4 500 lei minis are gone.",
+		"Ties the cheapest 36 GB machines here.",
+		"Cheapest 48 GB machine on the page.",
+		"Only 64 GB machine left after the Alienstore ad went.",
+		"The most expensive 24 GB mini listed here.",
+		"Base M4, 10-core, 256 GB — the weakest build host of the minis.",
+	}
+	for _, s := range ranks {
+		if !ranksItsListing(s) {
+			t.Errorf("ranksItsListing(%q) = false, want true", s)
+		}
+	}
+	// These state facts about the machine. Flagging them would train the reader
+	// to skim the block, which costs more than it catches.
+	plain := []string{
+		"19 battery cycles, Space Black, full box. In-person handover preferred, no trades.",
+		"Battery health 92%, 12–13 months of warranty left. Handover in Brașov only, no courier.",
+		"Two small scratches, battery health 97%. Handover in Sibiu only, no courier.",
+		"24 GB is assumed from the base M4 Pro mini config, not stated. Confirm before buying.",
+		"Title says “M4 Pro Max”; the description specifies M4 Max, 14-core CPU / 32-core GPU.",
+		"DeluxGSM reused this ad: it now advertises an M2 Pro 16GB Silver at 9 000 lei.",
+	}
+	for _, s := range plain {
+		if ranksItsListing(s) {
+			t.Errorf("ranksItsListing(%q) = true, want false", s)
+		}
+	}
+}
