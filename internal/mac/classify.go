@@ -148,15 +148,28 @@ func Classify(title, desc string) (Machine, error) {
 // InferFromBucket is the deliberate fallback for a listing whose seller never
 // wrote the memory down. It only ever returns the smallest size the OLX bucket
 // allows, and the caller must surface it as unstated.
+//
+// The bucket is a range, and only the open-ended one can hold a machine this
+// project tracks: OLX's other values are closed ranges topping out at 16 GB, so
+// a listing carrying one states a machine below the floor rather than an
+// unstated large one. Matching on "16" alone read "12 - 16 GB" as "> 16 GB" and
+// would have published a 16 GB mini as a 24 GB machine.
+//
+// A boundary this does not recognise returns false, which sends the listing to
+// the skipped report — visible, rather than guessed at.
 func InferFromBucket(bucketLabel string, kind Kind) (gb int, evidence string, ok bool) {
-	b := strings.ToLower(bucketLabel)
-	switch {
-	case strings.Contains(b, "16"): // "> 16 GB" — the smallest Apple config above it
-		if kind == KindMini {
-			return 24, fmt.Sprintf("RAM field reads %q — the seller never states the exact size", bucketLabel), true
-		}
+	if kind != KindMini {
+		return 0, "", false
 	}
-	return 0, "", false
+	if bucket(bucketLabel) != ">16gb" {
+		return 0, "", false
+	}
+	return 24, fmt.Sprintf("RAM field reads %q — the seller never states the exact size", bucketLabel), true
+}
+
+// bucket normalises an OLX select label so spacing is not treated as meaning.
+func bucket(label string) string {
+	return strings.ToLower(strings.Join(strings.Fields(label), ""))
 }
 
 // subject is the opening of a title, where Romanian ads put what they are selling.

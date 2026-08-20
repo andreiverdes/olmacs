@@ -86,6 +86,14 @@ Where a seller never states it, the listing is **not** silently guessed at: it i
 skipped and reported, or (for minis) filled from the smallest size the OLX bucket allows
 and flagged `ram_stated: false`, which renders a "config unstated" badge on the card.
 
+Only OLX's open-ended bucket (`> 16 GB`) can be filled that way. Its other values are
+closed ranges — `12 - 16 GB` and below — so a listing carrying one is a machine under the
+floor, not an unstated large one, and it belongs in the skipped report. Matching on the
+number alone read `12 - 16 GB` as "above 16" and would have published a 16 GB mini as a
+24 GB machine at 4 000 lei, under every real 24 GB mini on the page. The skipped report
+therefore prints the bucket, so a listing OLX itself places below the floor is not
+mistaken for a gap in the classifier.
+
 `internal/mac/classify_test.go` holds real listings the classifier has to get right.
 **When it gets something wrong in the wild, add that listing to the test first.**
 

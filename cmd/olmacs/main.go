@@ -207,11 +207,16 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 			if err != nil {
 				if _, isReject := err.(mac.Reject); !isReject {
 					// a Mac whose memory the seller never wrote down
-					if gb, ev, ok := mac.InferFromBucket(
-						o.SelectParam("capacitate_memorie_ram"), m.Kind); ok {
+					bucket := o.SelectParam("capacitate_memorie_ram")
+					if gb, ev, ok := mac.InferFromBucket(bucket, m.Kind); ok {
 						m.RAM, m.RAMEvidence, m.RAMStated = gb, ev, false
 					} else {
-						skipped = append(skipped, fmt.Sprintf("%s  %s (%v)", oid, trim(o.Title, 44), err))
+						// The bucket is carried into the report: it is the difference
+						// between a machine the classifier could not read and one OLX
+						// already places below the floor, and the skipped list is only
+						// useful if a real gap stands out from the second kind.
+						skipped = append(skipped, fmt.Sprintf("%s  %s (%v%s)",
+							oid, trim(o.Title, 44), err, bucketNote(bucket)))
 						continue
 					}
 				} else {
@@ -272,6 +277,14 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 	}
 	fmt.Fprintf(os.Stderr, "\nwrote %s\n", dataPath)
 	return nil
+}
+
+// bucketNote reports what OLX's own memory field says, when it says anything.
+func bucketNote(bucket string) string {
+	if bucket == "" {
+		return ""
+	}
+	return fmt.Sprintf("; OLX RAM field: %s", bucket)
 }
 
 // reused reports whether an ad slot has stopped advertising the machine this page

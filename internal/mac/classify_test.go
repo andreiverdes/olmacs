@@ -144,3 +144,25 @@ func TestLargeSizesNeedMemoryWords(t *testing.T) {
 		t.Errorf("Classify = (%d, %v), want 512 GB — Romanian memory words count too", m.RAM, err)
 	}
 }
+
+// Only OLX's open-ended bucket can hold a machine this project tracks. The
+// others are closed ranges topping out at 16 GB, and reading one of those as
+// "above 16" published IDjXsTM — "Mac mini M4 16GB/512 SSD", bucket
+// "12 - 16 GB" — as a 24 GB machine at 4 000 lei, under every real 24 GB mini
+// on the page.
+func TestInferFromBucketRejectsClosedRanges(t *testing.T) {
+	for _, bucket := range []string{"12 - 16 GB", "8 - 12 GB", "4 - 6 GB", "< 4 GB", ""} {
+		if gb, _, ok := InferFromBucket(bucket, KindMini); ok {
+			t.Errorf("InferFromBucket(%q) = (%d, true), want false — the bucket "+
+				"tops out below the 24 GB floor", bucket, gb)
+		}
+	}
+	if gb, _, ok := InferFromBucket(">16GB", KindMini); !ok || gb != 24 {
+		t.Errorf("InferFromBucket(\">16GB\") = (%d, %v), want (24, true) — "+
+			"spacing in the label is not meaning", gb, ok)
+	}
+	if gb, _, ok := InferFromBucket("> 16 GB", KindMacBook); ok {
+		t.Errorf("InferFromBucket(…, MacBook) = (%d, true), want false — only "+
+			"minis have a config the bucket pins down", gb)
+	}
+}
