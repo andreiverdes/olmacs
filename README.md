@@ -149,8 +149,12 @@ Stated on the page too, collected here:
   ads leaving and arriving — not sellers repricing. The page counts and says so.
 - **Small cells.** Some memory tiers are a single listing. Every chart shows `n` on
   both sides of a comparison for that reason.
-- **The posting-date strip only covers ads with a usable date.** Some never expose one;
-  a reused ad slot carries a date from before the machine existed and is excluded.
+- **The posting-date strip only covers ads with a usable date.** Some never expose one.
+  The rest are checked against the day Apple first sold a Mac of that generation
+  (`GEN_FLOOR` in `index.html`): a slot opened before then cannot be when the machine
+  was posted, so it is a reused slot and the strip leaves it out. One blanket 2023
+  cutoff used to do this and was too loose — an M4 Pro in a slot opened May 2024, five
+  months before any M4 Mac was on sale, went straight through it.
 - **Survivorship.** The strip only describes ads still up at a sweep. Anything listed
   and sold between two sweeps never enters it.
 - **The sweeps before 21 Aug 2026 carry some unverified prices.** The eleven hand-entered

@@ -822,7 +822,27 @@ function paintMix(id, dim, order, dimLabel) {
 
 // ---------- posting-date strip ----------
 const DAY = 864e5;
-const AGED = ALL.filter(i => i.status !== "gone" && i.created && i.created >= "2023-01-01");
+
+// The date OLX reports is the ad SLOT's, not the machine's, and sellers reuse
+// slots. A slot opened before the chip inside the machine was on sale cannot be
+// when this machine was posted, so its date is not a fact about this market and
+// the strip leaves it out.
+//
+// The floors are the day Apple first sold a Mac with that generation, which is
+// the earliest the ad could honestly be: M3 Macs 30 Oct 2023, M4 Macs 30 Oct
+// 2024, M5 Macs Oct 2025 (dated to the 1st, since only the month is certain
+// here). A generation floor, not a variant one — the base chip always lands
+// first, so this excludes only what is certainly impossible and never guesses a
+// Pro or Max ship date.
+//
+// One blanket cutoff of 2023-01-01 used to do this job and was too loose:
+// IDikeuZ, an M4 Pro, sits in a slot opened 27 May 2024 — five months before any
+// M4 Mac was on sale — and would have plotted there, dragging the oldest ad and
+// the median age of both M4 and 48 GB with it.
+const GEN_FLOOR = { M3: "2023-10-30", M4: "2024-10-28", M5: "2025-10-01" };
+const slotPredatesChip = i =>
+  !i.created || i.created < (GEN_FLOOR[i.gen] || "2023-01-01");
+const AGED = ALL.filter(i => i.status !== "gone" && !slotPredatesChip(i));
 const t0 = Math.min(...AGED.map(i => Date.parse(i.created)));
 const t1 = Date.parse(DATA.sweeps[DATA.sweeps.length - 1].iso);
 const tpos = iso => (Date.parse(iso) - t0) / (t1 - t0) * 100;
@@ -907,11 +927,11 @@ function paintAge() {
   // Both exclusion reasons are counted, never asserted: a sweep changes them.
   const onOffer = ALL.filter(i => i.status !== "gone");
   const noDate = onOffer.filter(i => !i.created).length;
-  const staleSlot = onOffer.filter(i => i.created && i.created < "2023-01-01").length;
+  const staleSlot = onOffer.filter(i => i.created && slotPredatesChip(i)).length;
   const why = [
     noDate ? `${noDate} never exposed one` : "",
-    staleSlot ? `${staleSlot} sit${staleSlot === 1 ? "s" : ""} in an ad slot opened years ` +
-                `before the machine existed, so the date is the slot's and not the listing's` : "",
+    staleSlot ? `${staleSlot} sit${staleSlot === 1 ? "s" : ""} in an ad slot opened before ` +
+                `Apple sold that chip, so the date is the slot's and not the listing's` : "",
   ].filter(Boolean).join(" and ");
   document.getElementById("agesub").textContent =
     `One dot per ad, placed on the day it was posted. ${kept.length} of ${onOffer.length} ` +
