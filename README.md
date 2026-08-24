@@ -91,6 +91,20 @@ figure on the row had never been held against OLX, so a difference is this page 
 been wrong rather than the seller moving, and filing it as a reprice would corrupt the
 one number the charts lean on.
 
+### Sweeping the same day twice
+
+A second run on an already-swept day replaces that day's sweep rather than adding one,
+so the baseline it compares against has to be the last sweep on a *different* day. Read
+off `Summary.Checked` it was today's own sweep, and the header said "0 added since 24
+Aug 2026" on 24 August.
+
+Freshness follows the same baseline: "new" means first seen since the previous sweep,
+not first seen today. The two are the same on a normal run and come apart on a re-run,
+where the re-check pass confirms the morning's arrivals and flattens them to `live` —
+so the day's arrivals lost their badge and the header reported that nothing came in.
+Both now derive from the previous sweep's date, and `markFresh` sets the split once at
+the end rather than during the passes.
+
 ### A blocked sweep is not a quiet market
 
 If OLX stops answering, pass 1 leaves every listing exactly as it was and pass 2 finds
@@ -122,6 +136,21 @@ mistaken for a gap in the classifier.
 
 `internal/mac/classify_test.go` holds real listings the classifier has to get right.
 **When it gets something wrong in the wild, add that listing to the test first.**
+
+### An ad that names two machines is reported, not resolved
+
+The title wins when the classifier reads a chip, which is right until the body
+disagrees with it. IDkSiRI was titled "Macbook Pro M5 Max 16’ 36GB 1TB" over a body
+opening "Vând MacBook Pro M4 Max 16”, 36GB RAM, 1TB stocare" — one machine, named as
+two. Taken from the title it would have gone on the page as a 15 000 lei M5 Max: below
+the other M5 Max 36 GB at 17 499, above the M4 Max 36 GB at 13 500, and counted in the
+M5 column of every chart.
+
+So the two have to agree. They disagree only when the body names exactly one
+generation and it is not the title's — ads that compare models name several and settle
+nothing, and most name none at all. The listing is then reported as `CONTRADICTORY` and
+left off the page, because resolving it means picking a side. Across the whole live
+search corpus this fires on one listing, and on none of the 62 already on the page.
 
 ### Underpriced listings are flagged, not hidden
 

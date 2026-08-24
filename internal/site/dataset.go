@@ -77,7 +77,6 @@ type Summary struct {
 	Checked      string         `json:"checked"`
 	Prev         string         `json:"prev"`
 	Built        string         `json:"built"`
-	Undated      int            `json:"undated"`
 	SoldSince    int            `json:"sold_since"`
 	ByGen        map[string]int `json:"by_gen"`
 	ByRAM        map[string]int `json:"by_ram"`
@@ -166,9 +165,6 @@ func (d *Dataset) Recompute(checked, prev string, eurRon float64, eurSource stri
 			}
 			if l.RON > maxRON {
 				maxRON = l.RON
-			}
-			if l.Created == "" || l.Created < "2023-01-01" {
-				s.Undated++
 			}
 		}
 	}

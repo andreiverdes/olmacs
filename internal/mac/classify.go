@@ -40,6 +40,14 @@ type Reject struct{ Reason string }
 
 func (r Reject) Error() string { return r.Reason }
 
+// Contradiction reports that the ad names two different machines — the title
+// one, the body another — so which is for sale cannot be read off the ad. It is
+// not a Reject: this is a Mac, and probably a qualifying one. It is reported
+// rather than resolved, because resolving it means picking a side.
+type Contradiction struct{ Reason string }
+
+func (c Contradiction) Error() string { return c.Reason }
+
 // Sizes Apple actually ships as unified memory. A number outside this set is
 // storage or noise, whatever the surrounding words claim.
 //
@@ -126,6 +134,22 @@ func Classify(title, desc string) (Machine, error) {
 		return m, Reject{"no M3, M4 or M5 chip named in the title"}
 	}
 	m.Gen = "M" + gen[1]
+
+	// The title and the body have to agree on the generation. IDkSiRI was titled
+	// "Macbook Pro M5 Max 16’ 36GB 1TB" over a body opening "Vând MacBook Pro M4
+	// Max 16”, 36GB RAM, 1TB stocare" — one machine, named as two. The title wins
+	// below, so the page would have carried a 15 000 lei M5 Max and counted it in
+	// the M5 column of every chart.
+	//
+	// Only a body naming exactly one generation counts. Ads that compare models
+	// ("mai rapid decat M4 Max") name several and settle nothing, and most name
+	// none at all.
+	if body := gensIn(strings.ToLower(stripHTML(desc))); len(body) == 1 && !body[m.Gen] {
+		return m, Contradiction{fmt.Sprintf(
+			"the title says %s but the description says %s — the ad names two "+
+				"different machines", m.Gen, only(body))}
+	}
+
 	// The variant is often only spelled out in the body ("procesor M4 PRO"),
 	// so fall back to it when the title just says "M4".
 	m.Chip = variant(t, m.Gen)
@@ -180,12 +204,22 @@ func subject(t string) string {
 	return t
 }
 
-func distinctGens(s string) int {
+func distinctGens(s string) int { return len(gensIn(s)) }
+
+// gensIn is the set of Apple silicon generations named in s, keyed "M3", "M4".
+func gensIn(s string) map[string]bool {
 	seen := map[string]bool{}
 	for _, mm := range reAnyGen.FindAllStringSubmatch(s, -1) {
-		seen[mm[1]] = true
+		seen["M"+mm[1]] = true
 	}
-	return len(seen)
+	return seen
+}
+
+func only(set map[string]bool) string {
+	for k := range set {
+		return k
+	}
+	return ""
 }
 
 func variant(s, gen string) string {

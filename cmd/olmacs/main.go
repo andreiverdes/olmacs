@@ -118,9 +118,14 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 	rate, rateSource := fetchEURRON(d.Summary.EURRON, d.Summary.EURRONSource)
 	now := time.Now()
 	iso, display := now.Format("2006-01-02"), formatDate(now)
-	prev := d.Summary.Checked
+	// The baseline this sweep is measured against. It has to be a different day:
+	// a second run on an already-swept day replaces that day's sweep rather than
+	// adding one, so reading Summary.Checked would compare today against itself
+	// and the header would say "0 added since 24 Aug 2026" on 24 August.
+	prevISO := previousSweepISO(d, iso)
+	prev := previousSweepDate(d, iso)
 	if prev == "" {
-		prev = display
+		prev, prevISO = display, iso
 	}
 
 	known := map[string]*site.Listing{}
@@ -131,7 +136,7 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 		known[d.Minis[i].OID] = &d.Minis[i]
 	}
 
-	var wentAway, repriced, corrected, added, skipped, adopted []string
+	var wentAway, repriced, corrected, added, skipped, adopted, contradictory []string
 	var healed []*site.Listing
 	var reach reachability
 
@@ -258,6 +263,14 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 			}
 			m, err := mac.Classify(o.Title, o.Description)
 			if err != nil {
+				// An ad that names two machines is reported, never resolved. The
+				// memory bucket cannot rescue it either: the question is not how
+				// much memory it has, it is which machine is for sale.
+				if c, isContradiction := err.(mac.Contradiction); isContradiction {
+					contradictory = append(contradictory,
+						fmt.Sprintf("%s  %s (%v)", oid, trim(o.Title, 44), c))
+					continue
+				}
 				if _, isReject := err.(mac.Reject); !isReject {
 					// a Mac whose memory the seller never wrote down
 					bucket := o.SelectParam("capacitate_memorie_ram")
@@ -333,7 +346,7 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 	}
 
 	// last sweep's arrivals are no longer new
-	demoteStale(d, iso)
+	markFresh(d, prevISO)
 	d.NormalizeCities()
 	flagUnderpriced(d)
 	applyNotes(d, notes) // a curated note always wins over a generated one
@@ -342,7 +355,7 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 	d.AppendSweep(display, iso)
 	d.Recompute(display, prev, rate, rateSource) // sold_since needs the sweep in place
 
-	report(d, wentAway, repriced, corrected, added, skipped, adopted, ranking, rate, rateSource)
+	report(d, wentAway, repriced, corrected, added, skipped, contradictory, adopted, ranking, rate, rateSource)
 	if dryRun {
 		fmt.Fprintln(os.Stderr, "\ndry run — nothing written")
 		return nil
@@ -448,10 +461,52 @@ func applyOffer(l *site.Listing, o olx.Offer, rate float64) bool {
 	return true
 }
 
-func demoteStale(d *site.Dataset, iso string) {
+// previousSweepDate returns the display date of the most recent sweep on a day
+// other than iso — the sweep this run is to be compared against. Empty when
+// there is no earlier one, which is the first run and has nothing to compare to.
+func previousSweepDate(d *site.Dataset, iso string) string {
+	if i := previousSweepIndex(d, iso); i >= 0 {
+		return d.Sweeps[i].Date
+	}
+	return ""
+}
+
+func previousSweepISO(d *site.Dataset, iso string) string {
+	if i := previousSweepIndex(d, iso); i >= 0 {
+		return d.Sweeps[i].ISO
+	}
+	return ""
+}
+
+func previousSweepIndex(d *site.Dataset, iso string) int {
+	for i := len(d.Sweeps) - 1; i >= 0; i-- {
+		if d.Sweeps[i].ISO != iso {
+			return i
+		}
+	}
+	return -1
+}
+
+// markFresh sets the new/live split from first_seen once both passes have run.
+//
+// It is one pass at the end rather than a decision made during the sweep,
+// because the re-check pass flattens everything it confirms to "live": a
+// listing found in the morning and confirmed in the evening would otherwise
+// lose its badge, and the header would report that nothing arrived on a day
+// something did.
+//
+// "New" means first seen since the previous sweep, not first seen today. Those
+// are the same thing on a normal run and come apart the moment a day is swept
+// twice.
+func markFresh(d *site.Dataset, prevISO string) {
 	for _, set := range [][]site.Listing{d.Main, d.Minis} {
 		for i := range set {
-			if set[i].Status == "new" && set[i].FirstSeen != "" && set[i].FirstSeen != iso {
+			if set[i].Status == "gone" {
+				continue
+			}
+			if set[i].FirstSeen != "" && set[i].FirstSeen > prevISO {
+				set[i].Status, set[i].FacetStatus = "new", "available,new"
+			} else {
 				set[i].Status, set[i].FacetStatus = "live", "available"
 			}
 		}
@@ -507,7 +562,7 @@ func applyNotes(d *site.Dataset, notes map[string]string) {
 	}
 }
 
-func report(d *site.Dataset, gone, repriced, corrected, added, skipped, adopted, ranking []string, rate float64, source string) {
+func report(d *site.Dataset, gone, repriced, corrected, added, skipped, contradictory, adopted, ranking []string, rate float64, source string) {
 	block := func(title string, xs []string) {
 		if len(xs) == 0 {
 			return
@@ -523,6 +578,7 @@ func report(d *site.Dataset, gone, repriced, corrected, added, skipped, adopted,
 	block("PRICE CHANGED", repriced)
 	block("PRICE CORRECTED — first sweep that could check this row", corrected)
 	block("SKIPPED — a Mac, but could not read the memory", skipped)
+	block("CONTRADICTORY — the title and the description name different machines", contradictory)
 	block("ID ADOPTED — a pre-sweeper row that can now be re-checked in full", adopted)
 	block("NOTES THAT RANK THEIR LISTING — re-read these against today's data", ranking)
 	fmt.Fprintf(os.Stderr, "\n%d listings · %d on offer · %d gone · EUR %.4f (%s)\n",

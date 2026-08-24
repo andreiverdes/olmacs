@@ -466,7 +466,7 @@ window.OLMACS_DATA = {
    "price": 2700,
    "price_label": "2 700 €",
    "currency": "EUR",
-   "ron": 14192,
+   "ron": 14176,
    "city": "Chiajna",
    "region": "Bucuresti - Ilfov",
    "business": false,
@@ -911,10 +911,11 @@ window.OLMACS_DATA = {
    "ram": 48,
    "ram_stated": true,
    "ram_evidence": "48 GB unified memory · 1 TB SSD · 14-core CPU / 20-core GPU · nano-texture (spec fields, not the title)",
-   "price": 12200,
-   "price_label": "12 200 lei",
+   "price": 9500,
+   "price_was": 12200,
+   "price_label": "9 500 lei",
    "currency": "RON",
-   "ron": 12200,
+   "ron": 9500,
    "city": "Sibiu",
    "region": "Sibiu",
    "business": false,
@@ -947,7 +948,7 @@ window.OLMACS_DATA = {
    "region": "Cluj",
    "business": false,
    "created": "",
-   "refreshed": "2026-08-21",
+   "refreshed": "2026-08-24",
    "desc": "",
    "below_threshold": false,
    "status": "live",
@@ -1034,9 +1035,9 @@ window.OLMACS_DATA = {
    "refreshed": "2026-07-25",
    "desc": "",
    "below_threshold": false,
-   "status": "live",
-   "facet_status": "available",
-   "gone_reason": "",
+   "status": "gone",
+   "facet_status": "gone",
+   "gone_reason": "sold",
    "note": "Sealed and unactivated, model Z1MH002WJ. Posted 25 Jul — it was already up at the last sweep and was missed, not newly listed.",
    "first_seen": "2026-08-07"
   },
@@ -1062,9 +1063,9 @@ window.OLMACS_DATA = {
    "refreshed": "2026-08-23",
    "desc": "",
    "below_threshold": false,
-   "status": "live",
-   "facet_status": "available",
-   "gone_reason": "",
+   "status": "gone",
+   "facet_status": "gone",
+   "gone_reason": "sold",
    "note": "DeluxGSM, sealed, 24-month warranty, unsealed and tested at handover. Fills the 36 GB M5 Max slot left by the 18 845 lei private ad that went.",
    "first_seen": "2026-08-07"
   },
@@ -1459,6 +1460,34 @@ window.OLMACS_DATA = {
    "gone_reason": "",
    "note": "",
    "first_seen": "2026-08-22"
+  },
+  {
+   "id": 308443987,
+   "oid": "IDkScn1",
+   "title": "MacBook Pro 16'' M5 Max 18/40, 64GB, 2TB SSD Silver INT",
+   "url": "https://www.olx.ro/d/oferta/macbook-pro-16-m5-max-18-40-64gb-2tb-ssd-silver-int-IDkScn1.html",
+   "kind": "MacBook",
+   "chip": "M5 Max",
+   "gen": "M5",
+   "ram": 64,
+   "ram_stated": true,
+   "ram_evidence": "MacBook Pro 16'' M5 Max cu 64GB RAM, 2TB SSD, culoare a",
+   "price": 27500,
+   "price_label": "27 500 lei",
+   "currency": "RON",
+   "ron": 27500,
+   "city": "București",
+   "region": "Bucuresti - Ilfov",
+   "business": false,
+   "created": "2026-08-24",
+   "refreshed": "2026-08-24",
+   "desc": "Pret fix, nu se vinde la acest pret, il pastrez. MacBook Pro 16'' M5 Max cu 64GB RAM, 2TB SSD, culoare argintie, procesor Apple M5 Max CPU18/GPU40, stare ca nouă.\u003cbr /\u003e\n\u003cbr /\u003e\nNu a iesit din casa, a fost folosit pe birou pentru o scurta perioada, este in garantie pana inclusiv Iulie 2027. Nu are urme de folosire.",
+   "below_threshold": false,
+   "status": "new",
+   "facet_status": "available,new",
+   "gone_reason": "",
+   "note": "",
+   "first_seen": "2026-08-24"
   }
  ],
  "minis": [
@@ -3379,14 +3408,6 @@ window.OLMACS_DATA = {
      "ron": 11900
     },
     {
-     "oid": "IDkFDCP",
-     "kind": "MacBook",
-     "gen": "M5",
-     "ram": 36,
-     "city": "Timișoara",
-     "ron": 18000
-    },
-    {
      "oid": "IDkIWsb",
      "kind": "MacBook",
      "gen": "M4",
@@ -3427,14 +3448,6 @@ window.OLMACS_DATA = {
      "ron": 9500
     },
     {
-     "oid": "IDkNcLa",
-     "kind": "MacBook",
-     "gen": "M5",
-     "ram": 48,
-     "city": "București",
-     "ron": 16000
-    },
-    {
      "oid": "IDkO1FQ",
      "kind": "Mac mini",
      "gen": "M4",
@@ -3448,7 +3461,7 @@ window.OLMACS_DATA = {
      "gen": "M4",
      "ram": 48,
      "city": "Sibiu",
-     "ron": 12200
+     "ron": 9500
     },
     {
      "oid": "IDkOYZJ",
@@ -3515,6 +3528,14 @@ window.OLMACS_DATA = {
      "ron": 4900
     },
     {
+     "oid": "IDkScn1",
+     "kind": "MacBook",
+     "gen": "M5",
+     "ram": 64,
+     "city": "București",
+     "ron": 27500
+    },
+    {
      "oid": "IDkdEZm",
      "kind": "MacBook",
      "gen": "M4",
@@ -3528,7 +3549,7 @@ window.OLMACS_DATA = {
      "gen": "M3",
      "ram": 36,
      "city": "Chiajna",
-     "ron": 14192
+     "ron": 14176
     },
     {
      "oid": "IDkztQ5",
@@ -3542,24 +3563,23 @@ window.OLMACS_DATA = {
   }
  ],
  "summary": {
-  "total": 61,
-  "available": 26,
-  "sold": 35,
-  "fresh": 0,
+  "total": 62,
+  "available": 25,
+  "sold": 37,
+  "fresh": 1,
   "min": 4900,
   "max": 41890,
   "cities": 22,
-  "eur_ron": 5.2563,
+  "eur_ron": 5.2504,
   "eur_ron_source": "ECB",
   "checked": "24 Aug 2026",
   "prev": "22 Aug 2026",
   "built": "25 Jul 2026",
-  "undated": 5,
-  "sold_since": 1,
+  "sold_since": 3,
   "by_gen": {
    "M3": 17,
    "M4": 31,
-   "M5": 13
+   "M5": 14
   },
   "by_ram": {
    "128": 6,
@@ -3567,18 +3587,18 @@ window.OLMACS_DATA = {
    "256": 1,
    "36": 24,
    "48": 17,
-   "64": 4
+   "64": 5
   },
   "by_kind": {
    "Mac Studio": 3,
    "Mac mini": 9,
-   "MacBook": 49
+   "MacBook": 50
   },
   "by_city": {
    "Arad": 2,
    "Botosani": 1,
    "Brașov": 1,
-   "București": 29,
+   "București": 30,
    "Buzău": 1,
    "Chiajna": 1,
    "Cluj-Napoca": 3,
@@ -3599,9 +3619,9 @@ window.OLMACS_DATA = {
    "Șcheia": 1
   },
   "by_status": {
-   "available": 26,
-   "gone": 35,
-   "new": 0
+   "available": 25,
+   "gone": 37,
+   "new": 1
   }
  }
 };

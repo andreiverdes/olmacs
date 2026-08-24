@@ -166,3 +166,35 @@ func TestInferFromBucketRejectsClosedRanges(t *testing.T) {
 			"minis have a config the bucket pins down", gb)
 	}
 }
+
+// An ad that names two different machines cannot be read as either. IDkSiRI was
+// titled "Macbook Pro M5 Max 16’ 36GB 1TB" over a body opening "Vând MacBook Pro
+// M4 Max 16”, 36GB RAM, 1TB stocare" — one machine, named as two. The title wins
+// in Classify, so the page would have carried a 15 000 lei M5 Max: below the
+// other M5 Max 36 GB at 17 499, above the M4 Max 36 GB at 13 500, and counted in
+// the M5 column of every chart.
+func TestTitleAndBodyMustAgreeOnGeneration(t *testing.T) {
+	_, err := Classify("Macbook Pro M5 Max 16’ 36GB 1TB",
+		`Vând MacBook Pro M4 Max 16”, 36GB RAM, 1TB stocare.<br /> Este în stare `+
+			`foarte bună, folosit în principal pentru editare video.`)
+	if _, ok := err.(Contradiction); !ok {
+		t.Fatalf("Classify err = %v (%T), want Contradiction", err, err)
+	}
+
+	// A body that names several generations is comparing models, and nothing
+	// follows from that — this is the shape of half the shop ads on OLX.
+	if _, err := Classify("Apple Macbook PRO 16” M5 MAX SiGiLAT ! 36GB 2TB",
+		"Configuratie DE TOP: cu procesor M5 MAX 36GB RAM. Mai rapid decat M4 Max si M3 Max."); err != nil {
+		t.Errorf("a body comparing models should not be a contradiction: %v", err)
+	}
+	// A body that names none is the common case and says nothing either way.
+	if m, err := Classify("MacBook Pro M4 Max 36GB RAM",
+		"Stare impecabila, cutie si factura. Predare in Cluj."); err != nil || m.Chip != "M4 Max" {
+		t.Errorf("Classify = (%q, %v), want M4 Max from the title alone", m.Chip, err)
+	}
+	// Agreement is the normal case and must stay silent.
+	if m, err := Classify("MacBook Pro M4 Max 36GB RAM",
+		"Vand MacBook Pro M4 Max, 36 GB RAM, 1TB SSD."); err != nil || m.Chip != "M4 Max" {
+		t.Errorf("Classify = (%q, %v), want M4 Max", m.Chip, err)
+	}
+}

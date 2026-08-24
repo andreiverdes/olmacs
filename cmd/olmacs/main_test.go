@@ -162,3 +162,57 @@ func TestRanksItsListing(t *testing.T) {
 		}
 	}
 }
+
+// A sweep is compared against the one before it, so its baseline has to be a
+// different day. Running twice in a day replaces that day's sweep rather than
+// adding one (site.AppendSweep), so reading the baseline off Summary.Checked
+// made the page compare today against itself — "0 added since 24 Aug 2026",
+// printed on 24 August.
+func TestPreviousSweepDate(t *testing.T) {
+	d := &site.Dataset{Sweeps: []site.Sweep{
+		{Date: "22 Aug 2026", ISO: "2026-08-22"},
+		{Date: "24 Aug 2026", ISO: "2026-08-24"},
+	}}
+	if got := previousSweepDate(d, "2026-08-24"); got != "22 Aug 2026" {
+		t.Errorf("re-run on a swept day = %q, want the day before it", got)
+	}
+	if got := previousSweepDate(d, "2026-08-25"); got != "24 Aug 2026" {
+		t.Errorf("a fresh day = %q, want the last sweep", got)
+	}
+	// Nothing to compare against on the very first sweep, and the caller
+	// substitutes today rather than printing an empty date.
+	if got := previousSweepDate(&site.Dataset{}, "2026-08-24"); got != "" {
+		t.Errorf("first ever sweep = %q, want empty", got)
+	}
+}
+
+// "New" has to mean "first seen since the previous sweep", not "first seen
+// today". They are the same on a normal run and differ the moment a day is
+// swept twice: the re-check pass flattens everything it confirms to "live", so
+// a listing found in the morning and confirmed in the evening lost its badge
+// and the header reported that nothing arrived on a day something had.
+func TestMarkFresh(t *testing.T) {
+	d := &site.Dataset{Main: []site.Listing{
+		{OID: "arrived-since", FirstSeen: "2026-08-24", Status: "live"},
+		{OID: "arrived-earlier", FirstSeen: "2026-08-20", Status: "new"},
+		{OID: "on-the-baseline-day", FirstSeen: "2026-08-22", Status: "new"},
+		{OID: "gone-stays-gone", FirstSeen: "2026-08-24", Status: "gone"},
+	}}
+	markFresh(d, "2026-08-22")
+
+	want := map[string][2]string{
+		"arrived-since":       {"new", "available,new"},
+		"arrived-earlier":     {"live", "available"},
+		"on-the-baseline-day": {"live", "available"},
+		"gone-stays-gone":     {"gone", ""},
+	}
+	for _, l := range d.Main {
+		w := want[l.OID]
+		if l.Status != w[0] {
+			t.Errorf("%s status = %q, want %q", l.OID, l.Status, w[0])
+		}
+		if w[1] != "" && l.FacetStatus != w[1] {
+			t.Errorf("%s facet = %q, want %q", l.OID, l.FacetStatus, w[1])
+		}
+	}
+}
