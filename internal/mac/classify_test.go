@@ -56,6 +56,12 @@ func TestClassify(t *testing.T) {
 			title:    `Apple Macbook 14" M3 Pro CA NOU ! 36GB 18GPU 12CPU 1TB Apple / vs m4 24gb max`,
 			wantKind: KindMacBook, wantGen: "M3", wantChip: "M3 Pro", wantRAM: 36,
 		},
+		{
+			// "48" carries no unit; the storage after the slash is what says it is memory.
+			name:     "memory written as the first half of memory/storage",
+			title:    "MacBook Pro 16 M5 Pro 48/1tb sigilat",
+			wantKind: KindMacBook, wantGen: "M5", wantChip: "M5 Pro", wantRAM: 48,
+		},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -127,6 +133,44 @@ func TestClassifyMemoryUnstated(t *testing.T) {
 	gb, ev, ok := InferFromBucket("> 16 GB", m.Kind)
 	if !ok || gb != 24 {
 		t.Fatalf("InferFromBucket = (%d, %q, %v), want (24, …, true)", gb, ev, ok)
+	}
+}
+
+// "32/80" is CPU/GPU cores. A slash only marks memory when a storage size with
+// its unit follows, and 18, 24 and 32 are all memory sizes as well as core counts.
+func TestCoreCountsAreNotMemory(t *testing.T) {
+	if m, err := Classify("Mac Studio M3 Ultra 32/80 | 4TB SSD", ""); err == nil {
+		t.Errorf("Classify = %d GB from %q, want memory unstated", m.RAM, m.RAMEvidence)
+	}
+}
+
+// The titles are real olx.ro listings. 256 and 512 are memory on a Studio Ultra
+// and storage everywhere else, so the words around them decide.
+func TestStorage(t *testing.T) {
+	cases := []struct {
+		title, desc string
+		want        int
+	}{
+		{"Macbook Pro M4 Max 16’ 36GB 1TB", "", 1024},
+		{"MacBook Pro 16 M5 Max 48/2tb Sigilat", "", 2048},
+		{"Macbook pro m3 16 pro 36 gb ram 512gb ssd", "", 512},
+		{`Macbook Pro 16" 48GB 512SSD M4PRO 2025`, "", 512},
+		{"MacBook Pro 16 M4 Pro 14/20, 48GB RAM, SSD 512GB, Space Black", "", 512},
+		{"Macbook Pro M3 Pro 16-inch 2023 36gb/512Gb/BATERIE96", "", 512},
+		{"Mac mini M4 16GB/512 SSD", "", 512},
+		{"MacBook Pro M4 1Tb", "procesor M4 PRO cu 12C CPU | stocare 1 Terra / 1000GB ssd", 1024},
+		{"Mac Studio M3 Ultra 32/80 | 256GB RAM | 4TB SSD", "", 4096},
+		{"Mac Studio M3 Ultra 512GB memorie unificata 8TB SSD", "", 8192},
+		{"Mac Studio M4 Max 36gb Ram", "Stare impecabila. 36GB RAM, 512GB.", 512},
+		{"Mac Mini M4 PRO 24GB", "Pret 5120 lei, M4 Pro 14 core", 0},
+		{"MacBook Pro 16 inch M4 Max 48GB RAM", "", 0},
+		{"Apple Macbook M3 Pro 16” 18 Core 36gb Ram 512gb", "", 512},
+		{"MacBook Pro 16 inch M4 Max **36 GB**1000 SSD**Sigilat", "", 1024},
+	}
+	for _, c := range cases {
+		if got := Storage(c.title, c.desc); got != c.want {
+			t.Errorf("Storage(%q, %q) = %d, want %d", c.title, c.desc, got, c.want)
+		}
 	}
 }
 

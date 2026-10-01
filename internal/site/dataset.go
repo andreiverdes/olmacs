@@ -28,6 +28,7 @@ type Listing struct {
 	RAM         int     `json:"ram"`
 	RAMStated   bool    `json:"ram_stated"`
 	RAMEvidence string  `json:"ram_evidence"`
+	Storage     int     `json:"storage"` // GB of SSD; 0 when the seller never stated it
 	Price       float64 `json:"price"`
 	PriceWas    float64 `json:"price_was,omitempty"`
 	PriceLabel  string  `json:"price_label"`
@@ -50,12 +51,13 @@ type Listing struct {
 
 // Snapshot is the reduced view of one sweep the over-time charts read.
 type Snapshot struct {
-	OID  string `json:"oid"`
-	Kind string `json:"kind"`
-	Gen  string `json:"gen"`
-	RAM  int    `json:"ram"`
-	City string `json:"city"`
-	RON  int    `json:"ron"`
+	OID     string `json:"oid"`
+	Kind    string `json:"kind"`
+	Gen     string `json:"gen"`
+	RAM     int    `json:"ram"`
+	Storage int    `json:"storage"`
+	City    string `json:"city"`
+	RON     int    `json:"ron"`
 }
 
 type Sweep struct {
@@ -80,6 +82,7 @@ type Summary struct {
 	SoldSince    int            `json:"sold_since"`
 	ByGen        map[string]int `json:"by_gen"`
 	ByRAM        map[string]int `json:"by_ram"`
+	ByStorage    map[string]int `json:"by_storage"`
 	ByKind       map[string]int `json:"by_kind"`
 	ByCity       map[string]int `json:"by_city"`
 	ByStatus     map[string]int `json:"by_status"`
@@ -140,8 +143,8 @@ func (d *Dataset) Recompute(checked, prev string, eurRon float64, eurSource stri
 	s := Summary{
 		Checked: checked, Prev: prev, Built: d.Summary.Built,
 		EURRON: eurRon, EURRONSource: eurSource,
-		ByGen: map[string]int{}, ByRAM: map[string]int{}, ByKind: map[string]int{},
-		ByCity: map[string]int{}, ByStatus: map[string]int{},
+		ByGen: map[string]int{}, ByRAM: map[string]int{}, ByStorage: map[string]int{},
+		ByKind: map[string]int{}, ByCity: map[string]int{}, ByStatus: map[string]int{},
 	}
 	if s.Built == "" {
 		s.Built = checked
@@ -150,6 +153,9 @@ func (d *Dataset) Recompute(checked, prev string, eurRon float64, eurSource stri
 	for _, l := range all {
 		s.ByGen[l.Gen]++
 		s.ByRAM[strconv.Itoa(l.RAM)]++
+		if l.Storage != 0 {
+			s.ByStorage[strconv.Itoa(l.Storage)]++
+		}
 		s.ByKind[l.Kind]++
 		s.ByCity[l.City]++
 		switch l.Status {
@@ -236,7 +242,7 @@ func (d *Dataset) AppendSweep(date, iso string) {
 		if l.Status == "gone" {
 			continue
 		}
-		offer = append(offer, Snapshot{l.OID, l.Kind, l.Gen, l.RAM, l.City, l.RON})
+		offer = append(offer, Snapshot{l.OID, l.Kind, l.Gen, l.RAM, l.Storage, l.City, l.RON})
 	}
 	sort.Slice(offer, func(i, j int) bool { return offer[i].OID < offer[j].OID })
 
@@ -247,6 +253,25 @@ func (d *Dataset) AppendSweep(date, iso string) {
 		return
 	}
 	d.Sweeps = append(d.Sweeps, Sweep{date, iso, offer})
+}
+
+// BackfillStorage copies each listing's storage onto every snapshot of it.
+// Snapshots predating the storage field carry none, and the machine behind an
+// OID never changes — a recycled slot is retired, not rewritten — so the
+// listing's figure is the figure at every sweep.
+func (d *Dataset) BackfillStorage() {
+	byOID := map[string]int{}
+	for _, l := range d.All() {
+		byOID[l.OID] = l.Storage
+	}
+	for i := range d.Sweeps {
+		for j := range d.Sweeps[i].Offer {
+			o := &d.Sweeps[i].Offer[j]
+			if gb, ok := byOID[o.OID]; ok {
+				o.Storage = gb
+			}
+		}
+	}
 }
 
 // LoadNotes reads the hand-maintained note overrides, keyed by OID.

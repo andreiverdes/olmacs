@@ -345,6 +345,15 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 		return err
 	}
 
+	// Storage is re-read from each row's own text on every sweep, gone rows
+	// included, so a parser fix reaches every listing and its history at once.
+	for _, rows := range [][]site.Listing{d.Main, d.Minis} {
+		for i := range rows {
+			rows[i].Storage = mac.Storage(rows[i].Title, rows[i].Desc)
+		}
+	}
+	d.BackfillStorage()
+
 	// last sweep's arrivals are no longer new
 	markFresh(d, prevISO)
 	d.NormalizeCities()

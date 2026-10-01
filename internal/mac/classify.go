@@ -240,6 +240,11 @@ func variant(s, gen string) string {
 // findRAM looks for a memory size in s. A size counts when Apple sells it as
 // memory and either the words around it say so, or Apple has never sold it as
 // storage (so it cannot be anything else).
+//
+// Failing that, a memory size written as the first half of "memory/storage"
+// counts: IDkXDQ7 is "MacBook Pro 16 M5 Pro 48/1tb sigilat", and the 48 carries
+// no unit at all. The second half has to be a storage size — terabytes with
+// their unit, or 256/512 — which is what keeps core counts ("18/40", "14/20") out.
 func findRAM(s string) (gb int, evidence string, ok bool) {
 	for _, loc := range reGB.FindAllStringSubmatchIndex(s, -1) {
 		n, err := strconv.Atoi(s[loc[2]:loc[3]])
@@ -256,8 +261,80 @@ func findRAM(s string) (gb int, evidence string, ok bool) {
 			return n, strings.TrimSpace(collapse(around)), true
 		}
 	}
+	for _, loc := range reRAMSlash.FindAllStringSubmatchIndex(s, -1) {
+		n, err := strconv.Atoi(s[loc[2]:loc[3]])
+		if err != nil || !ramSizes[n] {
+			continue
+		}
+		lo := max(0, loc[0]-28)
+		return n, strings.TrimSpace(collapse(s[lo:min(len(s), loc[1]+24)])), true
+	}
 	return 0, "", false
 }
+
+// Storage reads the SSD size, in GB, out of a listing. 0 means the seller never
+// wrote it down in a form that can be told apart from memory. The title is
+// read first, because a description is where a seller mentions the external
+// drive they are throwing in.
+//
+// Terabytes are unambiguous. 256 and 512 GB are also Studio Ultra memory sizes,
+// so they only count when nothing names them memory: storage words around
+// them, the second half of "36/512", or a GB unit with no memory word beside it.
+func Storage(title, desc string) int {
+	if gb := findStorage(title); gb != 0 {
+		return gb
+	}
+	return findStorage(stripHTML(desc))
+}
+
+func findStorage(s string) int {
+	best, at := 0, len(s)
+	if loc := reTB.FindStringSubmatchIndex(s); loc != nil {
+		n, _ := strconv.Atoi(s[loc[2]:loc[3]])
+		best, at = n*1024, loc[0]
+	}
+	for _, loc := range reGBStorage.FindAllStringSubmatchIndex(s, -1) {
+		if loc[0] >= at {
+			break
+		}
+		n, _ := strconv.Atoi(s[loc[2]:loc[3]])
+		if n%1000 == 0 { // "1000 SSD" — sellers round the terabyte
+			n = n / 1000 * 1024
+		}
+		before := s[max(0, loc[0]-16):loc[0]]
+		after := s[loc[1]:min(len(s), loc[1]+16)]
+		// Storage words beat a memory word before the size: "36GB RAM 512GB SSD"
+		// has RAM right in front of the 512, and the 512 is still the SSD.
+		switch {
+		case reMemoryAfter.MatchString(after):
+			continue
+		case loc[6] >= 0, reStorageAfter.MatchString(after), reStorageBefore.MatchString(before),
+			reSlashBefore.MatchString(before):
+			return n
+		case reMemoryBefore.MatchString(before) && !reMemoryClosed.MatchString(before):
+			continue
+		case loc[4] >= 0: // a GB unit, and nothing calls it memory
+			return n
+		}
+	}
+	return best
+}
+
+var (
+	// "48/1tb", "36 / 512GB" — memory first, storage second, the memory unitless.
+	reRAMSlash = regexp.MustCompile(`(?i)\b(\d{1,3})\s*/\s*(?:(?:1|2|4|8)\s*tb?|(?:256|512)(?:\s*gb?)?)\b`)
+	// "1TB", "2 Tb", "1 Terra", "4T". The unit is what makes a bare digit storage.
+	reTB = regexp.MustCompile(`(?i)\b(1|2|4|8|16)\s*(?:terra|tera|tb|t)\b`)
+	// The unit is optional here: "512 SSD", "512SSD" and "36/512" carry none.
+	reGBStorage     = regexp.MustCompile(`(?i)\b(256|512|1000|2000)(?:\s*(gb|g\b|giga)|(ssd)|\b)`)
+	reStorageBefore = regexp.MustCompile(`(?i)(ssd|stocare|storage|spatiu|spațiu|disk|hdd)\W*$`)
+	// Only a memory word directly in front — "RAM 512GB", "memorie: 256 GB" —
+	// and not one that closes the figure before it: "36gb Ram 512gb".
+	reMemoryBefore = regexp.MustCompile(`(?i)\b(ram|memorie|memory|unified)\s*:?\s*$`)
+	reMemoryClosed = regexp.MustCompile(`(?i)\d\s*(gb|g)?\s*(ram|memorie|memory|unified)\s*:?\s*$`)
+	reMemoryAfter  = regexp.MustCompile(`(?i)^\W*(ram|memorie|memory|unified|unificat|unificată)`)
+	reSlashBefore  = regexp.MustCompile(`/\s*$`)
+)
 
 var (
 	reTag = regexp.MustCompile(`<[^>]*>`)

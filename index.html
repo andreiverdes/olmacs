@@ -281,6 +281,7 @@
     <div class="frow" data-facet="kind"><span class="flabel">Type</span></div>
     <div class="frow" data-facet="gen"><span class="flabel">Chip</span></div>
     <div class="frow" data-facet="ram"><span class="flabel">Memory</span></div>
+    <div class="frow" data-facet="storage"><span class="flabel">Storage</span></div>
     <div class="frow" data-facet="city"><span class="flabel">City</span></div>
     <div class="frow" data-facet="facet_status"><span class="flabel">Status</span></div>
     <div class="frow" id="favRow"><span class="flabel">Saved</span>
@@ -291,7 +292,7 @@
   </div>
   <p class="fhint">Filters combine: more than one chip in a row <b>widens</b> it, picking across
     rows <b>narrows</b>. Chip <b>M3</b>&nbsp;+&nbsp;<b>M4</b> with City <b>Cluj-Napoca</b>&nbsp;+&nbsp;<b>Bucure&#537;ti</b>
-    shows M3 or M4 machines in either city. Sort:
+    shows M3 or M4 machines in either city. Storage only matches ads that state it. Sort:
     <button class="fchip" data-sort="price" aria-pressed="true">Price</button>
     <button class="fchip" data-sort="ram" aria-pressed="false">RAM</button></p>
 
@@ -311,7 +312,7 @@
     <p class="sec"><span id="pdates"></span>. Each row is one memory tier
       or chip generation &mdash; the pale track is the low-to-high spread of what is on offer
       today, the two dots are the median asking price at each sweep. Follows the Type, Chip,
-      Memory and City filters; the Status filter does not apply here, since each column is
+      Memory, Storage and City filters; the Status filter does not apply here, since each column is
       by definition the machines on offer on that date. The axis is fixed so the picture
       does not rescale as you filter.</p>
 
@@ -343,7 +344,7 @@
       so this fills in as the page is re-checked &mdash; today there are
       <span id="msweeps"></span>. The colour ramp runs from the lowest tier to the highest
       in legend order, and the same step means the same tier in every chart in this section.
-      Follows the Type, Chip, Memory and City filters.</p>
+      Follows the Type, Chip, Memory, Storage and City filters.</p>
 
     <div class="pgrid">
       <div class="pblock" id="mblock-gen">
@@ -402,7 +403,8 @@ const fmt = n => n == null ? "\u2014" : n.toLocaleString("ro-RO");
 const ESC = { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" };
 const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ESC[c]);
 
-const state = { kind:new Set(), gen:new Set(), ram:new Set(), city:new Set(), facet_status:new Set() };
+const state = { kind:new Set(), gen:new Set(), ram:new Set(), storage:new Set(), city:new Set(), facet_status:new Set() };
+const sizeLabel = gb => gb >= 1024 ? gb / 1024 + " TB" : gb + " GB";
 let sortBy = "price";
 let favOnly = false;
 
@@ -457,7 +459,8 @@ function buildRow(facet, counts, order) {
   const keys = order || Object.keys(counts).sort((a,b) => counts[b]-counts[a] || String(a).localeCompare(b));
   const html = keys.map(k =>
     `<button class="fchip" type="button" data-v="${esc(k)}" aria-pressed="false">` +
-    `${esc(LABELS[k] || k)}${facet === "ram" ? " GB" : ""}<span class="n">${counts[k]}</span></button>`).join("");
+    `${esc(facet === "storage" ? sizeLabel(+k) : (LABELS[k] || k) + (facet === "ram" ? " GB" : ""))}` +
+    `<span class="n">${counts[k] || 0}</span></button>`).join("");
   row.querySelector(".flabel").insertAdjacentHTML("afterend", html);
   row.querySelectorAll(".fchip").forEach(b => b.addEventListener("click", () => {
     const v = b.dataset.v, on = state[facet].has(v);
@@ -469,6 +472,8 @@ function buildRow(facet, counts, order) {
 buildRow("kind", S.by_kind);
 buildRow("gen", S.by_gen, Object.keys(S.by_gen).sort());
 buildRow("ram", S.by_ram, Object.keys(S.by_ram).map(Number).sort((a,b)=>a-b));
+// Fixed tiers, so a size nobody is selling yet still has its chip.
+buildRow("storage", S.by_storage, ["512","1024","2048","4096","8192"]);
 buildRow("city", S.by_city);
 buildRow("facet_status", S.by_status, ["available","new","gone"]);
 
@@ -520,6 +525,7 @@ function cardHTML(i) {
         <div class="badges">
           <span class="badge ram${i.below_threshold ? " sub" : ""}">${i.ram} GB${i.ram_stated ? "" : " min"}</span>
           <span class="badge">${esc(i.chip)}</span>
+          ${i.storage ? `<span class="badge">${sizeLabel(i.storage)}</span>` : ""}
           <span class="badge">${esc(i.kind)}</span>
           ${i.business ? '<span class="badge shop">shop</span>' : ""}
           ${i.status === "gone" ? `<span class="badge sold">${i.gone_reason === "reused" ? "Relisted" : "Sold"}</span>` : ""}
@@ -557,7 +563,7 @@ const FIRST_SWEEP = SWEEPS[0], LAST_SWEEP = SWEEPS[SWEEPS.length - 1];
 const shortDate = s => s.replace(/\s+\d{4}$/, "");
 const D_FIRST = shortDate(FIRST_SWEEP.date), D_LAST = shortDate(LAST_SWEEP.date);
 const PREV_OFFER = FIRST_SWEEP.offer;
-const PLOT_FACETS = ["kind","gen","ram","city"];   // Status/shortlist do not scope this section
+const PLOT_FACETS = ["kind","gen","ram","storage","city"];   // Status/shortlist do not scope this section
 const AXIS_MAX = Math.ceil(
   Math.max(...NOW_OFFER.concat(PREV_OFFER).map(i => i.ron)) / 5000) * 5000;
 const TICKS = [];

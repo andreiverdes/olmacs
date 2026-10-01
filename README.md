@@ -137,6 +137,23 @@ mistaken for a gap in the classifier.
 `internal/mac/classify_test.go` holds real listings the classifier has to get right.
 **When it gets something wrong in the wild, add that listing to the test first.**
 
+A memory size with no unit counts when it is the first half of `memory/storage`:
+"M5 Pro 48/1tb" is 48 GB. The second half has to be a storage size — terabytes with
+their unit, or 256/512 — which keeps core counts like "18/40" or "32/80" out.
+
+### Storage is parsed too, and only where it is stated
+
+OLX has no storage field at all, so `mac.Storage` reads it from the title, then the
+description. Terabytes are unambiguous; 256 and 512 GB are also Studio Ultra memory
+sizes, so they count only when nothing names them memory — storage words around them,
+the second half of "36/512", or a GB unit with no memory word beside it. "1000 SSD" is
+read as 1 TB.
+
+It is re-derived from every row's own text on each sweep, gone rows included, and copied
+onto every snapshot of that OID, so a parser fix reaches the whole history at once. A row
+whose seller never wrote it down carries `0`, and the Storage filter (512 GB to 8 TB)
+leaves those out rather than guessing a base configuration.
+
 ### An ad that names two machines is reported, not resolved
 
 The title wins when the classifier reads a chip, which is right until the body
