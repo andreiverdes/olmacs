@@ -214,6 +214,12 @@ Stated on the page too, collected here:
   `bnr.ro/nbrfxrates.xml` now redirects to the BNR homepage, as do the yearly and
   ten-day feeds, so the XML is withdrawn rather than moved. The call is left in place
   for the day it returns.
+- **Estimated prices are a model's guess.** Where nothing matching the filters was on
+  offer at a sweep, *Price over time* draws a hollow point from the model described
+  below instead of a price. The model knows type, chip generation, memory and storage;
+  it does not know Pro versus Max, condition, battery, warranty or city, and a typical
+  ad sits roughly ±20% off it (the chart states the current figure). Every estimate is
+  labelled as one, in the chart, the tooltip and the table.
 
 ## Editing notes
 
@@ -246,6 +252,19 @@ Charts follow a few fixed rules, worth knowing before editing them:
 - Deltas use arrow glyphs and signed values in text ink, never red/green alone.
 - The mix charts draw the most recent `MIX_WINDOW` sweeps (14) and **say how many older
   ones are not shown** rather than silently truncating.
+- The page has two tabs under the filters: **Oferte** (the cards) and **Statistici**
+  (every chart). Both follow the same filters; the open tab is kept in the URL hash
+  (`#tab=statistici`) next to the shortlist, so a copied link reopens the same view.
+- **Price over time** fits one hedonic model to every ad at every sweep: log price
+  against a level per sweep, type, chip generation, log2 memory and log2 storage. It is
+  fitted on the whole market, never the filtered subset, so a selection with no ads of
+  its own can still borrow from its neighbours — a 36 and a 64 GB M4 say something
+  about the 48 GB one. When ads matching the filters were seen at any sweep, the dashed
+  line carries *those* machines to every sweep with their own premium kept, so the gap
+  between it and the median is composition. When none ever were, the configuration is
+  priced directly, and any dimension the filters leave open takes its most common value
+  among the closest ads. Its axis fits the selection, unlike the fixed-axis charts below
+  it.
 
 ## Licence
 
