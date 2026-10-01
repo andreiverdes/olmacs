@@ -288,90 +288,129 @@
   .tab:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
   [role="tabpanel"] > .sect:first-child { margin-top:0; border-top:0; padding-top:0; }
 
+  /* ---- LANGUAGE ---- */
+  .sprite { position:absolute; width:0; height:0; overflow:hidden; }
+  .hrow { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .lang { position:relative; flex:none; }
+  .langbtn { display:inline-flex; align-items:center; gap:7px; cursor:pointer;
+             font-family:var(--data); font-size:12px; letter-spacing:.06em; color:var(--ink);
+             padding:5px 10px 5px 7px; background:var(--surface); border:1px solid var(--line);
+             border-radius:999px; }
+  .langbtn:hover { border-color:var(--ink-2); }
+  .langbtn:focus-visible, .langmenu button:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .flag { width:20px; height:14px; flex:none; border-radius:2px; box-shadow:0 0 0 1px rgba(0,0,0,.14); }
+  .caret { width:10px; height:6px; fill:none; stroke:var(--ink-2); stroke-width:1.6; }
+  .langbtn[aria-expanded="true"] .caret { transform:rotate(180deg); }
+  .langmenu { position:absolute; right:0; top:calc(100% + 6px); z-index:30; min-width:170px;
+              display:flex; flex-direction:column; gap:2px; padding:5px; background:var(--surface);
+              border:1px solid var(--line); border-radius:8px; box-shadow:var(--shadow); }
+  .langmenu[hidden] { display:none; }
+  .langmenu button { display:flex; align-items:center; gap:10px; width:100%; padding:7px 9px;
+                     border:0; border-radius:5px; background:none; color:var(--ink);
+                     font:inherit; font-size:13.5px; text-align:left; cursor:pointer; }
+  .langmenu button:hover, .langmenu button:focus-visible { background:var(--surface-2); }
+  .langmenu button[aria-checked="true"] { font-weight:600; }
+  .langmenu .code { margin-left:auto; font-family:var(--data); font-size:11px; color:var(--ink-2); }
+
   footer { margin-top:44px; padding-top:18px; border-top:1px solid var(--line);
            font-size:12.5px; color:var(--ink-2); display:flex; flex-direction:column; gap:6px; }
   @media (max-width:820px){ .fbar { position:static; } .flabel { width:auto; } }
   @media (prefers-reduced-motion: reduce){ * { transition:none !important; } }
 </style>
 
+<svg class="sprite" aria-hidden="true" focusable="false">
+  <symbol id="flag-en" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice">
+    <clipPath id="flag-en-t"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath>
+    <path d="M0,0 v30 h60 v-30 z" fill="#012169"/>
+    <path d="M0,0 L60,30 M60,0 L0,30" stroke="#FFFFFF" stroke-width="6"/>
+    <path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#flag-en-t)" stroke="#C8102E" stroke-width="4"/>
+    <path d="M30,0 v30 M0,15 h60" stroke="#FFFFFF" stroke-width="10"/>
+    <path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/>
+  </symbol>
+  <symbol id="flag-ro" viewBox="0 0 3 2" preserveAspectRatio="xMidYMid slice">
+    <path fill="#002B7F" d="M0 0h1v2H0z"/><path fill="#FCD116" d="M1 0h1v2H1z"/><path fill="#CE1126" d="M2 0h1v2H2z"/>
+  </symbol>
+</svg>
+
 <div class="wrap">
   <header>
-    <div class="eyebrow" id="stamp"></div>
-    <h1>M3, M4 &amp; M5 Macs on OLX with 24&nbsp;GB or more</h1>
-    <p class="lede">Every olx.ro listing for an Apple&nbsp;silicon M3-, M4- or M5-generation
-      Mac&nbsp;mini, Mac&nbsp;Studio or MacBook with at least 24&nbsp;GB of unified memory.
-      MacBooks and Mac&nbsp;Studios are carried from 36&nbsp;GB up, since below that they
-      stop being interesting here; minis are carried at 24&nbsp;GB, which is as high as the
-      model goes. Each listing was re-opened on OLX to confirm it is still for sale; the
-      ones that have gone are struck through rather than deleted, so the price history
-      stays readable.</p>
+    <div class="hrow">
+      <div class="eyebrow" id="stamp"></div>
+      <div class="lang">
+        <button type="button" class="langbtn" id="langBtn" aria-haspopup="menu"
+                aria-expanded="false" aria-controls="langMenu">
+          <svg class="flag" aria-hidden="true"><use href="#flag-en"/></svg><span id="langCode">EN</span>
+          <svg class="caret" viewBox="0 0 10 6" aria-hidden="true"><path d="M1 1l4 4 4-4"/></svg>
+        </button>
+        <div class="langmenu" id="langMenu" role="menu" hidden>
+          <button type="button" role="menuitemradio" data-lang="en" lang="en" tabindex="-1" aria-checked="false">
+            <svg class="flag" aria-hidden="true"><use href="#flag-en"/></svg>English<span class="code">EN</span></button>
+          <button type="button" role="menuitemradio" data-lang="ro" lang="ro" tabindex="-1" aria-checked="false">
+            <svg class="flag" aria-hidden="true"><use href="#flag-ro"/></svg>Română<span class="code">RO</span></button>
+        </div>
+      </div>
+    </div>
+    <h1 data-i18n="h1"></h1>
+    <p class="lede" data-i18n="lede"></p>
   </header>
 
   <dl class="stats" id="stats"></dl>
 
   <div class="fbar" id="fbar">
-    <div class="frow" data-facet="kind"><span class="flabel">Type</span></div>
-    <div class="frow" data-facet="gen"><span class="flabel">Chip</span></div>
-    <div class="frow" data-facet="ram"><span class="flabel">Memory</span></div>
-    <div class="frow" data-facet="storage"><span class="flabel">Storage</span></div>
-    <div class="frow" data-facet="city"><span class="flabel">City</span></div>
-    <div class="frow" data-facet="facet_status"><span class="flabel">Status</span></div>
-    <div class="frow" id="favRow"><span class="flabel">Saved</span>
-      <button class="fchip" type="button" id="favFilter" aria-pressed="false">&#9733; Shortlist<span class="n" id="favN">0</span></button>
+    <div class="frow" data-facet="kind"><span class="flabel" data-i18n="fType"></span></div>
+    <div class="frow" data-facet="gen"><span class="flabel" data-i18n="fChip"></span></div>
+    <div class="frow" data-facet="ram"><span class="flabel" data-i18n="fMemory"></span></div>
+    <div class="frow" data-facet="storage"><span class="flabel" data-i18n="fStorage"></span></div>
+    <div class="frow" data-facet="city"><span class="flabel" data-i18n="fCity"></span></div>
+    <div class="frow" data-facet="facet_status"><span class="flabel" data-i18n="fStatus"></span></div>
+    <div class="frow" id="favRow"><span class="flabel" data-i18n="fSaved"></span>
+      <button class="fchip" type="button" id="favFilter" aria-pressed="false">&#9733; <span data-i18n="shortlist"></span><span class="n" id="favN">0</span></button>
       <span class="tail"><span id="fcount"></span>
-        <button class="fclear" type="button" id="fclear">Clear all</button></span>
+        <button class="fclear" type="button" id="fclear" data-i18n="clearAll"></button></span>
     </div>
   </div>
-  <p class="fhint">Filters combine: more than one chip in a row <b>widens</b> it, picking across
-    rows <b>narrows</b>. Chip <b>M3</b>&nbsp;+&nbsp;<b>M4</b> with City <b>Cluj-Napoca</b>&nbsp;+&nbsp;<b>Bucure&#537;ti</b>
-    shows M3 or M4 machines in either city. Storage only matches ads that state it.
-    <span id="sortCtl">Sort:
-    <button class="fchip" data-sort="price" aria-pressed="true">Price</button>
+  <p class="fhint"><span data-i18n="fhint"></span>
+    <span id="sortCtl"><span data-i18n="sort"></span>
+    <button class="fchip" data-sort="price" aria-pressed="true" data-i18n="sortPrice"></button>
     <button class="fchip" data-sort="ram" aria-pressed="false">RAM</button></span></p>
 
-  <div class="tabs" role="tablist" aria-label="View">
+  <div class="tabs" role="tablist" data-i18n-aria="tabsLabel">
     <button class="tab" type="button" role="tab" id="tab-oferte" data-tab="oferte"
-            aria-controls="panel-oferte" aria-selected="true">Oferte<span class="n" id="tabN"></span></button>
+            aria-controls="panel-oferte" aria-selected="true"><span data-i18n="tabOffers"></span><span class="n" id="tabN"></span></button>
     <button class="tab" type="button" role="tab" id="tab-statistici" data-tab="statistici"
-            aria-controls="panel-statistici" aria-selected="false" tabindex="-1">Statistici</button>
+            aria-controls="panel-statistici" aria-selected="false" tabindex="-1"><span data-i18n="tabStats"></span></button>
   </div>
 
   <div id="panel-oferte" role="tabpanel" aria-labelledby="tab-oferte">
-  <div class="fempty" id="fempty">Nothing matches that combination.</div>
+  <div class="fempty" id="fempty" data-i18n="empty"></div>
 
   <section class="sect" id="favSect" hidden style="margin-top:0; border-top:0; padding-top:0">
-    <h2 class="sec">Shortlist</h2>
-    <p class="sec">Machines you starred. Saved in this browser and mirrored into the page URL,
-      so a bookmark or a copied link keeps the list.</p>
+    <h2 class="sec" data-i18n="favH"></h2>
+    <p class="sec" data-i18n="favP"></p>
     <div class="grid" id="favGrid"></div>
   </section>
 
   <div class="grid" id="grid"></div>
 
   <section class="sect" id="miniSect">
-    <h2 class="sec">Mac mini &mdash; under the 36&nbsp;GB line, right shape for a fleet</h2>
-    <p class="sec">No mini reaches 36&nbsp;GB, but a mini is the cheapest macOS core you can buy.
-      These are the M4-generation minis at 24&nbsp;GB, the ceiling for the model here.
-      The filters above apply to this section too.</p>
+    <h2 class="sec" data-i18n="miniH"></h2>
+    <p class="sec" data-i18n="miniP"></p>
     <div class="grid" id="miniGrid"></div>
   </section>
   </div>
 
   <div id="panel-statistici" role="tabpanel" aria-labelledby="tab-statistici" hidden>
   <section class="sect viz" id="trendSect">
-    <h2 class="sec">Price over time</h2>
-    <p class="sec">The asking price of the machines matching the filters at every sweep, on a
-      true time axis. Where nothing matching was on offer that day, a hollow point stands in
-      with a modelled estimate instead of leaving a gap. Follows the Type, Chip, Memory,
-      Storage and City filters; the axis fits whatever is selected.</p>
+    <h2 class="sec" data-i18n="trendH"></h2>
+    <p class="sec" data-i18n="trendP"></p>
     <div class="pblock" id="tblock">
       <h3 id="ttitle"></h3>
       <p class="psub" id="tfit"></p>
       <div class="plegend">
-        <span><i class="pkey"></i>Median asking price</span>
-        <span><i class="pkey track"></i>Low&ndash;high on offer</span>
+        <span><i class="pkey"></i><span data-i18n="legMedian"></span></span>
+        <span><i class="pkey track"></i><span data-i18n="legLowHigh"></span></span>
         <span><i class="pkey dash"></i><span id="tmodelKey"></span></span>
-        <span><i class="pkey hollow"></i>Nothing matching on offer &mdash; estimate</span>
+        <span><i class="pkey hollow"></i><span data-i18n="legEstimate"></span></span>
       </div>
       <div class="tscroll"><svg class="tchart" id="tchart" viewBox="0 0 1100 330" role="group"
            aria-labelledby="ttitle tfit"></svg></div>
@@ -381,56 +420,47 @@
   </section>
 
   <section class="sect viz" id="priceSect">
-    <h2 class="sec">Price by memory and by chip</h2>
-    <p class="sec"><span id="pdates"></span>. Each row is one memory tier
-      or chip generation &mdash; the pale track is the low-to-high spread of what is on offer
-      today, the two dots are the median asking price at each sweep. Follows the Type, Chip,
-      Memory, Storage and City filters; the Status filter does not apply here, since each column is
-      by definition the machines on offer on that date. The axis is fixed so the picture
-      does not rescale as you filter.</p>
+    <h2 class="sec" data-i18n="priceH"></h2>
+    <p class="sec" id="psec"></p>
 
     <div class="pgrid">
       <div class="pblock" id="pblock-ram">
-        <h3>By memory</h3>
-        <p class="psub">Unified memory, low tier to high.</p>
+        <h3 data-i18n="pRamH"></h3>
+        <p class="psub" data-i18n="pRamSub"></p>
         <div class="plegend"></div>
         <div class="prows"></div>
         <div class="paxis"></div>
-        <table class="ptable"><caption>Same figures, in lei</caption></table>
+        <table class="ptable"></table>
       </div>
 
       <div class="pblock" id="pblock-gen">
-        <h3>By chip</h3>
-        <p class="psub">Apple silicon generation, M3 to M5.</p>
+        <h3 data-i18n="pGenH"></h3>
+        <p class="psub" data-i18n="pGenSub"></p>
         <div class="plegend"></div>
         <div class="prows"></div>
         <div class="paxis"></div>
-        <table class="ptable"><caption>Same figures, in lei</caption></table>
+        <table class="ptable"></table>
       </div>
     </div>
 
     <p class="pcaveat" id="pcaveat"></p>
   </section>
   <section class="sect viz" id="mixSect">
-    <h2 class="sec">Chip and memory over time</h2>
-    <p class="sec">What the supply is made of, sweep by sweep. Each sweep appends a row,
-      so this fills in as the page is re-checked &mdash; today there are
-      <span id="msweeps"></span>. The colour ramp runs from the lowest tier to the highest
-      in legend order, and the same step means the same tier in every chart in this section.
-      Follows the Type, Chip, Memory, Storage and City filters.</p>
+    <h2 class="sec" data-i18n="mixH"></h2>
+    <p class="sec" id="msec"></p>
 
     <div class="pgrid">
       <div class="pblock" id="mblock-gen">
-        <h3>Chip mix at each sweep</h3>
-        <p class="psub">Machines on offer, split by generation.</p>
+        <h3 data-i18n="mixGenH"></h3>
+        <p class="psub"></p>
         <div class="plegend"></div>
         <div class="mrows"></div>
         <table class="ptable"></table>
       </div>
 
       <div class="pblock" id="mblock-ram">
-        <h3>Memory mix at each sweep</h3>
-        <p class="psub">Machines on offer, split by memory tier.</p>
+        <h3 data-i18n="mixRamH"></h3>
+        <p class="psub"></p>
         <div class="plegend"></div>
         <div class="mrows"></div>
         <table class="ptable"></table>
@@ -438,7 +468,7 @@
     </div>
 
     <div class="pblock" id="mblock-age" style="margin-top:26px">
-      <h3>When the ads on offer were posted</h3>
+      <h3 data-i18n="ageH"></h3>
       <p class="psub" id="agesub"></p>
       <div class="strip"></div>
       <div class="saxis"></div>
@@ -452,11 +482,8 @@
   <div class="ptip" id="ptip" role="tooltip" data-on="0"></div>
 
   <footer>
-    <div>Prices as listed. EUR figures converted at the
-      <span id="rate"></span>&nbsp;RON/EUR reference rate, for comparison only.</div>
-    <div>Filters exclude accessories, cases, empty boxes, wanted-ads and Intel-era machines.
-      A struck-through card means the offer returned HTTP&nbsp;410 or the seller reused the ad for
-      a different machine &mdash; the button still opens the original OLX page.</div>
+    <div id="frate"></div>
+    <div data-i18n="footer2"></div>
   </footer>
 </div>
 
@@ -468,6 +495,370 @@ const ALL = DATA.main.concat(DATA.minis);
 const fmt = n => n == null ? "\u2014" : n.toLocaleString("ro-RO");
 const ESC = { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" };
 const esc = v => String(v == null ? "" : v).replace(/[&<>"']/g, c => ESC[c]);
+
+// ---------- language ----------
+// Every word the page prints comes from STRINGS. Listing titles, descriptions and
+// curated notes are the sellers' and this project's own text and are shown as written.
+const LANGS = { en: { name: "English", locale: "en-GB" }, ro: { name: "Română", locale: "ro-RO" } };
+const LANG_KEY = "olmacs-lang";
+// pinned = chosen, by the link or by the reader; only then is it written into the
+// URL, so a link copied by someone who never touched the switcher stays clean
+let langPinned = true;
+let lang = (() => {
+  const m = location.hash.match(/(?:^#|&)lang=(en|ro)(?:&|$)/);
+  if (m) return m[1];
+  try { const v = localStorage.getItem(LANG_KEY); if (LANGS[v]) return v; } catch (e) {}
+  langPinned = false;
+  return /^ro\b/i.test(navigator.language || "") ? "ro" : "en";
+})();
+
+// "1 ad", "3 ads". Romanian puts "de" between a number and its noun from 20 up,
+// and again after each hundred: "20 de anunțuri", "100 de", but "101 anunțuri".
+const qty = (n, one, many) =>
+  n === 1 ? "1 " + one
+  : lang === "ro" && n && (n % 100 === 0 || n % 100 >= 20) ? n + " de " + many
+  : n + " " + many;
+
+// Sweep dates are stored as the sweeper prints them ("1 Oct 2026") and shown in
+// the reader's language.
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+function dateAs(s, opts) {
+  const [d, m, y] = String(s).split(" "), mo = MONTHS.indexOf(m);
+  if (mo < 0) return s;
+  return new Date(Date.UTC(+y, mo, +d))
+    .toLocaleDateString(LANGS[lang].locale, Object.assign({ timeZone: "UTC" }, opts));
+}
+const dateLong = s => dateAs(s, { day: "numeric", month: "short", year: "numeric" });
+const dateShort = s => dateAs(s, { day: "numeric", month: "short" });
+
+const STRINGS = {
+  en: {
+    title: "M3 / M4 / M5 Macs on OLX — 24 GB and up",
+    language: "Language",
+    h1: "M3, M4 &amp; M5 Macs on OLX with 24&nbsp;GB or more",
+    lede: "Every olx.ro listing for an Apple&nbsp;silicon M3-, M4- or M5-generation Mac&nbsp;mini, " +
+      "Mac&nbsp;Studio or MacBook with at least 24&nbsp;GB of unified memory. MacBooks and " +
+      "Mac&nbsp;Studios are carried from 36&nbsp;GB up, since below that they stop being " +
+      "interesting here; minis are carried at 24&nbsp;GB, which is as high as the model goes. " +
+      "Each listing was re-opened on OLX to confirm it is still for sale; the ones that have " +
+      "gone are struck through rather than deleted, so the price history stays readable.",
+    stamp: (b, c) => `olx.ro · built ${b} · re-verified ${c}`,
+    sForSale: "For sale", sAdded: (n, d) => `${n} added since ${d}`,
+    sGone: "Gone", sGoneSub: "sold or ad reused",
+    sRange: "Price range", sRangeSub: "RON, available only",
+    sMemory: "Memory on offer", sCities: "Cities",
+    fType: "Type", fChip: "Chip", fMemory: "Memory", fStorage: "Storage", fCity: "City",
+    fStatus: "Status", fSaved: "Saved", shortlist: "Shortlist", clearAll: "Clear all",
+    st_available: "Available", st_new: "New this sweep", st_gone: "Gone",
+    machines: n => qty(n, "machine", "machines"),
+    fcountOf: (n, of) => `${n} of ${of} machines`,
+    fhint: "Filters combine: more than one chip in a row <b>widens</b> it, picking across rows " +
+      "<b>narrows</b>. Chip <b>M3</b>&nbsp;+&nbsp;<b>M4</b> with City <b>Cluj-Napoca</b>&nbsp;+&nbsp;" +
+      "<b>Bucure&#537;ti</b> shows M3 or M4 machines in either city. Storage only matches ads that state it.",
+    sort: "Sort:", sortPrice: "Price",
+    tabsLabel: "View", tabOffers: "Listings", tabStats: "Statistics",
+    empty: "Nothing matches that combination.",
+    favH: "Shortlist",
+    favP: "Machines you starred. Saved in this browser and mirrored into the page URL, so a " +
+      "bookmark or a copied link keeps the list.",
+    miniH: "Mac mini &mdash; under the 36&nbsp;GB line, right shape for a fleet",
+    miniP: "No mini reaches 36&nbsp;GB, but a mini is the cheapest macOS core you can buy. These " +
+      "are the M4-generation minis at 24&nbsp;GB, the ceiling for the model here. The filters " +
+      "above apply to this section too.",
+    cReused: "Ad reused for another machine", cSold: "Sold", cChecked: d => `checked ${d}`,
+    cNew: d => `New since ${d}`, cLive: "Still listed",
+    bShop: "shop", bRelisted: "Relisted", bSold: "Sold", bUnstated: "config unstated",
+    cWas: p => `was ${p}`, cRefreshed: d => `refreshed ${d}`,
+    cOrig: "Original OLX page", cOpen: "Open on OLX",
+    cSave: "Save to shortlist", cSaveAria: title => `Save ${title} to shortlist`,
+
+    trendH: "Price over time",
+    trendP: "The asking price of the machines matching the filters at every sweep, on a true " +
+      "time axis. Where nothing matching was on offer that day, a hollow point stands in with a " +
+      "modelled estimate instead of leaving a gap. Follows the Type, Chip, Memory, Storage and " +
+      "City filters; the axis fits whatever is selected.",
+    legMedian: "Median asking price", legLowHigh: "Low&ndash;high on offer",
+    legEstimate: "Nothing matching on offer &mdash; estimate",
+    keyModelSame: "Model: the same machines, priced at each sweep",
+    keyModelConfig: "Model: this configuration, priced at each sweep",
+    or: " or ", everything: "Everything tracked", unstated: "unstated",
+    tfit: (obs, ads, n, r2, sd) => `Model fitted on ${obs} prices from ${ads} ads over ${n} sweeps. ` +
+      `It accounts for ${r2}% of the spread in price, and a typical ad sits within ±${sd}% of it.`,
+    hitAria: (d, n, med, est) => `${d}: ${qty(n, "machine", "machines")} on offer, median ${med} lei, model ${est} lei`,
+    hitAriaNone: (d, est) => `${d}: nothing matching on offer, estimate ${est} lei`,
+    nothingOnOffer: "nothing matching on offer",
+    lowHigh: "Low – high", median: "Median", model: "Model", estimate: "Estimate",
+    estimateLower: "estimate", typicalErr: "±1 typical error", from: "From",
+    fromConfig: "this configuration, priced from the rest of the market",
+    fromAds: n => `${qty(n, "matching ad", "matching ads")} seen across the sweeps, repriced to this date`,
+    tcaveat: (gaps, n, filled, city) => {
+      const dims = { kind: "type", gen: "chip", ram: "memory", storage: "storage" };
+      const took = filled && filled.map(([d, v]) => dims[d] + " as " + facetText(d, v)).join(", ");
+      return (gaps ? `${gaps} of ${n} sweeps had nothing matching on offer, so their points are ` +
+                     `estimates — a model's guess, not a price anyone asked. `
+                   : "Every sweep had something matching on offer, so no point here is an estimate. ") +
+        (filled
+          ? "Nothing matching this selection has been on offer at any sweep, so the whole line is " +
+            "priced from the rest of the market" +
+            (took ? `, taking ${took} — the most common among the ads closest to it` : "") + ". "
+          : "The model line follows the matching machines themselves: each keeps its own premium " +
+            "or discount, and only the market-wide level moves between sweeps. Where the median " +
+            "parts from it, the median moved because different machines were on offer. ") +
+        "The model knows type, chip generation, memory and storage — not Pro versus Max, " +
+        "condition, battery or warranty" +
+        (city ? ", and not the city: the City filter narrows the observed prices but not the model." : ".");
+    },
+
+    priceH: "Price by memory and by chip",
+    psec: (n, a, b) =>
+      (n === 1 ? `One sweep so far, on ${a}` : n === 2 ? `Two sweeps so far: ${a} and ${b}`
+                : `${n} sweeps so far, ${a} through ${b}`) +
+      ". Each row is one memory tier or chip generation — the pale track is the low-to-high " +
+      "spread of what is on offer today, the two dots are the median asking price at each sweep. " +
+      "Follows the Type, Chip, Memory, Storage and City filters; the Status filter does not apply " +
+      "here, since each column is by definition the machines on offer on that date. The axis is " +
+      "fixed so the picture does not rescale as you filter.",
+    pRamH: "By memory", pRamSub: "Unified memory, low tier to high.",
+    pGenH: "By chip", pGenSub: "Apple silicon generation, M3 to M5.",
+    medianOn: d => `Median ${d}`, legLowHighToday: "Low–high, on offer today",
+    tipLowHigh: "Low – high today", change: "Change", noFigure: d => `no ${d} figure`,
+    pRowAria: r => `${r.label}: ${r.n} on offer, ${fmt(r.lo)} to ${fmt(r.hi)} lei, median ` +
+      `${fmt(r.med)} lei against ${r.pmed == null ? "no figure" : fmt(r.pmed) + " lei"} over ` +
+      `${r.pn} machines on ${D_FIRST}, ${r.deltaText}`,
+    sameLei: "Same figures, in lei",
+    thLow: "Low", thMedian: "Median", thHigh: "High", thSweep: "Sweep", thAll: "All",
+    pcaveat: (sold, fresh, rep) =>
+      "Read the movement as composition, not as sellers cutting prices. Between the last two " +
+      `sweeps ${sold} ${sold === 1 ? "ad went" : "ads went"} and ${fresh} appeared, while ` +
+      (rep === 0 ? "no listing on this page changed its own asking price"
+                 : rep + (rep === 1 ? " listing changed its" : " listings changed their") + " own asking price") +
+      ". A tier whose median fell usually lost an expensive machine rather than got cheaper. " +
+      "Cell counts are small — some tiers are a single listing — so treat every median here as " +
+      "a marker, not a market rate.",
+
+    mixH: "Chip and memory over time",
+    msec: (n, a, b) => "What the supply is made of, sweep by sweep. Each sweep appends a row, so " +
+      `this fills in as the page is re-checked — today there are ${n} ` +
+      `(${n === 1 ? a : n === 2 ? a + " and " + b : a + " through " + b}). The colour ramp runs ` +
+      "from the lowest tier to the highest in legend order, and the same step means the same tier " +
+      "in every chart in this section. Follows the Type, Chip, Memory, Storage and City filters.",
+    mixGenH: "Chip mix at each sweep", mixRamH: "Memory mix at each sweep",
+    mixSub: (dim, hidden) => hidden
+      ? `Machines on offer, split by ${dim} — last ${MIX_WINDOW} of ${SWEEPS.length} sweeps ` +
+        `(${hidden} older not shown).`
+      : `Machines on offer, split by ${dim}.`,
+    mixAria: (d, total, parts) => `${d}: ${total} on offer — ${parts}`,
+    onOffer: "Machines on offer",
+    mcaveat: n => (n < 4 ? `With only ${n} sweeps this is not yet a trend. ` : "") +
+      "The bars move because ads went and others appeared, not because the market re-sorted " +
+      "itself — a whole category selling out shows up here as a step, not a slide. The " +
+      "posting-date strip is the one view with real depth, and it only describes ads that are " +
+      "still up: anything listed and sold between two sweeps never enters it.",
+
+    ageH: "When the ads on offer were posted",
+    ageAria: (label, n, a, b) => `${label}: ${n} ads, posted between ${a} and ${b}`,
+    ageNone: label => `${label}: no dated ads`,
+    days: n => n + " d",
+    ageCap: "Posting dates of the ads on offer",
+    ageHead: ["Group", "Class", "Dated ads", "Oldest", "Newest", "Median age"],
+    ageSub: (kept, total, noDate, stale) => {
+      const why = [
+        noDate ? `${noDate} never exposed one` : "",
+        stale ? `${stale} sit${stale === 1 ? "s" : ""} in an ad slot opened before Apple sold ` +
+                "that chip, so the date is the slot's and not the listing's" : "",
+      ].filter(Boolean).join(" and ");
+      return `One dot per ad, placed on the day it was posted. ${kept} of ${total} machines on ` +
+        "offer carry a usable date" + (why ? `; ${total - kept} are excluded — ${why}.` : ".");
+    },
+
+    rate: r => `Prices as listed. EUR figures converted at the ${r}&nbsp;RON/EUR reference rate, ` +
+      "for comparison only.",
+    footer2: "Filters exclude accessories, cases, empty boxes, wanted-ads and Intel-era machines. " +
+      "A struck-through card means the offer returned HTTP&nbsp;410 or the seller reused the ad " +
+      "for a different machine &mdash; the button still opens the original OLX page.",
+  },
+
+  ro: {
+    title: "Mac-uri M3 / M4 / M5 pe OLX — de la 24 GB în sus",
+    language: "Limbă",
+    h1: "Mac-uri M3, M4 și M5 pe OLX cu 24&nbsp;GB sau mai mult",
+    lede: "Toate anunțurile de pe olx.ro pentru un Mac&nbsp;mini, Mac&nbsp;Studio sau MacBook cu " +
+      "Apple&nbsp;silicon din generația M3, M4 sau M5 și cel puțin 24&nbsp;GB de memorie " +
+      "unificată. MacBook-urile și Mac&nbsp;Studio-urile sunt incluse de la 36&nbsp;GB în sus, " +
+      "pentru că sub acest prag nu mai sunt interesante aici; Mac mini-urile sunt incluse de la " +
+      "24&nbsp;GB, maximul la care ajunge modelul. Fiecare anunț a fost redeschis pe OLX pentru a " +
+      "confirma că este încă de vânzare; cele dispărute sunt tăiate, nu șterse, ca istoricul " +
+      "prețurilor să rămână lizibil.",
+    stamp: (b, c) => `olx.ro · creat ${b} · reverificat ${c}`,
+    sForSale: "De vânzare", sAdded: (n, d) => `${n} ${n === 1 ? "adăugat" : "adăugate"} de la ${d}`,
+    sGone: "Dispărute", sGoneSub: "vândute sau anunț refolosit",
+    sRange: "Interval de preț", sRangeSub: "RON, doar disponibile",
+    sMemory: "Memorie disponibilă", sCities: "Orașe",
+    fType: "Tip", fChip: "Cip", fMemory: "Memorie", fStorage: "Stocare", fCity: "Oraș",
+    fStatus: "Stare", fSaved: "Salvate", shortlist: "Favorite", clearAll: "Șterge tot",
+    st_available: "Disponibile", st_new: "Noi la această verificare", st_gone: "Dispărute",
+    machines: n => qty(n, "aparat", "aparate"),
+    fcountOf: (n, of) => `${n} din ${qty(of, "aparat", "aparate")}`,
+    fhint: "Filtrele se combină: mai multe opțiuni pe același rând <b>lărgesc</b> selecția, " +
+      "opțiuni de pe rânduri diferite o <b>restrâng</b>. Cip <b>M3</b>&nbsp;+&nbsp;<b>M4</b> cu " +
+      "Oraș <b>Cluj-Napoca</b>&nbsp;+&nbsp;<b>Bucure&#537;ti</b> arată aparatele M3 sau M4 din " +
+      "oricare dintre cele două orașe. Stocarea se potrivește doar cu anunțurile care o menționează.",
+    sort: "Sortare:", sortPrice: "Preț",
+    tabsLabel: "Vizualizare", tabOffers: "Oferte", tabStats: "Statistici",
+    empty: "Nimic nu corespunde acestei combinații.",
+    favH: "Favorite",
+    favP: "Aparatele marcate cu stea. Sunt salvate în acest browser și copiate în adresa " +
+      "paginii, așa că un marcaj sau un link copiat păstrează lista.",
+    miniH: "Mac mini &mdash; sub pragul de 36&nbsp;GB, potrivit pentru o flotă",
+    miniP: "Niciun Mac mini nu ajunge la 36&nbsp;GB, dar un mini este cel mai ieftin nucleu macOS " +
+      "pe care îl poți cumpăra. Acestea sunt Mac mini-urile din generația M4 cu 24&nbsp;GB, " +
+      "maximul modelului aici. Filtrele de mai sus se aplică și acestei secțiuni.",
+    cReused: "Anunț refolosit pentru alt aparat", cSold: "Vândut", cChecked: d => `verificat ${d}`,
+    cNew: d => `Nou de la ${d}`, cLive: "Încă activ",
+    bShop: "magazin", bRelisted: "Refolosit", bSold: "Vândut", bUnstated: "configurație nedeclarată",
+    cWas: p => `era ${p}`, cRefreshed: d => `actualizat ${d}`,
+    cOrig: "Pagina originală OLX", cOpen: "Deschide pe OLX",
+    cSave: "Salvează la favorite", cSaveAria: title => `Salvează ${title} la favorite`,
+
+    trendH: "Prețul în timp",
+    trendP: "Prețul cerut pentru aparatele care corespund filtrelor, la fiecare verificare, pe o " +
+      "axă de timp reală. Acolo unde în acea zi nu era nimic potrivit de vânzare, un punct gol " +
+      "ține locul unei estimări din model, în loc să lase un gol. Urmează filtrele Tip, Cip, " +
+      "Memorie, Stocare și Oraș; axa se adaptează la selecție.",
+    legMedian: "Prețul median cerut", legLowHigh: "Minim&ndash;maxim disponibil",
+    legEstimate: "Nimic potrivit de vânzare &mdash; estimare",
+    keyModelSame: "Model: aceleași aparate, evaluate la fiecare verificare",
+    keyModelConfig: "Model: această configurație, evaluată la fiecare verificare",
+    or: " sau ", everything: "Tot ce este urmărit", unstated: "nedeclarată",
+    tfit: (obs, ads, n, r2, sd) => `Model ajustat pe ${qty(obs, "preț", "prețuri")} din ` +
+      `${qty(ads, "anunț", "anunțuri")}, de-a lungul a ${qty(n, "verificare", "verificări")}. ` +
+      `Explică ${r2}% din diferențele de preț, iar un anunț tipic se află la cel mult ±${sd}% de el.`,
+    hitAria: (d, n, med, est) => `${d}: ${qty(n, "aparat", "aparate")} de vânzare, mediana ${med} lei, model ${est} lei`,
+    hitAriaNone: (d, est) => `${d}: nimic potrivit de vânzare, estimare ${est} lei`,
+    nothingOnOffer: "nimic potrivit de vânzare",
+    lowHigh: "Minim – maxim", median: "Mediana", model: "Model", estimate: "Estimare",
+    estimateLower: "estimare", typicalErr: "±1 eroare tipică", from: "Sursa",
+    fromConfig: "această configurație, evaluată din restul pieței",
+    fromAds: n => `${qty(n, "anunț potrivit", "anunțuri potrivite")} văzute de-a lungul ` +
+      "verificărilor, reevaluate la această dată",
+    tcaveat: (gaps, n, filled, city) => {
+      const dims = { kind: "tipul", gen: "cipul", ram: "memoria", storage: "stocarea" };
+      const took = filled && filled.map(([d, v]) => dims[d] + " " + facetText(d, v)).join(", ");
+      return (gaps === 1
+          ? `O verificare din ${n} nu a avut nimic potrivit de vânzare, așa că punctul ei este o ` +
+            "estimare — o presupunere a modelului, nu un preț cerut de cineva. "
+          : gaps
+          ? `${gaps} din ${qty(n, "verificare", "verificări")} nu au avut nimic potrivit de ` +
+            "vânzare, așa că punctele lor sunt estimări — o presupunere a modelului, nu un preț " +
+            "cerut de cineva. "
+          : "Fiecare verificare a avut ceva potrivit de vânzare, deci niciun punct de aici nu " +
+            "este o estimare. ") +
+        (filled
+          ? "Nimic din această selecție nu a fost de vânzare la nicio verificare, așa că întreaga " +
+            "linie este evaluată din restul pieței" +
+            (took ? `, considerând ${took} — valorile cele mai frecvente printre anunțurile cele ` +
+                    "mai apropiate" : "") + ". "
+          : "Linia modelului urmărește chiar aparatele potrivite: fiecare își păstrează prima sau " +
+            "reducerea proprie și doar nivelul general al pieței se mișcă între verificări. Acolo " +
+            "unde mediana se îndepărtează de ea, mediana s-a mișcat pentru că erau alte aparate " +
+            "de vânzare. ") +
+        "Modelul cunoaște tipul, generația cipului, memoria și stocarea — nu și Pro versus Max, " +
+        "starea, bateria sau garanția" +
+        (city ? ", și nici orașul: filtrul Oraș restrânge prețurile observate, dar nu și modelul." : ".");
+    },
+
+    priceH: "Preț după memorie și după cip",
+    psec: (n, a, b) =>
+      (n === 1 ? `O singură verificare până acum, pe ${a}`
+       : n === 2 ? `Două verificări până acum: ${a} și ${b}`
+       : `${qty(n, "verificare", "verificări")} până acum, între ${a} și ${b}`) +
+      ". Fiecare rând este un nivel de memorie sau o generație de cip — banda deschisă la " +
+      "culoare arată intervalul de prețuri disponibile azi, de la cel mai mic la cel mai mare, " +
+      "iar cele două puncte sunt prețul median cerut la fiecare verificare. Urmează filtrele " +
+      "Tip, Cip, Memorie, Stocare și Oraș; filtrul Stare nu se aplică aici, pentru că fiecare " +
+      "coloană înseamnă prin definiție aparatele de vânzare la acea dată. Axa este fixă, ca " +
+      "imaginea să nu se rescaleze când filtrezi.",
+    pRamH: "După memorie", pRamSub: "Memorie unificată, de la nivelul mic la cel mare.",
+    pGenH: "După cip", pGenSub: "Generația Apple silicon, de la M3 la M5.",
+    medianOn: d => `Mediana ${d}`, legLowHighToday: "Minim–maxim, disponibil azi",
+    tipLowHigh: "Minim – maxim azi", change: "Variație", noFigure: d => `fără valoare pe ${d}`,
+    pRowAria: r => `${r.label}: ${r.n} de vânzare, între ${fmt(r.lo)} și ${fmt(r.hi)} lei, ` +
+      `mediana ${fmt(r.med)} lei față de ${r.pmed == null ? "nicio valoare" : fmt(r.pmed) + " lei"} ` +
+      `pe ${qty(r.pn, "aparat", "aparate")} la ${D_FIRST}, ${r.deltaText}`,
+    sameLei: "Aceleași cifre, în lei",
+    thLow: "Minim", thMedian: "Median", thHigh: "Maxim", thSweep: "Verificare", thAll: "Total",
+    pcaveat: (sold, fresh, rep) =>
+      "Citește mișcarea ca o schimbare de componență, nu ca vânzători care scad prețurile. Între " +
+      "ultimele două verificări " +
+      (sold === 1 ? "a dispărut un anunț" : "au dispărut " + qty(sold, "anunț", "anunțuri")) + " și " +
+      (fresh === 1 ? "a apărut unul nou" : "au apărut " + qty(fresh, "anunț nou", "anunțuri noi")) +
+      ", iar " +
+      (rep === 0 ? "niciun anunț de pe această pagină nu și-a schimbat prețul cerut"
+       : rep === 1 ? "un anunț și-a schimbat prețul cerut"
+       : qty(rep, "anunț", "anunțuri") + " și-au schimbat prețul cerut") +
+      ". Un nivel a cărui mediană a scăzut a pierdut de obicei un aparat scump, nu s-a ieftinit. " +
+      "Celulele sunt mici — unele niveluri au un singur anunț — așa că tratează fiecare mediană " +
+      "de aici ca pe un reper, nu ca pe un preț de piață.",
+
+    mixH: "Cip și memorie în timp",
+    msec: (n, a, b) => "Din ce este compusă oferta, verificare cu verificare. Fiecare verificare " +
+      "adaugă un rând, așa că graficul se completează pe măsură ce pagina este reverificată — " +
+      `azi sunt ${n} (${n === 1 ? a : n === 2 ? a + " și " + b : a + " – " + b}). Scala de culori ` +
+      "merge de la nivelul cel mai mic la cel mai mare, în ordinea legendei, iar aceeași nuanță " +
+      "înseamnă același nivel în toate graficele din această secțiune. Urmează filtrele Tip, Cip, " +
+      "Memorie, Stocare și Oraș.",
+    mixGenH: "Cipuri la fiecare verificare", mixRamH: "Memorie la fiecare verificare",
+    mixSub: (dim, hidden) => hidden
+      ? `Aparate de vânzare, împărțite după ${dim} — ultimele ${MIX_WINDOW} din ` +
+        `${qty(SWEEPS.length, "verificare", "verificări")} (${hidden} mai vechi nu sunt afișate).`
+      : `Aparate de vânzare, împărțite după ${dim}.`,
+    mixAria: (d, total, parts) => `${d}: ${total} de vânzare — ${parts}`,
+    onOffer: "Aparate de vânzare",
+    mcaveat: n => (n < 4 ? `Cu doar ${qty(n, "verificare", "verificări")} nu este încă un trend. ` : "") +
+      "Barele se mișcă pentru că unele anunțuri au dispărut și altele au apărut, nu pentru că " +
+      "piața s-a reorganizat — o categorie întreagă vândută apare aici ca o treaptă, nu ca o " +
+      "pantă. Banda cu datele de publicare este singura vedere cu adevărată profunzime și " +
+      "descrie doar anunțurile încă active: orice a fost listat și vândut între două verificări " +
+      "nu intră în ea.",
+
+    ageH: "Când au fost publicate anunțurile active",
+    ageAria: (label, n, a, b) => `${label}: ${qty(n, "anunț", "anunțuri")}, publicate între ${a} și ${b}`,
+    ageNone: label => `${label}: niciun anunț datat`,
+    days: n => n + " z",
+    ageCap: "Datele de publicare ale anunțurilor active",
+    ageHead: ["Grup", "Clasă", "Anunțuri datate", "Cel mai vechi", "Cel mai nou", "Vârstă mediană"],
+    ageSub: (kept, total, noDate, stale) => {
+      const why = [
+        noDate === 1 ? "unul nu a expus niciodată o dată"
+          : noDate ? `${noDate} nu au expus niciodată una` : "",
+        stale ? (stale === 1 ? "unul se află" : `${stale} se află`) + " într-un slot de anunț " +
+                "deschis înainte ca Apple să vândă acel cip, deci data este a slotului, nu a anunțului" : "",
+      ].filter(Boolean).join(" și ");
+      return "Un punct pentru fiecare anunț, plasat în ziua în care a fost publicat. " +
+        `${kept} din ${qty(total, "aparat", "aparate")} de vânzare au o dată utilizabilă` +
+        (why ? `; ${total - kept} sunt excluse — ${why}.` : ".");
+    },
+
+    rate: r => "Prețuri așa cum apar în anunțuri. Sumele în EUR sunt convertite la cursul de " +
+      `referință ${r}&nbsp;RON/EUR, doar pentru comparație.`,
+    footer2: "Filtrele exclud accesorii, carcase, cutii goale, anunțuri de tip „caut” și aparate " +
+      "din era Intel. Un card tăiat înseamnă că oferta a răspuns cu HTTP&nbsp;410 sau că " +
+      "vânzătorul a refolosit anunțul pentru alt aparat &mdash; butonul deschide în continuare " +
+      "pagina originală OLX.",
+  },
+};
+// a key missing from Romanian falls back to English rather than printing nothing
+function tr(key, ...args) {
+  const v = key in STRINGS[lang] ? STRINGS[lang][key] : STRINGS.en[key];
+  return typeof v === "function" ? v(...args) : v;
+}
+function applyStatic() {
+  document.documentElement.lang = lang;
+  document.title = tr("title");
+  document.querySelectorAll("[data-i18n]").forEach(el => { el.innerHTML = tr(el.dataset.i18n); });
+  document.querySelectorAll("[data-i18n-aria]").forEach(el =>
+    el.setAttribute("aria-label", tr(el.dataset.i18nAria)));
+}
 
 const state = { kind:new Set(), gen:new Set(), ram:new Set(), storage:new Set(), city:new Set(), facet_status:new Set() };
 const sizeLabel = gb => gb >= 1024 ? gb / 1024 + " TB" : gb + " GB";
@@ -488,52 +879,31 @@ function saveFavs() {
   try { localStorage.setItem(FAV_KEY, JSON.stringify([...favs])); } catch (e) {}
   writeHash();
 }
-// The hash carries both the shortlist and the open tab, so a copied link
-// reopens the same view.
+// The hash carries the shortlist, the open tab and a chosen language, so a copied
+// link reopens the same view.
 function writeHash() {
   const parts = [];
   if (favs.size) parts.push("fav=" + encodeURIComponent([...favs].join(",")));
   if (tab === "statistici") parts.push("tab=statistici");
+  if (langPinned) parts.push("lang=" + lang);
   try {
     history.replaceState(null, "", location.pathname + location.search +
                                     (parts.length ? "#" + parts.join("&") : ""));
   } catch (e) {}
 }
 
-// naming the source matters: BNR and ECB differ in the fourth decimal, and the
-// sweeper falls back to ECB when bnr.ro refuses the connection
-document.getElementById("rate").textContent =
-  (S.eur_ron_source ? S.eur_ron_source + " " : "") + S.eur_ron;
-document.getElementById("stamp").textContent =
-  "olx.ro \u00b7 built " + S.built + " \u00b7 re-verified " + S.checked;
-
-stats: {
-  const el = document.getElementById("stats");
-  // Available only, like the price range beside it. S.by_ram and S.by_gen span
-  // every listing ever seen, gone ones included, which reads as a range you could
-  // go and buy: on 14 Aug the 256 GB Studio Ultra was retired and the header would
-  // still have offered "24-256 GB".
-  const live = ALL.filter(l => l.status !== "gone");
-  const rams = [...new Set(live.map(l => l.ram))].sort((a,b) => a-b);
-  const tally = live.reduce((acc,l) => (acc[l.gen] = (acc[l.gen] || 0) + 1, acc), {});
-  const gens = Object.entries(tally).sort().map(([k,v]) => v + " \u00d7 " + k).join(" \u00b7 ");
-  el.innerHTML = [
-    ["For sale", fmt(S.available), S.fresh + " added since " + S.prev],
-    ["Gone", fmt(S.sold), "sold or ad reused"],
-    ["Price range", fmt(S.min) + "\u2013" + fmt(S.max), "RON, available only"],
-    ["Memory on offer", rams.length ? rams[0] + "\u2013" + rams[rams.length-1] + " GB" : "\u2014", gens],
-    ["Cities", fmt(S.cities), Object.entries(S.by_city).sort((a,b)=>b[1]-a[1])
-      .slice(0,3).map(([c,n]) => c + " " + n).join(" \u00b7 ")]
-  ].map(([t,v,sub]) => `<div class="stat"><dt>${t}</dt><dd>${v}<small>${sub}</small></dd></div>`).join("");
+const chipLabel = (facet, k) => facet === "storage" ? sizeLabel(+k)
+  : facet === "facet_status" ? tr("st_" + k) : facet === "ram" ? k + " GB" : k;
+function relabelChips() {
+  document.querySelectorAll(".frow[data-facet] .fchip").forEach(b =>
+    b.querySelector(".lbl").textContent = chipLabel(b.closest(".frow").dataset.facet, b.dataset.v));
 }
-
-const LABELS = { available:"Available", new:"New this sweep", gone:"Gone" };
 function buildRow(facet, counts, order) {
   const row = document.querySelector(`.frow[data-facet="${facet}"]`);
   const keys = order || Object.keys(counts).sort((a,b) => counts[b]-counts[a] || String(a).localeCompare(b));
   const html = keys.map(k =>
     `<button class="fchip" type="button" data-v="${esc(k)}" aria-pressed="false">` +
-    `${esc(facet === "storage" ? sizeLabel(+k) : (LABELS[k] || k) + (facet === "ram" ? " GB" : ""))}` +
+    `<span class="lbl">${esc(chipLabel(facet, k))}</span>` +
     `<span class="n">${counts[k] || 0}</span></button>`).join("");
   row.querySelector(".flabel").insertAdjacentHTML("afterend", html);
   row.querySelectorAll(".fchip").forEach(b => b.addEventListener("click", () => {
@@ -588,11 +958,12 @@ function matches(i) {
 function cardHTML(i) {
   const cls = "card" + (i.status === "gone" ? " gone" : i.status === "new" ? " fresh" : "")
             + (favs.has(i.oid) ? " fav" : "");
+  const checked = tr("cChecked", dateLong(S.checked));
   const stamp = i.status === "gone"
-    ? `<div class="stamp st-gone">${i.gone_reason === "reused" ? "Ad reused for another machine" : "Sold"} \u00b7 checked ${S.checked}</div>`
+    ? `<div class="stamp st-gone">${i.gone_reason === "reused" ? tr("cReused") : tr("cSold")} \u00b7 ${checked}</div>`
     : i.status === "new"
-      ? `<div class="stamp st-new">New since ${S.prev}</div>`
-      : `<div class="stamp st-live">Still listed \u00b7 checked ${S.checked}</div>`;
+      ? `<div class="stamp st-new">${tr("cNew", dateLong(S.prev))}</div>`
+      : `<div class="stamp st-live">${tr("cLive")} \u00b7 ${checked}</div>`;
   return `
     <article class="card ${cls.slice(5)}">
       <div class="card-top">
@@ -601,27 +972,27 @@ function cardHTML(i) {
           <span class="badge">${esc(i.chip)}</span>
           ${i.storage ? `<span class="badge">${sizeLabel(i.storage)}</span>` : ""}
           <span class="badge">${esc(i.kind)}</span>
-          ${i.business ? '<span class="badge shop">shop</span>' : ""}
-          ${i.status === "gone" ? `<span class="badge sold">${i.gone_reason === "reused" ? "Relisted" : "Sold"}</span>` : ""}
-          ${i.ram_stated ? "" : '<span class="badge est">config unstated</span>'}
+          ${i.business ? `<span class="badge shop">${tr("bShop")}</span>` : ""}
+          ${i.status === "gone" ? `<span class="badge sold">${i.gone_reason === "reused" ? tr("bRelisted") : tr("bSold")}</span>` : ""}
+          ${i.ram_stated ? "" : `<span class="badge est">${tr("bUnstated")}</span>`}
         </div>
         <div class="price"><span class="amt">${fmt(i.price)} ${esc(i.currency)}</span>
           ${i.currency === "EUR" ? `<small>\u2248 ${fmt(i.ron)} RON</small>`
-            : i.price_was ? `<small>was ${fmt(i.price_was)}</small>` : "<small>&nbsp;</small>"}
+            : i.price_was ? `<small>${tr("cWas", fmt(i.price_was))}</small>` : "<small>&nbsp;</small>"}
         </div>
       </div>
       <h2>${esc(i.title)}</h2>
       <div class="meta"><span>${esc(i.city) || "\u2014"}</span>
-        ${i.refreshed ? `<span>refreshed ${esc(i.refreshed)}</span>` : ""}</div>
+        ${i.refreshed ? `<span>${tr("cRefreshed", esc(i.refreshed))}</span>` : ""}</div>
       ${stamp}
       ${i.ram_evidence ? `<div class="evidence">${esc(i.ram_evidence)}</div>` : ""}
       ${i.note ? `<div class="note">${esc(i.note)}</div>` : ""}
       <div class="actions">
         <a class="cta" href="${esc(i.url)}" target="_blank" rel="noopener noreferrer">
-          ${i.status === "gone" ? "Original OLX page" : "Open on OLX"} <span>&rarr;</span></a>
+          ${i.status === "gone" ? tr("cOrig") : tr("cOpen")} <span>&rarr;</span></a>
         <button class="favbtn" type="button" data-oid="${esc(i.oid)}"
-                aria-pressed="${favs.has(i.oid)}" title="Save to shortlist"
-                aria-label="Save ${esc(i.title)} to shortlist">&#9733;</button>
+                aria-pressed="${favs.has(i.oid)}" title="${esc(tr("cSave"))}"
+                aria-label="${esc(tr("cSaveAria", i.title))}">&#9733;</button>
       </div>
     </article>`;
 }
@@ -634,8 +1005,8 @@ const NOW_OFFER = ALL.filter(i => i.status !== "gone");
 // accumulate. Every label below is derived from these — nothing about a date is
 // written into the page, or a sweep would turn the copy into a lie.
 const FIRST_SWEEP = SWEEPS[0], LAST_SWEEP = SWEEPS[SWEEPS.length - 1];
-const shortDate = s => s.replace(/\s+\d{4}$/, "");
-const D_FIRST = shortDate(FIRST_SWEEP.date), D_LAST = shortDate(LAST_SWEEP.date);
+// set by paintText, in the reader's language
+let D_FIRST, D_LAST;
 const PREV_OFFER = FIRST_SWEEP.offer;
 const PLOT_FACETS = ["kind","gen","ram","storage","city"];   // Status/shortlist do not scope this section
 const AXIS_MAX = Math.ceil(
@@ -662,12 +1033,12 @@ function groupBy(items, dim) {
 
 const tip = document.getElementById("ptip");
 function showTip(ev, row) {
-  showTipLines(ev, row.label + " · " + row.n + (row.n === 1 ? " machine" : " machines"), [
-    ["", "Low – high today", fmt(row.lo) + " – " + fmt(row.hi) + " lei"],
-    ["now", "Median " + D_LAST + " (n " + row.n + ")", fmt(row.med) + " lei"],
-    ["prev", "Median " + D_FIRST + " (n " + row.pn + ")",
+  showTipLines(ev, row.label + " · " + tr("machines", row.n), [
+    ["", tr("tipLowHigh"), fmt(row.lo) + " – " + fmt(row.hi) + " lei"],
+    ["now", tr("medianOn", D_LAST) + " (n " + row.n + ")", fmt(row.med) + " lei"],
+    ["prev", tr("medianOn", D_FIRST) + " (n " + row.pn + ")",
      row.pmed == null ? "—" : fmt(row.pmed) + " lei"],
-    ["", "Change", row.deltaText],
+    ["", tr("change"), row.deltaText],
   ]);
 }
 // lines are [key class, name, value]; the key draws the matching legend mark
@@ -712,7 +1083,7 @@ function priceRows(dim, order) {
       lo: Math.min(...cur), hi: Math.max(...cur), med, pmed,
       perGB: median(now.get(k).map(i => i.ron / i.ram)),
       delta: pct,
-      deltaText: pct == null ? "no " + D_FIRST + " figure"
+      deltaText: pct == null ? tr("noFigure", D_FIRST)
         : (pct >= 0 ? "▲ +" : "▼ −") + Math.abs(pct).toFixed(0) + "%"
           + " (" + (med >= pmed ? "+" : "−") + fmt(Math.abs(med - pmed)) + " lei)",
     };
@@ -752,10 +1123,7 @@ function paintBlock(id, dim, order, dimLabel) {
     el.querySelector(".pdelta").textContent =
       r.delta == null ? "—"
         : (r.delta >= 0 ? "▲ " : "▼ ") + Math.abs(r.delta).toFixed(0) + "%";
-    el.setAttribute("aria-label",
-      `${r.label}: ${r.n} on offer, ${fmt(r.lo)} to ${fmt(r.hi)} lei, ` +
-      `median ${fmt(r.med)} lei against ${r.pmed == null ? "no figure" : fmt(r.pmed) + " lei"} ` +
-      `over ${r.pn} machines on ${D_FIRST}, ${r.deltaText}`);
+    el.setAttribute("aria-label", tr("pRowAria", r));
     ["pointerenter","focus"].forEach(e => el.addEventListener(e, ev => showTip(ev, r)));
     ["pointerleave","blur"].forEach(e => el.addEventListener(e, hideTip));
     rowsEl.appendChild(el);
@@ -773,8 +1141,8 @@ function paintBlock(id, dim, order, dimLabel) {
 
   // table twin - every plotted value readable without hovering
   const tbl = root.querySelector(".ptable");
-  const head = ["Low", "Median", "High", "lei / GB", D_FIRST + " (n)", "Δ"];
-  let html = `<caption>Same figures, in lei</caption><tr><th>${dimLabel}</th><th>n</th>` +
+  const head = [tr("thLow"), tr("thMedian"), tr("thHigh"), "lei / GB", D_FIRST + " (n)", "Δ"];
+  let html = `<caption>${tr("sameLei")}</caption><tr><th>${dimLabel}</th><th>n</th>` +
              head.map(h => `<th>${h}</th>`).join("") + "</tr>";
   for (const r of rows) {
     html += `<tr><td>${esc(r.label)}</td><td>${r.n}</td><td>${fmt(r.lo)}</td>` +
@@ -784,7 +1152,7 @@ function paintBlock(id, dim, order, dimLabel) {
                   : (r.delta >= 0 ? "+" : "−") + Math.abs(r.delta).toFixed(0) + "%"}</td></tr>`;
   }
   tbl.innerHTML = rows.length ? html
-    : `<caption>Same figures, in lei</caption><tr><td>Nothing matches that combination.</td></tr>`;
+    : `<caption>${tr("sameLei")}</caption><tr><td>${tr("empty")}</td></tr>`;
 }
 
 const numAsc = (a,b) => Number(a) - Number(b);
@@ -793,9 +1161,9 @@ const strAsc = (a,b) => String(a).localeCompare(b);
 function paintPriceLegend(id) {
   const el = document.getElementById(id).querySelector(".plegend");
   el.innerHTML = "";
-  for (const [cls, text] of [["pkey prev", "Median " + D_FIRST],
-                             ["pkey", "Median " + D_LAST],
-                             ["pkey track", "Low–high, on offer today"]]) {
+  for (const [cls, text] of [["pkey prev", tr("medianOn", D_FIRST)],
+                             ["pkey", tr("medianOn", D_LAST)],
+                             ["pkey track", tr("legLowHighToday")]]) {
     const s = document.createElement("span");
     const k = document.createElement("i");
     k.className = cls;
@@ -808,8 +1176,8 @@ function paintPriceLegend(id) {
 function renderPrice() {
   paintPriceLegend("pblock-ram");
   paintPriceLegend("pblock-gen");
-  paintBlock("pblock-ram", "ram", numAsc, "Memory");
-  paintBlock("pblock-gen", "gen", strAsc, "Chip");
+  paintBlock("pblock-ram", "ram", numAsc, tr("fMemory"));
+  paintBlock("pblock-gen", "gen", strAsc, tr("fChip"));
   hideTip();
 }
 
@@ -854,10 +1222,7 @@ function paintMix(id, dim, order, dimLabel) {
     return { date: s.date, c, total: kept.length };
   });
   const widest = Math.max(1, ...counts.map(r => r.total));
-  root.querySelector(".psub").textContent = hidden
-    ? `Machines on offer, split by ${dimLabel.toLowerCase()} — last ${MIX_WINDOW} of ` +
-      `${SWEEPS.length} sweeps (${hidden} older not shown).`
-    : `Machines on offer, split by ${dimLabel.toLowerCase()}.`;
+  root.querySelector(".psub").textContent = tr("mixSub", dimLabel.toLowerCase(), hidden);
 
   const rows = root.querySelector(".mrows");
   rows.innerHTML = "";
@@ -866,7 +1231,7 @@ function paintMix(id, dim, order, dimLabel) {
     el.className = "mrow";
     const lab = document.createElement("div");
     lab.className = "mlabel";
-    lab.textContent = r.date.replace(" 2026", "");
+    lab.textContent = dateShort(r.date);
     const bar = document.createElement("div");
     bar.className = "mbar";
     // the row's own width tracks its share of the widest sweep, so a shrinking
@@ -887,20 +1252,20 @@ function paintMix(id, dim, order, dimLabel) {
     tot.className = "mtotal";
     tot.textContent = r.total;
     el.append(lab, bar, tot);
-    el.setAttribute("aria-label", r.date + ": " + r.total + " on offer — " +
-      keys.filter(k => r.c[k]).map(k => r.c[k] + " × " + labelOf(dim, k)).join(", "));
+    el.setAttribute("aria-label", tr("mixAria", dateLong(r.date), r.total,
+      keys.filter(k => r.c[k]).map(k => r.c[k] + " × " + labelOf(dim, k)).join(", ")));
     rows.appendChild(el);
   }
 
   const tbl = root.querySelector(".ptable");
-  let html = `<caption>Machines on offer</caption><tr><th>Sweep</th>` +
-    keys.map(k => `<th>${esc(labelOf(dim, k))}</th>`).join("") + `<th>All</th></tr>`;
+  let html = `<caption>${tr("onOffer")}</caption><tr><th>${tr("thSweep")}</th>` +
+    keys.map(k => `<th>${esc(labelOf(dim, k))}</th>`).join("") + `<th>${tr("thAll")}</th></tr>`;
   for (const r of counts)
-    html += `<tr><td>${esc(r.date)}</td>` +
+    html += `<tr><td>${esc(dateLong(r.date))}</td>` +
             keys.map(k => `<td>${r.c[k] || "—"}</td>`).join("") +
             `<td>${r.total}</td></tr>`;
   tbl.innerHTML = counts.length && keys.length ? html
-    : `<caption>Machines on offer</caption><tr><td>Nothing matches that combination.</td></tr>`;
+    : `<caption>${tr("onOffer")}</caption><tr><td>${tr("empty")}</td></tr>`;
 }
 
 // ---------- posting-date strip ----------
@@ -937,8 +1302,8 @@ function paintAge() {
   strip.innerHTML = "";
 
   const groups = [
-    ["Chip", "gen", classesOf("gen", strAsc)],
-    ["Memory", "ram", classesOf("ram", numAsc)],
+    [tr("fChip"), "gen", classesOf("gen", strAsc)],
+    [tr("fMemory"), "ram", classesOf("ram", numAsc)],
   ];
   const tableRows = [];
 
@@ -974,12 +1339,12 @@ function paintAge() {
       const oldest = mine[0], newest = mine[mine.length - 1];
       const ageOf = x => Math.round((t1 - Date.parse(x.created)) / DAY);
       el.setAttribute("aria-label", mine.length
-        ? `${labelOf(dim,k)}: ${mine.length} ads, posted between ${oldest.created} and ${newest.created}`
-        : `${labelOf(dim,k)}: no dated ads`);
+        ? tr("ageAria", labelOf(dim, k), mine.length, oldest.created, newest.created)
+        : tr("ageNone", labelOf(dim, k)));
       strip.appendChild(el);
       tableRows.push([gname, labelOf(dim, k), mine.length,
                       oldest ? oldest.created : "—", newest ? newest.created : "—",
-                      mine.length ? ageOf(mine[Math.floor(mine.length/2)]) + " d" : "—"]);
+                      mine.length ? tr("days", ageOf(mine[Math.floor(mine.length/2)])) : "—"]);
     }
   }
 
@@ -996,14 +1361,13 @@ function paintAge() {
     if (ix % every) return;
     const s = document.createElement("span");
     s.style.left = tpos(dt.toISOString().slice(0,10)) + "%";
-    s.textContent = dt.toLocaleDateString("en-GB", { month:"short", year:"2-digit", timeZone:"UTC" });
+    s.textContent = dt.toLocaleDateString(LANGS[lang].locale, { month:"short", year:"2-digit", timeZone:"UTC" });
     ax.appendChild(s);
   });
 
   const tbl = root.querySelector(".ptable");
-  tbl.innerHTML = `<caption>Posting dates of the ads on offer</caption>` +
-    `<tr><th>Group</th><th>Class</th><th>Dated ads</th><th>Oldest</th><th>Newest</th>` +
-    `<th>Median age</th></tr>` +
+  tbl.innerHTML = `<caption>${tr("ageCap")}</caption>` +
+    "<tr>" + tr("ageHead").map(h => `<th>${h}</th>`).join("") + "</tr>" +
     tableRows.map(r => "<tr>" + r.map((v,ix) =>
       `<td>${esc(v)}</td>`).join("") + "</tr>").join("");
 
@@ -1011,20 +1375,13 @@ function paintAge() {
   const onOffer = ALL.filter(i => i.status !== "gone");
   const noDate = onOffer.filter(i => !i.created).length;
   const staleSlot = onOffer.filter(i => i.created && slotPredatesChip(i)).length;
-  const why = [
-    noDate ? `${noDate} never exposed one` : "",
-    staleSlot ? `${staleSlot} sit${staleSlot === 1 ? "s" : ""} in an ad slot opened before ` +
-                `Apple sold that chip, so the date is the slot's and not the listing's` : "",
-  ].filter(Boolean).join(" and ");
   document.getElementById("agesub").textContent =
-    `One dot per ad, placed on the day it was posted. ${kept.length} of ${onOffer.length} ` +
-    `machines on offer carry a usable date` +
-    (why ? `; ${onOffer.length - kept.length} are excluded — ${why}.` : ".");
+    tr("ageSub", kept.length, onOffer.length, noDate, staleSlot);
 }
 
 function renderMix() {
-  paintMix("mblock-gen", "gen", strAsc, "Chip");
-  paintMix("mblock-ram", "ram", numAsc, "Memory");
+  paintMix("mblock-gen", "gen", strAsc, tr("fChip"));
+  paintMix("mblock-ram", "ram", numAsc, tr("fMemory"));
   paintAge();
 }
 
@@ -1088,8 +1445,7 @@ const MODEL = (() => {
 })();
 
 const MODEL_DIMS = ["kind", "gen", "ram", "storage"];
-const DIM_NAME = { kind: "type", gen: "chip", ram: "memory", storage: "storage" };
-const facetText = (f, v) => f === "ram" ? v + " GB" : f === "storage" ? (+v ? sizeLabel(+v) : "unstated") : v;
+const facetText = (f, v) => f === "ram" ? v + " GB" : f === "storage" ? (+v ? sizeLabel(+v) : tr("unstated")) : v;
 
 // What the estimate prices. Ads that matched the filters at any sweep are carried
 // to every other sweep with their own premium intact, so the line follows those
@@ -1136,7 +1492,6 @@ const niceStep = span => {
   const raw = span / 5, mag = 10 ** Math.floor(Math.log10(raw));
   return [1, 2, 2.5, 5, 10].map(m => m * mag).find(s => s >= raw);
 };
-const plural = (n, one, many) => n + " " + (n === 1 ? one : many);
 const f1 = v => v.toFixed(1);
 
 function paintTrend() {
@@ -1153,15 +1508,11 @@ function paintTrend() {
   });
 
   const sel = PLOT_FACETS.filter(f => state[f].size)
-    .map(f => [...state[f]].map(v => facetText(f, v)).join(" or "));
-  document.getElementById("ttitle").textContent = sel.length ? sel.join(" · ") : "Everything tracked";
-  document.getElementById("tmodelKey").textContent = basis.filled
-    ? "Model: this configuration, priced at each sweep"
-    : "Model: the same machines, priced at each sweep";
-  document.getElementById("tfit").textContent =
-    `Model fitted on ${OBS.length} prices from ${MODEL.own.size} ads over ${SWEEPS.length} sweeps. ` +
-    `It accounts for ${Math.round(MODEL.r2 * 100)}% of the spread in price, and a typical ad sits ` +
-    `within ±${Math.round((spread - 1) * 100)}% of it.`;
+    .map(f => [...state[f]].map(v => facetText(f, v)).join(tr("or")));
+  document.getElementById("ttitle").textContent = sel.length ? sel.join(" · ") : tr("everything");
+  document.getElementById("tmodelKey").textContent = tr(basis.filled ? "keyModelConfig" : "keyModelSame");
+  document.getElementById("tfit").textContent = tr("tfit", OBS.length, MODEL.own.size, SWEEPS.length,
+    Math.round(MODEL.r2 * 100), Math.round((spread - 1) * 100));
 
   // the axis fits the selection: a 6 000 lei mini and a 30 000 lei Studio on one
   // fixed scale would flatten whichever is selected into a line
@@ -1179,9 +1530,8 @@ function paintTrend() {
   rows.forEach((r, t) => {
     const a = t ? (xs[t-1] + xs[t]) / 2 : TM.l - 12;
     const b = t < rows.length - 1 ? (xs[t] + xs[t+1]) / 2 : TW - TM.r + 12;
-    const label = r.n
-      ? `${r.s.date}: ${plural(r.n, "machine", "machines")} on offer, median ${fmt(r.med)} lei, model ${fmt(r.est)} lei`
-      : `${r.s.date}: nothing matching on offer, estimate ${fmt(r.est)} lei`;
+    const label = r.n ? tr("hitAria", dateLong(r.s.date), r.n, fmt(r.med), fmt(r.est))
+                      : tr("hitAriaNone", dateLong(r.s.date), fmt(r.est));
     svg += `<rect class="thit" tabindex="0" data-t="${t}" x="${f1(a)}" y="${TM.t}" ` +
            `width="${f1(Math.max(b - a, 1))}" height="${TH - TM.t - TM.b}" aria-label="${esc(label)}"/>`;
   });
@@ -1195,7 +1545,7 @@ function paintTrend() {
   for (let t = rows.length - 1; t >= 0; t--) {
     if (lastX - xs[t] < 62) continue;
     lastX = xs[t];
-    svg += `<text x="${f1(xs[t])}" y="${TH - TM.b + 20}" text-anchor="middle">${esc(shortDate(rows[t].s.date))}</text>` +
+    svg += `<text x="${f1(xs[t])}" y="${TH - TM.b + 20}" text-anchor="middle">${esc(dateShort(rows[t].s.date))}</text>` +
            `<text class="tn" x="${f1(xs[t])}" y="${TH - TM.b + 36}" text-anchor="middle">n ${rows[t].n}</text>`;
   }
   rows.forEach((r, t) => {
@@ -1218,51 +1568,33 @@ function paintTrend() {
 
   const chart = document.getElementById("tchart");
   chart.innerHTML = svg;
-  const from = basis.filled
-    ? "this configuration, priced from the rest of the market"
-    : plural(basis.items.length, "matching ad", "matching ads") + " seen across the sweeps, repriced to this date";
+  const from = basis.filled ? tr("fromConfig") : tr("fromAds", basis.items.length);
   chart.querySelectorAll(".thit").forEach(el => {
     const r = rows[+el.dataset.t];
-    const head = r.s.date + " · " + (r.n ? plural(r.n, "machine", "machines") : "nothing matching on offer");
+    const head = dateLong(r.s.date) + " · " + (r.n ? tr("machines", r.n) : tr("nothingOnOffer"));
     const lines = r.n ? [
-      ["", "Low – high", fmt(r.lo) + " – " + fmt(r.hi) + " lei"],
-      ["now", "Median", fmt(r.med) + " lei"],
-      ["dash", "Model", fmt(r.est) + " lei"],
+      ["", tr("lowHigh"), fmt(r.lo) + " – " + fmt(r.hi) + " lei"],
+      ["now", tr("median"), fmt(r.med) + " lei"],
+      ["dash", tr("model"), fmt(r.est) + " lei"],
     ] : [
-      ["hollow", "Estimate", fmt(r.est) + " lei"],
-      ["", "±1 typical error", fmt(Math.round(r.est / spread)) + " – " + fmt(Math.round(r.est * spread)) + " lei"],
-      ["", "From", from],
+      ["hollow", tr("estimate"), fmt(r.est) + " lei"],
+      ["", tr("typicalErr"), fmt(Math.round(r.est / spread)) + " – " + fmt(Math.round(r.est * spread)) + " lei"],
+      ["", tr("from"), from],
     ];
     ["pointerenter", "focus"].forEach(e => el.addEventListener(e, ev => showTipLines(ev, head, lines)));
     ["pointerleave", "blur"].forEach(e => el.addEventListener(e, hideTip));
   });
 
   document.querySelector("#tblock .ptable").innerHTML =
-    `<caption>Same figures, in lei</caption><tr><th>Sweep</th><th>n</th><th>Low</th>` +
-    `<th>Median</th><th>High</th><th>Model</th></tr>` +
-    rows.map(r => `<tr><td>${esc(r.s.date)}</td><td>${r.n}</td><td>${fmt(r.lo)}</td>` +
+    `<caption>${tr("sameLei")}</caption><tr><th>${tr("thSweep")}</th><th>n</th><th>${tr("thLow")}</th>` +
+    `<th>${tr("thMedian")}</th><th>${tr("thHigh")}</th><th>${tr("model")}</th></tr>` +
+    rows.map(r => `<tr><td>${esc(dateLong(r.s.date))}</td><td>${r.n}</td><td>${fmt(r.lo)}</td>` +
       `<td>${fmt(r.med)}</td><td>${fmt(r.hi)}</td>` +
-      `<td>${fmt(r.est)}${r.n ? "" : " (estimate)"}</td></tr>`).join("");
+      `<td>${fmt(r.est)}${r.n ? "" : " (" + tr("estimateLower") + ")"}</td></tr>`).join("");
 
   // derived, like every other caveat on the page
-  const gaps = rows.filter(r => !r.n).length;
-  const filled = basis.filled && basis.filled
-    .map(([d, v]) => DIM_NAME[d] + " as " + facetText(d, v)).join(", ");
-  document.getElementById("tcaveat").textContent =
-    (gaps ? `${gaps} of ${SWEEPS.length} sweeps had nothing matching on offer, so their points ` +
-            `are estimates — a model's guess, not a price anyone asked. `
-          : "Every sweep had something matching on offer, so no point here is an estimate. ") +
-    (basis.filled
-      ? "Nothing matching this selection has been on offer at any sweep, so the whole line is " +
-        "priced from the rest of the market" +
-        (filled ? `, taking ${filled} — the most common among the ads closest to it` : "") + ". "
-      : "The model line follows the matching machines themselves: each keeps its own premium " +
-        "or discount, and only the market-wide level moves between sweeps. Where the median " +
-        "parts from it, the median moved because different machines were on offer. ") +
-    "The model knows type, chip generation, memory and storage — not Pro versus Max, " +
-    "condition, battery or warranty" +
-    (state.city.size ? ", and not the city: the City filter narrows the observed prices but " +
-                       "not the model." : ".");
+  document.getElementById("tcaveat").textContent = tr("tcaveat",
+    rows.filter(r => !r.n).length, SWEEPS.length, basis.filled, state.city.size > 0);
 }
 
 // ---------- tabs ----------
@@ -1294,42 +1626,100 @@ TABS.forEach((b, ix) => {
 });
 showTab(tab);
 
-document.getElementById("msweeps").textContent =
-  SWEEPS.length + (SWEEPS.length === 1 ? " (" : " (") +
-  (SWEEPS.length <= 2 ? SWEEPS.map(s => s.date).join(" and ")
-                      : FIRST_SWEEP.date + " through " + LAST_SWEEP.date) + ")";
-document.getElementById("mcaveat").textContent =
-  (SWEEPS.length < 4
-    ? "With only " + SWEEPS.length + " sweeps this is not yet a trend. "
-    : "") +
-  "The bars move because ads went and others appeared, not because the market re-sorted " +
-  "itself \u2014 a whole category selling out shows up here as a step, not a slide. The " +
-  "posting-date strip is the one view with real depth, and it only describes ads that are " +
-  "still up: anything listed and sold between two sweeps never enters it.";
+// ---------- derived prose ----------
+// Every sentence here is counted from the data, opening words included, and re-run
+// when the language changes. It used to read "Two sweeps so far:" in the markup
+// with only the dates filled in, so the third sweep turned it into "Two sweeps so
+// far: 4 between 28 Jul and 14 Aug" — a hand-written count going stale in exactly
+// the way the rest of this page is built to prevent.
+function paintText() {
+  D_FIRST = dateShort(FIRST_SWEEP.date);
+  D_LAST = dateShort(LAST_SWEEP.date);
+  const first = dateLong(FIRST_SWEEP.date), last = dateLong(LAST_SWEEP.date);
 
-// The whole sentence is derived, opening words included. It used to read "Two
-// sweeps so far:" in the markup with only the dates filled in, so the third sweep
-// turned it into "Two sweeps so far: 4 between 28 Jul and 14 Aug" — a hand-written
-// count going stale in exactly the way the rest of this page is built to prevent.
-document.getElementById("pdates").textContent =
-  SWEEPS.length === 1 ? "One sweep so far, on " + FIRST_SWEEP.date
-  : SWEEPS.length === 2 ? "Two sweeps so far: " + FIRST_SWEEP.date + " and " + LAST_SWEEP.date
-  : SWEEPS.length + " sweeps so far, " + FIRST_SWEEP.date + " through " + LAST_SWEEP.date;
+  // naming the source matters: BNR and ECB differ in the fourth decimal, and the
+  // sweeper falls back to ECB when bnr.ro refuses the connection
+  document.getElementById("frate").innerHTML =
+    tr("rate", esc((S.eur_ron_source ? S.eur_ron_source + " " : "") + S.eur_ron));
+  document.getElementById("stamp").textContent = tr("stamp", dateLong(S.built), dateLong(S.checked));
 
-// Everything in this caveat is counted from the data. A sweep must never be able
-// to leave a hand-written finding behind as a false statement.
-const selfRepriced = ALL.filter(i => i.price_was && i.status !== "gone").length;
-document.getElementById("pcaveat").textContent =
-  "Read the movement as composition, not as sellers cutting prices. Between the last two " +
-  "sweeps " + S.sold_since + (S.sold_since === 1 ? " ad went" : " ads went") + " and " +
-  S.fresh + " appeared, while " +
-  (selfRepriced === 0
-    ? "no listing on this page changed its own asking price"
-    : selfRepriced + (selfRepriced === 1 ? " listing changed its" : " listings changed their") +
-      " own asking price") +
-  ". A tier whose median fell usually lost an expensive machine rather than got cheaper. " +
-  "Cell counts are small — some tiers are a single listing — so treat every median " +
-  "here as a marker, not a market rate.";
+  // Available only, like the price range beside it. S.by_ram and S.by_gen span
+  // every listing ever seen, gone ones included, which reads as a range you could
+  // go and buy: on 14 Aug the 256 GB Studio Ultra was retired and the header would
+  // still have offered "24-256 GB".
+  const live = ALL.filter(l => l.status !== "gone");
+  const rams = [...new Set(live.map(l => l.ram))].sort((a,b) => a-b);
+  const tally = live.reduce((acc,l) => (acc[l.gen] = (acc[l.gen] || 0) + 1, acc), {});
+  const gens = Object.entries(tally).sort().map(([k,v]) => v + " \u00d7 " + k).join(" \u00b7 ");
+  document.getElementById("stats").innerHTML = [
+    [tr("sForSale"), fmt(S.available), tr("sAdded", S.fresh, dateLong(S.prev))],
+    [tr("sGone"), fmt(S.sold), tr("sGoneSub")],
+    [tr("sRange"), fmt(S.min) + "\u2013" + fmt(S.max), tr("sRangeSub")],
+    [tr("sMemory"), rams.length ? rams[0] + "\u2013" + rams[rams.length-1] + " GB" : "\u2014", gens],
+    [tr("sCities"), fmt(S.cities), Object.entries(S.by_city).sort((a,b)=>b[1]-a[1])
+      .slice(0,3).map(([c,n]) => esc(c) + " " + n).join(" \u00b7 ")]
+  ].map(([h,v,sub]) => `<div class="stat"><dt>${h}</dt><dd>${v}<small>${sub}</small></dd></div>`).join("");
+
+  document.getElementById("psec").textContent = tr("psec", SWEEPS.length, first, last);
+  document.getElementById("msec").textContent = tr("msec", SWEEPS.length, first, last);
+  document.getElementById("mcaveat").textContent = tr("mcaveat", SWEEPS.length);
+  const selfRepriced = ALL.filter(i => i.price_was && i.status !== "gone").length;
+  document.getElementById("pcaveat").textContent = tr("pcaveat", S.sold_since, S.fresh, selfRepriced);
+}
+
+// ---------- language switcher ----------
+const langBtn = document.getElementById("langBtn"), langMenu = document.getElementById("langMenu");
+const langItems = [...langMenu.querySelectorAll("[data-lang]")];
+function openLangMenu() {
+  langMenu.hidden = false;
+  langBtn.setAttribute("aria-expanded", "true");
+  (langItems.find(b => b.dataset.lang === lang) || langItems[0]).focus();
+}
+function closeLangMenu(refocus) {
+  if (langMenu.hidden) return;
+  langMenu.hidden = true;
+  langBtn.setAttribute("aria-expanded", "false");
+  if (refocus) langBtn.focus();
+}
+langBtn.addEventListener("click", () => langMenu.hidden ? openLangMenu() : closeLangMenu(false));
+langBtn.addEventListener("keydown", ev => {
+  if (ev.key === "ArrowDown" || ev.key === "ArrowUp") { openLangMenu(); ev.preventDefault(); }
+});
+langItems.forEach((b, ix) => {
+  b.addEventListener("click", () => { closeLangMenu(true); setLang(b.dataset.lang); });
+  b.addEventListener("keydown", ev => {
+    const move = { ArrowDown: 1, ArrowUp: -1 }[ev.key];
+    if (move) {
+      langItems[(ix + move + langItems.length) % langItems.length].focus();
+      ev.preventDefault();
+    } else if (ev.key === "Escape") {
+      closeLangMenu(true);
+      ev.preventDefault();
+    } else if (ev.key === "Tab") {
+      closeLangMenu(false);
+    }
+  });
+});
+document.addEventListener("click", ev => { if (!ev.target.closest(".lang")) closeLangMenu(false); });
+
+function localize() {
+  applyStatic();
+  relabelChips();
+  paintText();
+  langBtn.querySelector("use").setAttribute("href", "#flag-" + lang);
+  document.getElementById("langCode").textContent = lang.toUpperCase();
+  langBtn.setAttribute("aria-label", tr("language") + ": " + LANGS[lang].name);
+  langMenu.setAttribute("aria-label", tr("language"));
+  langItems.forEach(b => b.setAttribute("aria-checked", String(b.dataset.lang === lang)));
+}
+function setLang(l) {
+  lang = l;
+  langPinned = true;
+  try { localStorage.setItem(LANG_KEY, l); } catch (e) {}
+  writeHash();
+  localize();
+  render();
+}
 
 function render() {
   const cmp = (a,b) => sortBy === "ram" ? (b.ram-a.ram) || (a.ron-b.ron) : (a.ron-b.ron);
@@ -1351,9 +1741,10 @@ function render() {
   paintTrend();
   const shown = m.length + n.length;
   document.getElementById("fcount").textContent =
-    shown === ALL.length ? ALL.length + " machines" : shown + " of " + ALL.length + " machines";
+    shown === ALL.length ? tr("machines", ALL.length) : tr("fcountOf", shown, ALL.length);
   document.getElementById("fempty").style.display = shown ? "none" : "block";
   document.getElementById("tabN").textContent = shown;
 }
+localize();
 render();
 </script>

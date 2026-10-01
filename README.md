@@ -252,8 +252,16 @@ Charts follow a few fixed rules, worth knowing before editing them:
 - Deltas use arrow glyphs and signed values in text ink, never red/green alone.
 - The mix charts draw the most recent `MIX_WINDOW` sweeps (14) and **say how many older
   ones are not shown** rather than silently truncating.
-- The page has two tabs under the filters: **Oferte** (the cards) and **Statistici**
-  (every chart). Both follow the same filters; the open tab is kept in the URL hash
+- **English and Romanian.** Every word the page prints lives in `STRINGS` in
+  `index.html`, one entry per language, and derived sentences are functions of the data
+  in both — so the no-hand-written-findings rule holds in Romanian too. Romanian counts
+  go through `qty`, which adds the "de" Romanian needs from 20 up ("26 de anunțuri").
+  Dates are re-rendered in the reader's locale from the sweeper's "1 Oct 2026". Listing
+  titles, descriptions and curated notes are shown as written. The language comes from
+  the link (`#lang=ro`), then the last choice in this browser, then the browser's own
+  language, and is written into the link only once chosen.
+- The page has two tabs under the filters: **Listings / Oferte** (the cards) and
+  **Statistics / Statistici** (every chart). Both follow the same filters; the open tab is kept in the URL hash
   (`#tab=statistici`) next to the shortlist, so a copied link reopens the same view.
 - **Price over time** fits one hedonic model to every ad at every sweep: log price
   against a level per sweep, type, chip generation, log2 memory and log2 storage. It is
