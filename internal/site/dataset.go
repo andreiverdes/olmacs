@@ -40,13 +40,11 @@ type Listing struct {
 	Created     string  `json:"created"`
 	Refreshed   string  `json:"refreshed"`
 	Desc        string  `json:"desc"`
-
-	BelowThreshold bool   `json:"below_threshold"`
-	Status         string `json:"status"`       // live | new | gone
-	FacetStatus    string `json:"facet_status"` // available | available,new | gone
-	GoneReason     string `json:"gone_reason"`  // sold | reused | ""
-	Note           string `json:"note"`
-	FirstSeen      string `json:"first_seen"`
+	Status      string  `json:"status"`       // live | new | gone
+	FacetStatus string  `json:"facet_status"` // available | available,new | gone
+	GoneReason  string  `json:"gone_reason"`  // sold | reused | ""
+	Note        string  `json:"note"`
+	FirstSeen   string  `json:"first_seen"`
 }
 
 // Snapshot is the reduced view of one sweep the over-time charts read.

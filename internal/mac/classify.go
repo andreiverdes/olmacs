@@ -24,7 +24,7 @@ const (
 // Machine is what a listing was determined to be advertising.
 type Machine struct {
 	Kind Kind
-	Gen  string // "M3", "M4", "M5"
+	Gen  string // "M3", "M4", "M5", "M6"
 	Chip string // "M3 Pro", "M4 Max", "M5", …
 	RAM  int    // GB of unified memory
 
@@ -61,14 +61,21 @@ var ramSizes = map[int]bool{8: true, 16: true, 18: true, 24: true, 32: true,
 // Sizes Apple has never sold as an SSD, so a bare "36 GB" cannot be storage.
 var ramOnlySizes = map[int]bool{18: true, 24: true, 36: true, 48: true, 96: true}
 
+// A mini's figures leave less room still: no M-series Mac ships with less than
+// 256 GB of storage, so "Mac Mini M4/16GB/256GB" is a 16 GB mini, and with every
+// mini on the page that reading cannot wait for a memory word. On a MacBook or
+// Studio a bare 32 is as often GPU cores ("M4 Max - 32 GB, 512 GB Memorie", a
+// 36 GB Studio), so this stays mini-only.
+var miniRAMOnlySizes = map[int]bool{16: true, 18: true, 24: true, 32: true, 36: true, 48: true, 64: true}
+
 var (
 	reGB = regexp.MustCompile(`(?i)(\d{1,3})\s*(?:gb|g\b|giga)`)
 	// One pattern for both generation and variant. The optional \s* is what makes
 	// "M4PRO" parse, which sellers write about as often as "M4 Pro".
-	reChip = regexp.MustCompile(`(?i)\bm([345])\s*(pro\s*max|max|pro|ultra)?\b`)
+	reChip = regexp.MustCompile(`(?i)\bm([3-6])\s*(pro\s*max|max|pro|ultra)?\b`)
 	// Catch-all detection has to see the whole Apple-silicon range, not just the
 	// generations this project tracks: "M1 / M2 / M3 / M4" is one shop ad, not a machine.
-	reAnyGen = regexp.MustCompile(`(?i)\bm([1-5])\b`)
+	reAnyGen = regexp.MustCompile(`(?i)\bm([1-6])\b`)
 
 	// Accessory nouns, tested against the SUBJECT of the title only. Every case
 	// ad names the machine it fits ("Carcasa pentru Mac Mini M4"), so matching
@@ -91,7 +98,7 @@ var (
 )
 
 // Classify reads a listing. It returns a Reject error for anything that is not an
-// M3/M4/M5 Mac, and a plain error when the machine is one but its memory could
+// M3–M6 Mac, and a plain error when the machine is one but its memory could
 // not be established.
 func Classify(title, desc string) (Machine, error) {
 	var m Machine
@@ -131,7 +138,7 @@ func Classify(title, desc string) (Machine, error) {
 		if reIntel.MatchString(t) {
 			return m, Reject{"Intel-era machine"}
 		}
-		return m, Reject{"no M3, M4 or M5 chip named in the title"}
+		return m, Reject{"no M3, M4, M5 or M6 chip named in the title"}
 	}
 	m.Gen = "M" + gen[1]
 
@@ -157,12 +164,21 @@ func Classify(title, desc string) (Machine, error) {
 		m.Chip = variant(strings.ToLower(stripHTML(desc)), m.Gen)
 	}
 
-	// Memory: the seller's words first, the OLX bucket only as a floor.
-	if gb, ev, ok := findRAM(title); ok {
+	// Memory: the seller's words first, the OLX bucket only as a floor. Past
+	// 128 GB is Ultra territory: a Max read as 512 GB is its SSD ("Mac Studio M4
+	// Max - 32 GB, 512 GB Memorie" — Romanian sellers call storage memorie too).
+	maxGB, bare := 128, ramOnlySizes
+	if strings.HasSuffix(m.Chip, " Ultra") {
+		maxGB = 512
+	}
+	if m.Kind == KindMini {
+		bare = miniRAMOnlySizes
+	}
+	if gb, ev, ok := findRAM(title, maxGB, bare); ok {
 		m.RAM, m.RAMEvidence, m.RAMStated = gb, ev, true
 		return m, nil
 	}
-	if gb, ev, ok := findRAM(stripHTML(desc)); ok {
+	if gb, ev, ok := findRAM(stripHTML(desc), maxGB, bare); ok {
 		m.RAM, m.RAMEvidence, m.RAMStated = gb, ev, true
 		return m, nil
 	}
@@ -170,14 +186,14 @@ func Classify(title, desc string) (Machine, error) {
 }
 
 // InferFromBucket is the deliberate fallback for a listing whose seller never
-// wrote the memory down. It only ever returns the smallest size the OLX bucket
-// allows, and the caller must surface it as unstated.
+// wrote the memory down. It returns the smallest size the OLX bucket allows for
+// the machine, and the caller must surface it as unstated.
 //
-// The bucket is a range, and only the open-ended one can hold a machine this
-// project tracks: OLX's other values are closed ranges topping out at 16 GB, so
-// a listing carrying one states a machine below the floor rather than an
-// unstated large one. Matching on "16" alone read "12 - 16 GB" as "> 16 GB" and
-// would have published a 16 GB mini as a 24 GB machine.
+// Only minis have a configuration the bucket pins down. Every mini from the M4
+// on ships with at least 16 GB, so "12 - 16 GB" can only be 16 and "> 16 GB"
+// is at least 24. The lower buckets cannot hold one at all. Matching on "16"
+// alone once read "12 - 16 GB" as "> 16 GB" and published a 16 GB mini as a
+// 24 GB machine.
 //
 // A boundary this does not recognise returns false, which sends the listing to
 // the skipped report — visible, rather than guessed at.
@@ -185,10 +201,15 @@ func InferFromBucket(bucketLabel string, kind Kind) (gb int, evidence string, ok
 	if kind != KindMini {
 		return 0, "", false
 	}
-	if bucket(bucketLabel) != ">16gb" {
+	switch bucket(bucketLabel) {
+	case ">16gb":
+		gb = 24
+	case "12-16gb":
+		gb = 16
+	default:
 		return 0, "", false
 	}
-	return 24, fmt.Sprintf("RAM field reads %q — the seller never states the exact size", bucketLabel), true
+	return gb, fmt.Sprintf("RAM field reads %q — the seller never states the exact size", bucketLabel), true
 }
 
 // bucket normalises an OLX select label so spacing is not treated as meaning.
@@ -245,10 +266,10 @@ func variant(s, gen string) string {
 // counts: IDkXDQ7 is "MacBook Pro 16 M5 Pro 48/1tb sigilat", and the 48 carries
 // no unit at all. The second half has to be a storage size — terabytes with
 // their unit, or 256/512 — which is what keeps core counts ("18/40", "14/20") out.
-func findRAM(s string) (gb int, evidence string, ok bool) {
+func findRAM(s string, maxGB int, bare map[int]bool) (gb int, evidence string, ok bool) {
 	for _, loc := range reGB.FindAllStringSubmatchIndex(s, -1) {
 		n, err := strconv.Atoi(s[loc[2]:loc[3]])
-		if err != nil || !ramSizes[n] {
+		if err != nil || !ramSizes[n] || n > maxGB {
 			continue
 		}
 		after := s[loc[1]:min(len(s), loc[1]+24)]
@@ -256,14 +277,15 @@ func findRAM(s string) (gb int, evidence string, ok bool) {
 			continue
 		}
 		lo := max(0, loc[0]-28)
-		around := s[lo:min(len(s), loc[1]+24)]
-		if ramOnlySizes[n] || reRAMNear.MatchString(around) {
+		before := s[lo:loc[0]]
+		around := before + s[loc[0]:loc[1]] + after
+		if bare[n] || namesMemory(before, after) {
 			return n, strings.TrimSpace(collapse(around)), true
 		}
 	}
 	for _, loc := range reRAMSlash.FindAllStringSubmatchIndex(s, -1) {
 		n, err := strconv.Atoi(s[loc[2]:loc[3]])
-		if err != nil || !ramSizes[n] {
+		if err != nil || !ramSizes[n] || n > maxGB {
 			continue
 		}
 		lo := max(0, loc[0]-28)
@@ -271,6 +293,21 @@ func findRAM(s string) (gb int, evidence string, ok bool) {
 	}
 	return 0, "", false
 }
+
+// namesMemory reports whether a memory word sits beside a size with no other
+// number in between. A memory word vouches only for the figure next to it:
+// "512GB 18 RAM" is RAM for the 18, and "unificată de 16 GB SSD de 256 GB" is
+// unified memory for the 16. Read off the whole window, both put the SSD size on
+// the page as memory (IDkZrdu at 512 GB, IDkYEa7 at 256 GB).
+func namesMemory(before, after string) bool {
+	if loc := reRAMNear.FindStringIndex(after); loc != nil && !reDigit.MatchString(after[:loc[0]]) {
+		return true
+	}
+	locs := reRAMNear.FindAllStringIndex(before, -1)
+	return len(locs) > 0 && !reDigit.MatchString(before[locs[len(locs)-1][1]:])
+}
+
+var reDigit = regexp.MustCompile(`\d`)
 
 // Storage reads the SSD size, in GB, out of a listing. 0 means the seller never
 // wrote it down in a form that can be told apart from memory. The title is
@@ -341,8 +378,11 @@ var (
 	reWS  = regexp.MustCompile(`\s+`)
 )
 
+// stripHTML flattens a description to one line. A line break becomes " | ", not a
+// space: "Memorie: 36GB<br />Stocare: 512GB" is two fields, and read as one line
+// the storage label right after 36GB disqualified it as memory.
 func stripHTML(s string) string {
-	s = strings.NewReplacer("<br />", " ", "<br>", " ", "&nbsp;", " ").Replace(s)
+	s = strings.NewReplacer("<br />", " | ", "<br/>", " | ", "<br>", " | ", "&nbsp;", " ").Replace(s)
 	return reWS.ReplaceAllString(reTag.ReplaceAllString(s, " "), " ")
 }
 

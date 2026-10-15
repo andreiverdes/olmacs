@@ -27,12 +27,9 @@ import (
 	"github.com/andreiverdes/olmacs/internal/site"
 )
 
-// The memory floor per machine type. Minis top out at 24 GB, so holding them to
-// the laptop threshold would exclude the whole category.
-const (
-	laptopFloor = 36
-	miniFloor   = 24
-)
+// The memory floor for MacBooks and Mac Studios. Minis have none: every mini is
+// listed, since a mini is the cheapest macOS core and any of them suits a fleet.
+const laptopFloor = 36
 
 // Search angles. One query never surfaces everything: OLX matches all terms, so
 // each of these reaches a different slice of the same market.
@@ -40,7 +37,8 @@ var queries = []string{
 	"macbook 36gb", "macbook pro 48gb", "macbook pro 64gb", "macbook pro 128gb",
 	"macbook m4 max", "macbook m5 max", "macbook pro m5 pro", "macbook pro m3 max",
 	"macbook pro m4 pro 48gb", "mac studio", "mac studio m4", "mac mini m4 pro",
-	"macbook pro 36gb ram", "macbook pro m4 max",
+	"mac mini m4", "mac mini", "macbook pro 36gb ram", "macbook pro m4 max",
+	"macbook m6", "mac m6 pro",
 }
 
 var reOID = regexp.MustCompile(`ID([A-Za-z0-9]+)\.html`)
@@ -300,7 +298,7 @@ func sweep(dataPath, notesPath string, limit int, dryRun bool) error {
 				Business: o.Business, Created: dateOnly(o.CreatedTime),
 				Refreshed: dateOnly(o.LastRefreshTime), Desc: o.Description,
 				Status: "new", FacetStatus: "available,new",
-				BelowThreshold: m.RAM < laptopFloor, FirstSeen: iso,
+				FirstSeen: iso,
 			}
 			applyOffer(&l, o, rate)
 			if l.RON == 0 {
@@ -444,7 +442,7 @@ func qualifies(m mac.Machine) bool {
 		return false
 	}
 	if m.Kind == mac.KindMini {
-		return m.RAM >= miniFloor
+		return true
 	}
 	return m.RAM >= laptopFloor
 }

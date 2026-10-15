@@ -1,5 +1,5 @@
 <meta charset="utf-8">
-<title>M3 / M4 / M5 Macs on OLX &#8212; 24 GB and up</title>
+<title>M3–M6 Macs on OLX &#8212; 36 GB and up, and every Mac mini</title>
 <style>
   :root {
     --ground:#F2F4F4; --surface:#FFFFFF; --surface-2:#E9EDED;
@@ -98,7 +98,6 @@
   .badge { font-family:var(--data); font-size:11px; letter-spacing:.04em; padding:3px 7px;
            border-radius:3px; background:var(--surface-2); color:var(--ink-2); }
   .badge.ram { background:var(--accent); color:var(--accent-ink); font-weight:600; }
-  .badge.ram.sub { background:transparent; color:var(--ink-2); border:1px solid var(--accent); }
   .badge.shop { background:var(--warn-bg); color:var(--warn); }
   .badge.est { background:transparent; border:1px dashed var(--line); }
   .badge.sold { background:var(--crit); color:var(--surface); font-weight:600; }
@@ -114,7 +113,7 @@
   .st-gone::before { color:var(--crit); }
   .evidence { font-family:var(--data); font-size:11.5px; line-height:1.5; color:var(--ink-2);
               background:var(--surface-2); padding:8px 10px; border-radius:4px;
-              overflow-x:auto; white-space:nowrap; }
+              overflow-wrap:anywhere; }
   .note { font-size:12.5px; color:var(--warn); background:var(--warn-bg); padding:8px 10px;
           border-radius:4px; line-height:1.45; }
   .card a.cta { margin-top:auto; display:inline-flex; align-items:center; justify-content:center;
@@ -533,13 +532,13 @@ const dateShort = s => dateAs(s, { day: "numeric", month: "short" });
 
 const STRINGS = {
   en: {
-    title: "M3 / M4 / M5 Macs on OLX — 24 GB and up",
+    title: "M3–M6 Macs on OLX — 36 GB and up, and every Mac mini",
     language: "Language",
-    h1: "M3, M4 &amp; M5 Macs on OLX with 24&nbsp;GB or more",
-    lede: "Every olx.ro listing for an Apple&nbsp;silicon M3-, M4- or M5-generation Mac&nbsp;mini, " +
-      "Mac&nbsp;Studio or MacBook with at least 24&nbsp;GB of unified memory. MacBooks and " +
-      "Mac&nbsp;Studios are carried from 36&nbsp;GB up, since below that they stop being " +
-      "interesting here; minis are carried at 24&nbsp;GB, which is as high as the model goes. " +
+    h1: "M3–M6 Macs on OLX with 36&nbsp;GB or more, and every Mac&nbsp;mini",
+    lede: "Every olx.ro listing for an Apple&nbsp;silicon M3-, M4-, M5- or M6-generation MacBook or " +
+      "Mac&nbsp;Studio with at least 36&nbsp;GB of unified memory, since below that they stop " +
+      "being interesting here — and every Mac&nbsp;mini of those generations, whatever its " +
+      "memory, because a mini is the cheapest macOS core you can buy. " +
       "Each listing was re-opened on OLX to confirm it is still for sale; the ones that have " +
       "gone are struck through rather than deleted, so the price history stays readable.",
     stamp: (b, c) => `olx.ro · built ${b} · re-verified ${c}`,
@@ -561,9 +560,9 @@ const STRINGS = {
     favH: "Shortlist",
     favP: "Machines you starred. Saved in this browser and mirrored into the page URL, so a " +
       "bookmark or a copied link keeps the list.",
-    miniH: "Mac mini &mdash; under the 36&nbsp;GB line, right shape for a fleet",
-    miniP: "No mini reaches 36&nbsp;GB, but a mini is the cheapest macOS core you can buy. These " +
-      "are the M4-generation minis at 24&nbsp;GB, the ceiling for the model here. The filters " +
+    miniH: "Mac mini &mdash; every configuration, right shape for a fleet",
+    miniP: "A mini is the cheapest macOS core you can buy, so every mini from the M4 generation " +
+      "on is listed here, whatever its memory. The filters " +
       "above apply to this section too.",
     cReused: "Ad reused for another machine", cSold: "Sold", cChecked: d => `checked ${d}`,
     cNew: d => `New since ${d}`, cLive: "Still listed",
@@ -619,7 +618,7 @@ const STRINGS = {
       "here, since each column is by definition the machines on offer on that date. The axis is " +
       "fixed so the picture does not rescale as you filter.",
     pRamH: "By memory", pRamSub: "Unified memory, low tier to high.",
-    pGenH: "By chip", pGenSub: "Apple silicon generation, M3 to M5.",
+    pGenH: "By chip", pGenSub: "Apple silicon generation, M3 to M6.",
     medianOn: d => `Median ${d}`, legLowHighToday: "Low–high, on offer today",
     tipLowHigh: "Low – high today", change: "Change", noFigure: d => `no ${d} figure`,
     pRowAria: r => `${r.label}: ${r.n} on offer, ${fmt(r.lo)} to ${fmt(r.hi)} lei, median ` +
@@ -679,14 +678,14 @@ const STRINGS = {
   },
 
   ro: {
-    title: "Mac-uri M3 / M4 / M5 pe OLX — de la 24 GB în sus",
+    title: "Mac-uri M3–M6 pe OLX — de la 36 GB în sus, plus toate Mac mini-urile",
     language: "Limbă",
-    h1: "Mac-uri M3, M4 și M5 pe OLX cu 24&nbsp;GB sau mai mult",
-    lede: "Toate anunțurile de pe olx.ro pentru un Mac&nbsp;mini, Mac&nbsp;Studio sau MacBook cu " +
-      "Apple&nbsp;silicon din generația M3, M4 sau M5 și cel puțin 24&nbsp;GB de memorie " +
-      "unificată. MacBook-urile și Mac&nbsp;Studio-urile sunt incluse de la 36&nbsp;GB în sus, " +
-      "pentru că sub acest prag nu mai sunt interesante aici; Mac mini-urile sunt incluse de la " +
-      "24&nbsp;GB, maximul la care ajunge modelul. Fiecare anunț a fost redeschis pe OLX pentru a " +
+    h1: "Mac-uri M3–M6 pe OLX cu 36&nbsp;GB sau mai mult, plus toate Mac&nbsp;mini-urile",
+    lede: "Toate anunțurile de pe olx.ro pentru un MacBook sau Mac&nbsp;Studio cu Apple&nbsp;silicon " +
+      "din generația M3, M4, M5 sau M6 și cel puțin 36&nbsp;GB de memorie unificată, pentru că " +
+      "sub acest prag nu mai sunt interesante aici — plus toate Mac mini-urile din aceste " +
+      "generații, indiferent de memorie, pentru că un mini este cel mai ieftin nucleu macOS. " +
+      "Fiecare anunț a fost redeschis pe OLX pentru a " +
       "confirma că este încă de vânzare; cele dispărute sunt tăiate, nu șterse, ca istoricul " +
       "prețurilor să rămână lizibil.",
     stamp: (b, c) => `olx.ro · creat ${b} · reverificat ${c}`,
@@ -709,10 +708,10 @@ const STRINGS = {
     favH: "Favorite",
     favP: "Aparatele marcate cu stea. Sunt salvate în acest browser și copiate în adresa " +
       "paginii, așa că un marcaj sau un link copiat păstrează lista.",
-    miniH: "Mac mini &mdash; sub pragul de 36&nbsp;GB, potrivit pentru o flotă",
-    miniP: "Niciun Mac mini nu ajunge la 36&nbsp;GB, dar un mini este cel mai ieftin nucleu macOS " +
-      "pe care îl poți cumpăra. Acestea sunt Mac mini-urile din generația M4 cu 24&nbsp;GB, " +
-      "maximul modelului aici. Filtrele de mai sus se aplică și acestei secțiuni.",
+    miniH: "Mac mini &mdash; toate configurațiile, potrivite pentru o flotă",
+    miniP: "Un mini este cel mai ieftin nucleu macOS pe care îl poți cumpăra, așa că aici apare " +
+      "orice Mac mini din generația M4 sau mai nouă, indiferent de memorie. Filtrele de mai sus " +
+      "se aplică și acestei secțiuni.",
     cReused: "Anunț refolosit pentru alt aparat", cSold: "Vândut", cChecked: d => `verificat ${d}`,
     cNew: d => `Nou de la ${d}`, cLive: "Încă activ",
     bShop: "magazin", bRelisted: "Refolosit", bSold: "Vândut", bUnstated: "configurație nedeclarată",
@@ -779,7 +778,7 @@ const STRINGS = {
       "coloană înseamnă prin definiție aparatele de vânzare la acea dată. Axa este fixă, ca " +
       "imaginea să nu se rescaleze când filtrezi.",
     pRamH: "După memorie", pRamSub: "Memorie unificată, de la nivelul mic la cel mare.",
-    pGenH: "După cip", pGenSub: "Generația Apple silicon, de la M3 la M5.",
+    pGenH: "După cip", pGenSub: "Generația Apple silicon, de la M3 la M6.",
     medianOn: d => `Mediana ${d}`, legLowHighToday: "Minim–maxim, disponibil azi",
     tipLowHigh: "Minim – maxim azi", change: "Variație", noFigure: d => `fără valoare pe ${d}`,
     pRowAria: r => `${r.label}: ${r.n} de vânzare, între ${fmt(r.lo)} și ${fmt(r.hi)} lei, ` +
@@ -970,7 +969,7 @@ function cardHTML(i) {
     <article class="card ${cls.slice(5)}">
       <div class="card-top">
         <div class="badges">
-          <span class="badge ram${i.below_threshold ? " sub" : ""}">${i.ram} GB${i.ram_stated ? "" : " min"}</span>
+          <span class="badge ram">${i.ram} GB${i.ram_stated ? "" : " min"}</span>
           <span class="badge">${esc(i.chip)}</span>
           ${i.storage ? `<span class="badge">${sizeLabel(i.storage)}</span>` : ""}
           <span class="badge">${esc(i.kind)}</span>
@@ -1184,7 +1183,7 @@ function renderPrice() {
 }
 
 // ---------- mix over time ----------
-// Classes are ordered (M3<M4<M5, 24<...<128), so the ordinal ramp carries the order
+// Classes are ordered (M3<M4<M5<M6, 24<...<128), so the ordinal ramp carries the order
 // and the same step means the same tier in every chart in this section.
 const RAMP = ["var(--o1)","var(--o2)","var(--o3)","var(--o4)","var(--o5)","var(--o6)"];
 const MIX_WINDOW = 14;   // sweep rows drawn; older ones stay in the data
@@ -1281,15 +1280,18 @@ const DAY = 864e5;
 // The floors are the day Apple first sold a Mac with that generation, which is
 // the earliest the ad could honestly be: M3 Macs 30 Oct 2023, M4 Macs 30 Oct
 // 2024, M5 Macs Oct 2025 (dated to the 1st, since only the month is certain
-// here). A generation floor, not a variant one — the base chip always lands
-// first, so this excludes only what is certainly impossible and never guesses a
-// Pro or Max ship date.
+// here). No M6 Mac is on sale yet (expected late Oct 2026), so its floor is the
+// 1st of the month the sweeper started tracking it, which no M6 ad can
+// predate; move it to the real ship date once Apple sets one. A generation
+// floor, not a variant one — the base chip always lands first, so this
+// excludes only what is certainly impossible and never guesses a Pro or Max
+// ship date.
 //
 // One blanket cutoff of 2023-01-01 used to do this job and was too loose:
 // IDikeuZ, an M4 Pro, sits in a slot opened 27 May 2024 — five months before any
 // M4 Mac was on sale — and would have plotted there, dragging the oldest ad and
 // the median age of both M4 and 48 GB with it.
-const GEN_FLOOR = { M3: "2023-10-30", M4: "2024-10-28", M5: "2025-10-01" };
+const GEN_FLOOR = { M3: "2023-10-30", M4: "2024-10-28", M5: "2025-10-01", M6: "2026-10-01" };
 const slotPredatesChip = i =>
   !i.created || i.created < (GEN_FLOOR[i.gen] || "2023-01-01");
 const AGED = ALL.filter(i => i.status !== "gone" && !slotPredatesChip(i));
