@@ -263,6 +263,9 @@ Charts follow a few fixed rules, worth knowing before editing them:
 - The page has two tabs under the filters: **Listings / Oferte** (the cards) and
   **Statistics / Statistici** (every chart). Both follow the same filters; the open tab is kept in the URL hash
   (`#tab=statistici`) next to the shortlist, so a copied link reopens the same view.
+- The **Status** filter opens on *Available*, so the page leads with what can still be
+  bought; *Clear all* drops it to show the full history. It scopes the cards only — the
+  Statistics tab ignores Status and the shortlist.
 - **Price over time** fits one hedonic model to every ad at every sweep: log price
   against a level per sweep, type, chip generation, log2 memory and log2 storage. It is
   fitted on the whole market, never the filtered subset, so a selection with no ads of

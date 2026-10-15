@@ -860,7 +860,9 @@ function applyStatic() {
     el.setAttribute("aria-label", tr(el.dataset.i18nAria)));
 }
 
-const state = { kind:new Set(), gen:new Set(), ram:new Set(), storage:new Set(), city:new Set(), facet_status:new Set() };
+// Status starts on Available: the page opens on what can still be bought. "Clear all"
+// still clears it, for the full history including gone listings.
+const state = { kind:new Set(), gen:new Set(), ram:new Set(), storage:new Set(), city:new Set(), facet_status:new Set(["available"]) };
 const sizeLabel = gb => gb >= 1024 ? gb / 1024 + " TB" : gb + " GB";
 let sortBy = "price";
 let favOnly = false;
@@ -902,7 +904,7 @@ function buildRow(facet, counts, order) {
   const row = document.querySelector(`.frow[data-facet="${facet}"]`);
   const keys = order || Object.keys(counts).sort((a,b) => counts[b]-counts[a] || String(a).localeCompare(b));
   const html = keys.map(k =>
-    `<button class="fchip" type="button" data-v="${esc(k)}" aria-pressed="false">` +
+    `<button class="fchip" type="button" data-v="${esc(k)}" aria-pressed="${state[facet].has(String(k))}">` +
     `<span class="lbl">${esc(chipLabel(facet, k))}</span>` +
     `<span class="n">${counts[k] || 0}</span></button>`).join("");
   row.querySelector(".flabel").insertAdjacentHTML("afterend", html);
