@@ -1763,9 +1763,9 @@ window.OLMACS_DATA = {
    "created": "2026-09-29",
    "refreshed": "2026-09-29",
    "desc": "MacBook Pro 16 inch din 2016, echipat cu cipul M5 Pro, 48GB memorie și stocare de 1TB. Stare nouă, producător procesor Apple, cu placă video integrată.",
-   "status": "live",
-   "facet_status": "available",
-   "gone_reason": "",
+   "status": "gone",
+   "facet_status": "gone",
+   "gone_reason": "sold",
    "note": "",
    "first_seen": "2026-10-01"
   },
@@ -2776,6 +2776,34 @@ window.OLMACS_DATA = {
    "gone_reason": "",
    "note": "",
    "first_seen": "2026-10-29"
+  },
+  {
+   "id": 311286635,
+   "oid": "IDl47Sb",
+   "title": "Apple Mac Studio M3 Ultra 96GB RAM + Apple Studio Display 27\"",
+   "url": "https://www.olx.ro/d/oferta/apple-mac-studio-m3-ultra-96gb-ram-apple-studio-display-27-IDl47Sb.html",
+   "kind": "Mac Studio",
+   "chip": "M3 Ultra",
+   "gen": "M3",
+   "ram": 96,
+   "ram_stated": true,
+   "ram_evidence": "Apple Mac Studio M3 Ultra 96GB RAM + Apple Studio Disp",
+   "storage": 1024,
+   "price": 30000,
+   "price_label": "30 000 lei",
+   "currency": "RON",
+   "ron": 30000,
+   "city": "Bacau",
+   "region": "Bacau",
+   "business": false,
+   "created": "2026-10-29",
+   "refreshed": "2026-10-29",
+   "desc": "!! NU SUNT INTERESAT DE SCHIMBURI\u003cbr /\u003e\n!! PRETUL NU ESTE NEGOCIABIL\u003cbr /\u003e\n\u003cbr /\u003e\nApple Mac Studio / M3 Ultra / 96 GB RAM / 1TB SSD\u003cbr /\u003e\n\u003cbr /\u003e\n+\u003cbr /\u003e\n\u003cbr /\u003e\nApple Studio Display 27\" \u003cbr /\u003e\n\u003cbr /\u003e\nVin impreuna cu toate accesoriile si cutiile originale.",
+   "status": "new",
+   "facet_status": "available,new",
+   "gone_reason": "",
+   "note": "",
+   "first_seen": "2026-10-29"
   }
  ],
  "minis": [
@@ -3717,7 +3745,6 @@ window.OLMACS_DATA = {
    "ram_evidence": "Mac MINI M4 16GB ram, 256GB stocare",
    "storage": 256,
    "price": 3300,
-   "price_was": 3290,
    "price_label": "3 300 lei",
    "currency": "RON",
    "ron": 3300,
@@ -3979,6 +4006,34 @@ window.OLMACS_DATA = {
    "created": "2026-10-29",
    "refreshed": "2026-10-29",
    "desc": "Vând Apple Mac mini M6, cu 16 GB RAM și SSD de 256 GB, în stare impecabilă.\u003cbr /\u003e\n\u003cbr /\u003e\nDispozitivul a fost deschis și testat, fiind păstrat într-o stare excelentă, fără urme de uzură.\u003cbr /\u003e\n\u003cbr /\u003e\nSpecificații:\u003cbr /\u003e\n\u003cbr /\u003e\n* Procesor: Apple M6\u003cbr /\u003e\n* Memorie RAM: 16 GB\u003cbr /\u003e\n* Stocare: SSD de 256 GB\u003cbr /\u003e\n* Sistem de operare: macOS\u003cbr /\u003e\n* Conectivitate: Wi-Fi și Bluetooth\u003cbr /\u003e\n* Porturi: USB-C / Thunderbolt, HDMI, Ethernet și jack audio, în funcție de configurația exactă\u003cbr /\u003e\n\u003cbr /\u003e\nAvantaje:\u003cbr /\u003e\n\u003cbr /\u003e\n* Performanță ridicată într-un format foarte compact\u003cbr /\u003e\n* Potrivit pentru birou, multitasking, programare și productivitate\u003cbr /\u003e\n* Consum redus de energie și funcționare silențioasă\u003cbr /\u003e\n* Garanție disponibilă\u003cbr /\u003e\n* Cutie și accesorii originale\u003cbr /\u003e\n\u003cbr /\u003e\nProdusul este în stare impecabilă și funcționează perfect.",
+   "status": "new",
+   "facet_status": "available,new",
+   "gone_reason": "",
+   "note": "",
+   "first_seen": "2026-10-29"
+  },
+  {
+   "id": 311288043,
+   "oid": "IDl48eT",
+   "title": "Apple Mac Mini M4 – 24GB RAM, 512GB SSD",
+   "url": "https://www.olx.ro/d/oferta/apple-mac-mini-m4-24gb-ram-512gb-ssd-IDl48eT.html",
+   "kind": "Mac mini",
+   "chip": "M4",
+   "gen": "M4",
+   "ram": 24,
+   "ram_stated": true,
+   "ram_evidence": "Apple Mac Mini M4 – 24GB RAM, 512GB SSD",
+   "storage": 512,
+   "price": 5000,
+   "price_label": "5 000 lei",
+   "currency": "RON",
+   "ron": 5000,
+   "city": "Pitesti",
+   "region": "Arges",
+   "business": false,
+   "created": "2026-10-29",
+   "refreshed": "2026-10-29",
+   "desc": "Vand Apple Mac Mini cu procesor M4, configuratie cu 24 GB memorie RAM si SSD de 512 GB, garantie 18.06.2028\u003cbr /\u003e\n\u003cbr /\u003e\nCalculator compact, foarte performant si silentios, ideal pentru programare, multitasking, aplicatii de productivitate, editare foto-video sau utilizare zilnica.\u003cbr /\u003e\n\u003cbr /\u003e\nSpecificatii:\u003cbr /\u003e\n\u003cbr /\u003e\n* Procesor: Apple M4\u003cbr /\u003e\n* Memorie RAM: 24 GB\u003cbr /\u003e\n* Stocare: SSD 512 GB\u003cbr /\u003e\n* Sistem de operare: macOS 27.2\u003cbr /\u003e\n* Conectivitate: 3 x Thunderbolt, 2 x USB-C, HDMI, Ethernet, Wi-Fi si Bluetooth\u003cbr /\u003e\n* Design compact, cu un consum redus de energie",
    "status": "new",
    "facet_status": "available,new",
    "gone_reason": "",
@@ -8474,15 +8529,6 @@ window.OLMACS_DATA = {
      "ron": 12300
     },
     {
-     "oid": "IDkYzG0",
-     "kind": "MacBook",
-     "gen": "M5",
-     "ram": 48,
-     "storage": 1024,
-     "city": "București",
-     "ron": 18500
-    },
-    {
      "oid": "IDkZ0dj",
      "kind": "Mac mini",
      "gen": "M4",
@@ -8733,55 +8779,74 @@ window.OLMACS_DATA = {
      "storage": 256,
      "city": "Selimbar",
      "ron": 4899
+    },
+    {
+     "oid": "IDl47Sb",
+     "kind": "Mac Studio",
+     "gen": "M3",
+     "ram": 96,
+     "storage": 1024,
+     "city": "Bacau",
+     "ron": 30000
+    },
+    {
+     "oid": "IDl48eT",
+     "kind": "Mac mini",
+     "gen": "M4",
+     "ram": 24,
+     "storage": 512,
+     "city": "Pitesti",
+     "ron": 5000
     }
    ]
   }
  ],
  "summary": {
-  "total": 142,
-  "available": 38,
-  "sold": 104,
-  "fresh": 5,
+  "total": 144,
+  "available": 39,
+  "sold": 105,
+  "fresh": 7,
   "min": 3300,
   "max": 41890,
-  "cities": 40,
+  "cities": 41,
   "eur_ron": 5.3441,
   "eur_ron_source": "ECB",
   "checked": "29 Oct 2026",
   "prev": "28 Oct 2026",
   "built": "25 Jul 2026",
-  "sold_since": 3,
+  "sold_since": 4,
   "by_gen": {
-   "M3": 28,
-   "M4": 80,
+   "M3": 29,
+   "M4": 81,
    "M5": 31,
    "M6": 3
   },
   "by_ram": {
    "128": 8,
    "16": 26,
-   "24": 17,
+   "24": 18,
    "256": 1,
    "36": 44,
    "48": 34,
    "64": 10,
-   "96": 2
+   "96": 3
   },
   "by_storage": {
-   "1024": 45,
+   "1024": 46,
    "2048": 21,
    "256": 16,
    "4096": 2,
-   "512": 44
+   "512": 45
   },
   "by_kind": {
-   "Mac Studio": 11,
-   "Mac mini": 43,
+   "Mac Studio": 12,
+   "Mac mini": 44,
    "MacBook": 88
   },
   "by_city": {
    "Arad": 3,
    "Avrig": 1,
+   "Bacau": 1,
    "Baia Mare": 1,
    "Berceni": 1,
    "Botosani": 1,
@@ -8801,7 +8866,7 @@ window.OLMACS_DATA = {
    "Oradea": 3,
    "Palazu Mare": 1,
    "Piatra Neamț": 1,
-   "Pitesti": 1,
+   "Pitesti": 2,
    "Ploiesti": 2,
    "Popești-Leordeni": 2,
    "Ramnicu Valcea": 1,
@@ -8822,9 +8887,9 @@ window.OLMACS_DATA = {
    "Șcheia": 1
   },
   "by_status": {
-   "available": 38,
-   "gone": 104,
-   "new": 5
+   "available": 39,
+   "gone": 105,
+   "new": 7
   }
  }
 };
